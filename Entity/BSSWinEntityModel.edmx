@@ -1,0 +1,900 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="BSS_ATTENDANCE_DEVICES">
+          <Key>
+            <PropertyRef Name="DeviceId" />
+          </Key>
+          <Property Name="DeviceId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DeviceName" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="DeviceIP" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="DevicePort" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="DeviceLocation" Type="int" />
+          <Property Name="DeviceFor" Type="int" />
+          <Property Name="DeviceSerial" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="DeviceMAC" Type="nvarchar" MaxLength="250" />
+          <Property Name="DeviceFirmwareVersion" Type="nvarchar" MaxLength="50" />
+          <Property Name="DeviceSDKVersion" Type="nvarchar" MaxLength="250" />
+          <Property Name="DeviceProductCode" Type="nvarchar" MaxLength="250" />
+          <Property Name="DeviceMachineNumber" Type="nvarchar" MaxLength="250" />
+          <Property Name="DeviceLastSynced" Type="date" />
+          <Property Name="DeviceAdminCount" Type="int" />
+          <Property Name="DeviceUserCount" Type="int" />
+          <Property Name="DeviceTrxCount" Type="int" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+          <Property Name="ATTRIBUTE1" Type="nvarchar(max)" />
+          <Property Name="ATTRIBUTE2" Type="nvarchar(max)" />
+          <Property Name="ATTRIBUTE3" Type="nvarchar(max)" />
+          <Property Name="ATTRIBUTE4" Type="nvarchar(max)" />
+          <Property Name="ATTRIBUTE5" Type="nvarchar(max)" />
+          <Property Name="DeviceAddedDate" Type="date" Nullable="false" />
+          <Property Name="DeviceAddedBy" Type="int" />
+          <Property Name="DeviceUpdateDate" Type="date" />
+          <Property Name="DeviceUpdatedBy" Type="int" />
+        </EntityType>
+        <EntityType Name="BSS_ATTENDANCE_ZK">
+          <Key>
+            <PropertyRef Name="AttendaceID" />
+          </Key>
+          <Property Name="AttendaceID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Enrollment_Number" Type="int" Nullable="false" />
+          <Property Name="Machine_Number" Type="int" Nullable="false" />
+          <Property Name="InOut_Mode" Type="int" />
+          <Property Name="Verify_Method" Type="int" Nullable="false" />
+          <Property Name="Punch_Date" Type="date" Nullable="false" />
+          <Property Name="Punch_Time" Type="time" Precision="7" Nullable="false" />
+          <Property Name="Work_Code" Type="int" />
+          <Property Name="Sync_Status" Type="bit" />
+        </EntityType>
+        <EntityType Name="BSS_STUDENT">
+          <Key>
+            <PropertyRef Name="STUDENT_HEADER_ID" />
+          </Key>
+          <Property Name="STUDENT_HEADER_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="STUDENT_ID" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="FIRST_NAME" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="MIDDLE_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="LAST_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="NICK_NAME" Type="nvarchar" MaxLength="50" />
+          <Property Name="PRES_HOLDING_NO" Type="nvarchar" MaxLength="30" />
+          <Property Name="PRES_STREET" Type="nvarchar" MaxLength="50" />
+          <Property Name="PRES_AREA" Type="nvarchar" MaxLength="50" />
+          <Property Name="PRES_THANA_ID" Type="int" />
+          <Property Name="PRES_POST_CODE" Type="nvarchar" MaxLength="10" />
+          <Property Name="PRES_CITY_ID" Type="int" />
+          <Property Name="PRES_DIVISION_ID" Type="int" />
+          <Property Name="PRES_COUNTRY_ID" Type="int" />
+          <Property Name="PERM_HOLDING_NO" Type="nvarchar" MaxLength="30" />
+          <Property Name="PERM_STREET" Type="nvarchar" MaxLength="50" />
+          <Property Name="PERM_AREA" Type="nvarchar" MaxLength="50" />
+          <Property Name="PERM_POST_CODE" Type="nvarchar" MaxLength="10" />
+          <Property Name="PERM_THANA_ID" Type="int" />
+          <Property Name="PERM_CITY_ID" Type="int" />
+          <Property Name="PERM_DIVISION_ID" Type="int" />
+          <Property Name="PERM_COUNTRY_ID" Type="int" />
+          <Property Name="DOB" Type="datetime" />
+          <Property Name="BIRTH_CITY" Type="int" />
+          <Property Name="BIRTH_COUNTRY" Type="int" />
+          <Property Name="PLACE_OF_BIRTH" Type="nvarchar" MaxLength="60" />
+          <Property Name="ADMISSION_DATE" Type="datetime" />
+          <Property Name="ADMISSION_SESSION_ID" Type="int" />
+          <Property Name="ADMISSION_CLASS_ID" Type="int" />
+          <Property Name="ADMISSION_SECTION_ID" Type="int" />
+          <Property Name="ADMISSION_SHIFT" Type="int" />
+          <Property Name="SESSION_ID" Type="int" />
+          <Property Name="CLASS_ID" Type="int" />
+          <Property Name="SECTION_ID" Type="int" />
+          <Property Name="SHIFT" Type="int" />
+          <Property Name="CAMPUS_ID" Type="int" />
+          <Property Name="END_DATE" Type="datetime" />
+          <Property Name="STATUS" Type="bit" />
+          <Property Name="GENDER" Type="nvarchar" MaxLength="10" />
+          <Property Name="RELIGION" Type="nvarchar" MaxLength="30" />
+          <Property Name="RES_PHONE" Type="nvarchar" MaxLength="30" />
+          <Property Name="MOBILE" Type="nvarchar" MaxLength="30" />
+          <Property Name="EMAIL" Type="nvarchar" MaxLength="100" />
+          <Property Name="BLOOD_GROUP" Type="nvarchar" MaxLength="10" />
+          <Property Name="NATIONALITY" Type="nvarchar" MaxLength="60" />
+          <Property Name="BIRTH_CERTIFICATE_NO" Type="nvarchar" MaxLength="30" />
+          <Property Name="PASSPORT_NO" Type="nvarchar" MaxLength="30" />
+          <Property Name="MEDICAL_HISTORY" Type="nvarchar" MaxLength="200" />
+          <Property Name="EMERGENCY_MEDICAL_ACTION" Type="nvarchar" MaxLength="200" />
+          <Property Name="FATHER_FIRST_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="FATHER_MIDDLE_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="FATHER_LAST_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="FATHER_EDUCATION" Type="nvarchar" MaxLength="50" />
+          <Property Name="FATHER_EDUCATION_DETAILS" Type="nvarchar" MaxLength="200" />
+          <Property Name="FATHER_OCCUPATION" Type="nvarchar" MaxLength="30" />
+          <Property Name="FATHER_OCCUPATION_DETAILS" Type="nvarchar" MaxLength="150" />
+          <Property Name="FATHER_OFFICE_ADDRESS" Type="nvarchar" MaxLength="200" />
+          <Property Name="FATHER_OFFICE_PHONE" Type="nvarchar" MaxLength="30" />
+          <Property Name="FATHER_MOBILE" Type="nvarchar" MaxLength="30" />
+          <Property Name="FATHER_NATIONAL_ID" Type="nvarchar" MaxLength="30" />
+          <Property Name="FATHER_PASSPORT_NO" Type="nvarchar" MaxLength="30" />
+          <Property Name="MOTHER_FIRST_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="MOTHER_MIDDLE_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="MOTHER_LAST_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="MOTHER_EDUCATION" Type="nvarchar" MaxLength="50" />
+          <Property Name="MOTHER_EDUCATION_DETAILS" Type="nvarchar" MaxLength="200" />
+          <Property Name="MOTHER_OCCUPATION" Type="nvarchar" MaxLength="30" />
+          <Property Name="MOTHER_OCCUPATION_DETAILS" Type="nvarchar" MaxLength="150" />
+          <Property Name="MOTHER_OFFICE_ADDRESS" Type="nvarchar" MaxLength="200" />
+          <Property Name="MOTHER_OFFICE_PHONE" Type="nvarchar" MaxLength="30" />
+          <Property Name="MOTHER_MOBILE" Type="nvarchar" MaxLength="30" />
+          <Property Name="MOTHER_NATIONAL_ID" Type="nvarchar" MaxLength="30" />
+          <Property Name="MOHER_PASSPORT_NO" Type="nvarchar" MaxLength="30" />
+          <Property Name="LOC_GUARDIAN_FIRST_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="LOC_GUARDIAN_MIDDLE_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="LOC_GUARDIAN_LAST_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="LOC_GUARDIAN_RELATIONSHIP" Type="nvarchar" MaxLength="30" />
+          <Property Name="LOC_GUARDIAN_MOBILE" Type="nvarchar" MaxLength="30" />
+          <Property Name="LOCAL_GURDIAN_NATIONAL_ID" Type="nvarchar" MaxLength="30" />
+          <Property Name="LOCAL_GURDIAN_PASSPORT_NO" Type="nvarchar" MaxLength="30" />
+          <Property Name="STUDENT_PHOTO_PATH" Type="nvarchar" MaxLength="50" />
+          <Property Name="PROXIMITY_NUM" Type="nvarchar" MaxLength="15" />
+          <Property Name="EXIT_REASONS" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE1" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE2" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE3" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE4" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE5" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE6" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE7" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE8" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE9" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE10" Type="text" />
+          <Property Name="CREATED_BY" Type="bigint" />
+          <Property Name="CREATION_DATE" Type="datetime" />
+          <Property Name="LAST_UPDATE_BY" Type="bigint" />
+          <Property Name="LAST_UPDATE_DATE" Type="datetime" />
+          <Property Name="EFFECTIVE_FROM" Type="datetime" />
+          <Property Name="EFFECTIVE_TO" Type="datetime" />
+          <Property Name="READMISSION_DATE" Type="datetime" />
+          <Property Name="READMISSION_SESSION_ID" Type="int" />
+          <Property Name="SYNC_STATUS" Type="nvarchar" MaxLength="10" />
+          <Property Name="ATTRIBUTE11" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE12" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE13" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE14" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE15" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE16" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE17" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE18" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE19" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE20" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE21" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE22" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE23" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE24" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE25" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE26" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE27" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE28" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE29" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE30" Type="nvarchar" MaxLength="250" />
+        </EntityType>
+        <EntityType Name="HR_EMPLOYEE">
+          <Key>
+            <PropertyRef Name="EMP_HEADER_ID" />
+          </Key>
+          <Property Name="EMP_HEADER_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EMP_ID" Type="nvarchar" MaxLength="15" Nullable="false" />
+          <Property Name="EMP_FIRST_NAME" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="EMP_MIDDLE_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="EMP_LAST_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="EMP_NICK_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="BUSINESS_GROUP_ID" Type="int" />
+          <Property Name="APPLICANT_ID" Type="int" />
+          <Property Name="DEPT_ID" Type="int" />
+          <Property Name="DESIG_ID" Type="int" />
+          <Property Name="PUNCH_CARD_ID" Type="nvarchar" MaxLength="20" />
+          <Property Name="START_TIME" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="END_TIME" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="JOINING_DATE" Type="datetime" />
+          <Property Name="JOB_END_DATE" Type="datetime" />
+          <Property Name="IS_PERMENENT" Type="bit" />
+          <Property Name="STATUS" Type="bit" />
+          <Property Name="BIRTH_DATE" Type="datetime" />
+          <Property Name="DEATH_DATE" Type="datetime" />
+          <Property Name="JOB_LOCATION_ID" Type="int" />
+          <Property Name="BASE_OFFICE_ID" Type="int" />
+          <Property Name="UNIT_ID" Type="int" />
+          <Property Name="INTERNAL_LOCATION_ID" Type="int" />
+          <Property Name="PRES_HOLDING_NO" Type="nvarchar" MaxLength="20" />
+          <Property Name="PRES_STREET" Type="nvarchar" MaxLength="50" />
+          <Property Name="PRES_AREA" Type="nvarchar" MaxLength="50" />
+          <Property Name="PRES_THANA_ID" Type="int" />
+          <Property Name="PRES_POST_CODE" Type="nvarchar" MaxLength="10" />
+          <Property Name="PRES_CITY_ID" Type="int" />
+          <Property Name="PRES_DIVISION_ID" Type="int" />
+          <Property Name="PRES_COUNTRY_ID" Type="int" />
+          <Property Name="PERM_HOLDING_NO" Type="nvarchar" MaxLength="20" />
+          <Property Name="PERM_STREET" Type="nvarchar" MaxLength="50" />
+          <Property Name="PERM_AREA" Type="nvarchar" MaxLength="50" />
+          <Property Name="PERM_THANA_ID" Type="int" />
+          <Property Name="PERM_POST_CODE" Type="nvarchar" MaxLength="10" />
+          <Property Name="PERM_CITY_ID" Type="int" />
+          <Property Name="PERM_DIVISION_ID" Type="int" />
+          <Property Name="PERM_COUNTRY_ID" Type="int" />
+          <Property Name="GENDER" Type="bit" />
+          <Property Name="RELIGION" Type="nvarchar" MaxLength="30" />
+          <Property Name="PLACE_OF_BIRTH" Type="nvarchar" MaxLength="60" />
+          <Property Name="BIRTH_COUNTRY" Type="int" />
+          <Property Name="BIRTH_CITY" Type="int" />
+          <Property Name="NATIONALITY" Type="nvarchar" MaxLength="50" />
+          <Property Name="PASSPORT_NO" Type="nvarchar" MaxLength="30" />
+          <Property Name="NATIONAL_ID" Type="nvarchar" MaxLength="30" />
+          <Property Name="SOCIAL_SECURITY_ID" Type="nvarchar" MaxLength="30" />
+          <Property Name="DRIVING_LICENSE_NO" Type="nvarchar" MaxLength="30" />
+          <Property Name="BLOOD_GROUP" Type="nvarchar" MaxLength="10" />
+          <Property Name="MARITAL_STATUS" Type="nvarchar" MaxLength="10" />
+          <Property Name="IS_STUDENT" Type="nvarchar" MaxLength="1" />
+          <Property Name="WORK_PHONE" Type="nvarchar" MaxLength="20" />
+          <Property Name="MOBILE" Type="nvarchar" MaxLength="20" />
+          <Property Name="PHONE" Type="nvarchar" MaxLength="20" />
+          <Property Name="EMAIL" Type="nvarchar" MaxLength="100" />
+          <Property Name="EMAIL_2" Type="nvarchar" MaxLength="100" />
+          <Property Name="FATHER_FIRST_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="FATHER_MIDDLE_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="FATHER_LAST_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="FATHER_CONTACT_NO" Type="nvarchar" MaxLength="20" />
+          <Property Name="FATHER_NATIONAL_ID" Type="nvarchar" MaxLength="30" />
+          <Property Name="MOTHER_FIRST_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="MOTHER_MIDDLE_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="MOTHER_LAST_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="MOTHER_CONTACT_NO" Type="nvarchar" MaxLength="20" />
+          <Property Name="MOTHER_NATIONAL_ID" Type="nvarchar" MaxLength="30" />
+          <Property Name="SPOUSE_FIRST_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="SPOUSE_MIDDLE_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="SPOUSE_LAST_NAME" Type="nvarchar" MaxLength="30" />
+          <Property Name="SPOUSE_CONTACT_NO" Type="nvarchar" MaxLength="20" />
+          <Property Name="SPOUSE_NATIONAL_ID" Type="nvarchar" MaxLength="30" />
+          <Property Name="NO_OF_DEPENDENT" Type="int" />
+          <Property Name="BACKGROUND_CHECK_DATE" Type="datetime" />
+          <Property Name="BACKGROUND_CHECK_BY" Type="int" />
+          <Property Name="BACKGROUND_CHECK_STATUS" Type="bit" />
+          <Property Name="LAST_MEDICAL_STATUS" Type="nvarchar" MaxLength="1" />
+          <Property Name="LAST_MEDICAL_CHECK_DATE" Type="datetime" />
+          <Property Name="MEDICAL_HISTORY" Type="nvarchar" MaxLength="500" />
+          <Property Name="SIGNATURE" Type="nvarchar" MaxLength="150" />
+          <Property Name="IMG_URL" Type="nvarchar" MaxLength="150" />
+          <Property Name="ATTRIBUTE1" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE2" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE3" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE4" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE5" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE6" Type="nvarchar" MaxLength="100" />
+          <Property Name="ATTRIBUTE7" Type="nvarchar" MaxLength="100" />
+          <Property Name="ATTRIBUTE8" Type="nvarchar" MaxLength="100" />
+          <Property Name="ATTRIBUTE9" Type="nvarchar" MaxLength="100" />
+          <Property Name="ATTRIBUTE10" Type="text" />
+          <Property Name="ATTRIBUTE11" Type="nvarchar" MaxLength="100" />
+          <Property Name="ATTRIBUTE12" Type="nvarchar" MaxLength="100" />
+          <Property Name="ATTRIBUTE13" Type="nvarchar" MaxLength="100" />
+          <Property Name="ATTRIBUTE14" Type="nvarchar" MaxLength="100" />
+          <Property Name="ATTRIBUTE15" Type="nvarchar" MaxLength="100" />
+          <Property Name="CREATED_BY" Type="bigint" />
+          <Property Name="CREATION_DATE" Type="datetime" />
+          <Property Name="LAST_UPDATE_BY" Type="bigint" />
+          <Property Name="LAST_UPDATE_DATE" Type="datetime" />
+          <Property Name="EFFECTIVE_FROM" Type="datetime" />
+          <Property Name="EFFECTIVE_TO" Type="datetime" />
+          <Property Name="SYNC_STATUS" Type="nvarchar" MaxLength="10" />
+          <Property Name="REJOINING_DATE" Type="datetime" />
+        </EntityType>
+        <EntityContainer Name="ModelStoreContainer">
+          <EntitySet Name="BSS_ATTENDANCE_DEVICES" EntityType="Self.BSS_ATTENDANCE_DEVICES" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BSS_ATTENDANCE_ZK" EntityType="Self.BSS_ATTENDANCE_ZK" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BSS_STUDENT" EntityType="Self.BSS_STUDENT" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="HR_EMPLOYEE" EntityType="Self.HR_EMPLOYEE" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="BSS_ATTENDANCE_DEVICES">
+          <Key>
+            <PropertyRef Name="DeviceId" />
+          </Key>
+          <Property Name="DeviceId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DeviceName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DeviceIP" Type="String" MaxLength="250" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DevicePort" Type="String" MaxLength="250" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DeviceLocation" Type="Int32" />
+          <Property Name="DeviceFor" Type="Int32" />
+          <Property Name="DeviceSerial" Type="String" MaxLength="250" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DeviceMAC" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="DeviceFirmwareVersion" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DeviceSDKVersion" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="DeviceProductCode" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="DeviceMachineNumber" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="DeviceLastSynced" Type="DateTime" Precision="0" />
+          <Property Name="DeviceAdminCount" Type="Int32" />
+          <Property Name="DeviceUserCount" Type="Int32" />
+          <Property Name="DeviceTrxCount" Type="Int32" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <Property Name="ATTRIBUTE1" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE3" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE4" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE5" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DeviceAddedDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="DeviceAddedBy" Type="Int32" />
+          <Property Name="DeviceUpdateDate" Type="DateTime" Precision="0" />
+          <Property Name="DeviceUpdatedBy" Type="Int32" />
+        </EntityType>
+        <EntityType Name="BSS_ATTENDANCE_ZK">
+          <Key>
+            <PropertyRef Name="AttendaceID" />
+          </Key>
+          <Property Name="AttendaceID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Enrollment_Number" Type="Int32" Nullable="false" />
+          <Property Name="Machine_Number" Type="Int32" Nullable="false" />
+          <Property Name="InOut_Mode" Type="Int32" />
+          <Property Name="Verify_Method" Type="Int32" Nullable="false" />
+          <Property Name="Punch_Date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Punch_Time" Type="Time" Nullable="false" Precision="7" />
+          <Property Name="Work_Code" Type="Int32" />
+          <Property Name="Sync_Status" Type="Boolean" />
+        </EntityType>
+        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="BSS_ATTENDANCE_DEVICES" EntityType="Self.BSS_ATTENDANCE_DEVICES" />
+          <EntitySet Name="BSS_ATTENDANCE_ZK" EntityType="Self.BSS_ATTENDANCE_ZK" />
+          <EntitySet Name="BSS_STUDENT" EntityType="Model.BSS_STUDENT" />
+          <EntitySet Name="HR_EMPLOYEE" EntityType="Model.HR_EMPLOYEE" />
+        </EntityContainer>
+        <EntityType Name="BSS_STUDENT">
+          <Key>
+            <PropertyRef Name="STUDENT_HEADER_ID" />
+          </Key>
+          <Property Name="STUDENT_HEADER_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="STUDENT_ID" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="FIRST_NAME" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MIDDLE_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="LAST_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="NICK_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PRES_HOLDING_NO" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="PRES_STREET" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PRES_AREA" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PRES_THANA_ID" Type="Int32" />
+          <Property Name="PRES_POST_CODE" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="PRES_CITY_ID" Type="Int32" />
+          <Property Name="PRES_DIVISION_ID" Type="Int32" />
+          <Property Name="PRES_COUNTRY_ID" Type="Int32" />
+          <Property Name="PERM_HOLDING_NO" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="PERM_STREET" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PERM_AREA" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PERM_POST_CODE" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="PERM_THANA_ID" Type="Int32" />
+          <Property Name="PERM_CITY_ID" Type="Int32" />
+          <Property Name="PERM_DIVISION_ID" Type="Int32" />
+          <Property Name="PERM_COUNTRY_ID" Type="Int32" />
+          <Property Name="DOB" Type="DateTime" Precision="3" />
+          <Property Name="BIRTH_CITY" Type="Int32" />
+          <Property Name="BIRTH_COUNTRY" Type="Int32" />
+          <Property Name="PLACE_OF_BIRTH" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ADMISSION_DATE" Type="DateTime" Precision="3" />
+          <Property Name="ADMISSION_SESSION_ID" Type="Int32" />
+          <Property Name="ADMISSION_CLASS_ID" Type="Int32" />
+          <Property Name="ADMISSION_SECTION_ID" Type="Int32" />
+          <Property Name="ADMISSION_SHIFT" Type="Int32" />
+          <Property Name="SESSION_ID" Type="Int32" />
+          <Property Name="CLASS_ID" Type="Int32" />
+          <Property Name="SECTION_ID" Type="Int32" />
+          <Property Name="SHIFT" Type="Int32" />
+          <Property Name="CAMPUS_ID" Type="Int32" />
+          <Property Name="END_DATE" Type="DateTime" Precision="3" />
+          <Property Name="STATUS" Type="Boolean" />
+          <Property Name="GENDER" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="RELIGION" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="RES_PHONE" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MOBILE" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="EMAIL" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="BLOOD_GROUP" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="NATIONALITY" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="BIRTH_CERTIFICATE_NO" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="PASSPORT_NO" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MEDICAL_HISTORY" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="EMERGENCY_MEDICAL_ACTION" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_FIRST_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_MIDDLE_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_LAST_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_EDUCATION" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_EDUCATION_DETAILS" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_OCCUPATION" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_OCCUPATION_DETAILS" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_OFFICE_ADDRESS" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_OFFICE_PHONE" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_MOBILE" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_NATIONAL_ID" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_PASSPORT_NO" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_FIRST_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_MIDDLE_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_LAST_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_EDUCATION" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_EDUCATION_DETAILS" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_OCCUPATION" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_OCCUPATION_DETAILS" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_OFFICE_ADDRESS" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_OFFICE_PHONE" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_MOBILE" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_NATIONAL_ID" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MOHER_PASSPORT_NO" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="LOC_GUARDIAN_FIRST_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="LOC_GUARDIAN_MIDDLE_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="LOC_GUARDIAN_LAST_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="LOC_GUARDIAN_RELATIONSHIP" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="LOC_GUARDIAN_MOBILE" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="LOCAL_GURDIAN_NATIONAL_ID" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="LOCAL_GURDIAN_PASSPORT_NO" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="STUDENT_PHOTO_PATH" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PROXIMITY_NUM" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="EXIT_REASONS" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE1" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE2" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE3" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE4" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE5" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE6" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE7" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE8" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE9" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE10" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CREATED_BY" Type="Int64" />
+          <Property Name="CREATION_DATE" Type="DateTime" Precision="3" />
+          <Property Name="LAST_UPDATE_BY" Type="Int64" />
+          <Property Name="LAST_UPDATE_DATE" Type="DateTime" Precision="3" />
+          <Property Name="EFFECTIVE_FROM" Type="DateTime" Precision="3" />
+          <Property Name="EFFECTIVE_TO" Type="DateTime" Precision="3" />
+          <Property Name="READMISSION_DATE" Type="DateTime" Precision="3" />
+          <Property Name="READMISSION_SESSION_ID" Type="Int32" />
+          <Property Name="SYNC_STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE11" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE12" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE13" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE14" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE15" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE16" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE17" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE18" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE19" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE20" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE21" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE22" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE23" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE24" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE25" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE26" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE27" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE28" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE29" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE30" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="HR_EMPLOYEE">
+          <Key>
+            <PropertyRef Name="EMP_HEADER_ID" />
+          </Key>
+          <Property Name="EMP_HEADER_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EMP_ID" Type="String" Nullable="false" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="EMP_FIRST_NAME" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="EMP_MIDDLE_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="EMP_LAST_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="EMP_NICK_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="BUSINESS_GROUP_ID" Type="Int32" />
+          <Property Name="APPLICANT_ID" Type="Int32" />
+          <Property Name="DEPT_ID" Type="Int32" />
+          <Property Name="DESIG_ID" Type="Int32" />
+          <Property Name="PUNCH_CARD_ID" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="START_TIME" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="END_TIME" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="JOINING_DATE" Type="DateTime" Precision="3" />
+          <Property Name="JOB_END_DATE" Type="DateTime" Precision="3" />
+          <Property Name="IS_PERMENENT" Type="Boolean" />
+          <Property Name="STATUS" Type="Boolean" />
+          <Property Name="BIRTH_DATE" Type="DateTime" Precision="3" />
+          <Property Name="DEATH_DATE" Type="DateTime" Precision="3" />
+          <Property Name="JOB_LOCATION_ID" Type="Int32" />
+          <Property Name="BASE_OFFICE_ID" Type="Int32" />
+          <Property Name="UNIT_ID" Type="Int32" />
+          <Property Name="INTERNAL_LOCATION_ID" Type="Int32" />
+          <Property Name="PRES_HOLDING_NO" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="PRES_STREET" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PRES_AREA" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PRES_THANA_ID" Type="Int32" />
+          <Property Name="PRES_POST_CODE" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="PRES_CITY_ID" Type="Int32" />
+          <Property Name="PRES_DIVISION_ID" Type="Int32" />
+          <Property Name="PRES_COUNTRY_ID" Type="Int32" />
+          <Property Name="PERM_HOLDING_NO" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="PERM_STREET" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PERM_AREA" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PERM_THANA_ID" Type="Int32" />
+          <Property Name="PERM_POST_CODE" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="PERM_CITY_ID" Type="Int32" />
+          <Property Name="PERM_DIVISION_ID" Type="Int32" />
+          <Property Name="PERM_COUNTRY_ID" Type="Int32" />
+          <Property Name="GENDER" Type="Boolean" />
+          <Property Name="RELIGION" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="PLACE_OF_BIRTH" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="BIRTH_COUNTRY" Type="Int32" />
+          <Property Name="BIRTH_CITY" Type="Int32" />
+          <Property Name="NATIONALITY" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PASSPORT_NO" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="NATIONAL_ID" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="SOCIAL_SECURITY_ID" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="DRIVING_LICENSE_NO" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="BLOOD_GROUP" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="MARITAL_STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="IS_STUDENT" Type="String" MaxLength="1" FixedLength="false" Unicode="true" />
+          <Property Name="WORK_PHONE" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="MOBILE" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="PHONE" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="EMAIL" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="EMAIL_2" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_FIRST_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_MIDDLE_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_LAST_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_CONTACT_NO" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_NATIONAL_ID" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_FIRST_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_MIDDLE_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_LAST_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_CONTACT_NO" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_NATIONAL_ID" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="SPOUSE_FIRST_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="SPOUSE_MIDDLE_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="SPOUSE_LAST_NAME" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="SPOUSE_CONTACT_NO" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="SPOUSE_NATIONAL_ID" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="NO_OF_DEPENDENT" Type="Int32" />
+          <Property Name="BACKGROUND_CHECK_DATE" Type="DateTime" Precision="3" />
+          <Property Name="BACKGROUND_CHECK_BY" Type="Int32" />
+          <Property Name="BACKGROUND_CHECK_STATUS" Type="Boolean" />
+          <Property Name="LAST_MEDICAL_STATUS" Type="String" MaxLength="1" FixedLength="false" Unicode="true" />
+          <Property Name="LAST_MEDICAL_CHECK_DATE" Type="DateTime" Precision="3" />
+          <Property Name="MEDICAL_HISTORY" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="SIGNATURE" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="IMG_URL" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE1" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE2" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE3" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE4" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE5" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE6" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE7" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE8" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE9" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE10" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ATTRIBUTE11" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE12" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE13" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE14" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE15" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CREATED_BY" Type="Int64" />
+          <Property Name="CREATION_DATE" Type="DateTime" Precision="3" />
+          <Property Name="LAST_UPDATE_BY" Type="Int64" />
+          <Property Name="LAST_UPDATE_DATE" Type="DateTime" Precision="3" />
+          <Property Name="EFFECTIVE_FROM" Type="DateTime" Precision="3" />
+          <Property Name="EFFECTIVE_TO" Type="DateTime" Precision="3" />
+          <Property Name="SYNC_STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="REJOINING_DATE" Type="DateTime" Precision="3" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ModelStoreContainer" CdmEntityContainer="Entities">
+          <EntitySetMapping Name="BSS_ATTENDANCE_DEVICES">
+            <EntityTypeMapping TypeName="Model.BSS_ATTENDANCE_DEVICES">
+              <MappingFragment StoreEntitySet="BSS_ATTENDANCE_DEVICES">
+                <ScalarProperty Name="DeviceId" ColumnName="DeviceId" />
+                <ScalarProperty Name="DeviceName" ColumnName="DeviceName" />
+                <ScalarProperty Name="DeviceIP" ColumnName="DeviceIP" />
+                <ScalarProperty Name="DevicePort" ColumnName="DevicePort" />
+                <ScalarProperty Name="DeviceLocation" ColumnName="DeviceLocation" />
+                <ScalarProperty Name="DeviceFor" ColumnName="DeviceFor" />
+                <ScalarProperty Name="DeviceSerial" ColumnName="DeviceSerial" />
+                <ScalarProperty Name="DeviceMAC" ColumnName="DeviceMAC" />
+                <ScalarProperty Name="DeviceFirmwareVersion" ColumnName="DeviceFirmwareVersion" />
+                <ScalarProperty Name="DeviceSDKVersion" ColumnName="DeviceSDKVersion" />
+                <ScalarProperty Name="DeviceProductCode" ColumnName="DeviceProductCode" />
+                <ScalarProperty Name="DeviceMachineNumber" ColumnName="DeviceMachineNumber" />
+                <ScalarProperty Name="DeviceLastSynced" ColumnName="DeviceLastSynced" />
+                <ScalarProperty Name="DeviceAdminCount" ColumnName="DeviceAdminCount" />
+                <ScalarProperty Name="DeviceUserCount" ColumnName="DeviceUserCount" />
+                <ScalarProperty Name="DeviceTrxCount" ColumnName="DeviceTrxCount" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="ATTRIBUTE1" ColumnName="ATTRIBUTE1" />
+                <ScalarProperty Name="ATTRIBUTE2" ColumnName="ATTRIBUTE2" />
+                <ScalarProperty Name="ATTRIBUTE3" ColumnName="ATTRIBUTE3" />
+                <ScalarProperty Name="ATTRIBUTE4" ColumnName="ATTRIBUTE4" />
+                <ScalarProperty Name="ATTRIBUTE5" ColumnName="ATTRIBUTE5" />
+                <ScalarProperty Name="DeviceAddedDate" ColumnName="DeviceAddedDate" />
+                <ScalarProperty Name="DeviceAddedBy" ColumnName="DeviceAddedBy" />
+                <ScalarProperty Name="DeviceUpdateDate" ColumnName="DeviceUpdateDate" />
+                <ScalarProperty Name="DeviceUpdatedBy" ColumnName="DeviceUpdatedBy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BSS_ATTENDANCE_ZK">
+            <EntityTypeMapping TypeName="Model.BSS_ATTENDANCE_ZK">
+              <MappingFragment StoreEntitySet="BSS_ATTENDANCE_ZK">
+                <ScalarProperty Name="Sync_Status" ColumnName="Sync_Status" />
+                <ScalarProperty Name="AttendaceID" ColumnName="AttendaceID" />
+                <ScalarProperty Name="Enrollment_Number" ColumnName="Enrollment_Number" />
+                <ScalarProperty Name="Machine_Number" ColumnName="Machine_Number" />
+                <ScalarProperty Name="InOut_Mode" ColumnName="InOut_Mode" />
+                <ScalarProperty Name="Verify_Method" ColumnName="Verify_Method" />
+                <ScalarProperty Name="Punch_Date" ColumnName="Punch_Date" />
+                <ScalarProperty Name="Punch_Time" ColumnName="Punch_Time" />
+                <ScalarProperty Name="Work_Code" ColumnName="Work_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BSS_STUDENT">
+            <EntityTypeMapping TypeName="Model.BSS_STUDENT">
+              <MappingFragment StoreEntitySet="BSS_STUDENT">
+                <ScalarProperty Name="ATTRIBUTE30" ColumnName="ATTRIBUTE30" />
+                <ScalarProperty Name="ATTRIBUTE29" ColumnName="ATTRIBUTE29" />
+                <ScalarProperty Name="ATTRIBUTE28" ColumnName="ATTRIBUTE28" />
+                <ScalarProperty Name="ATTRIBUTE27" ColumnName="ATTRIBUTE27" />
+                <ScalarProperty Name="ATTRIBUTE26" ColumnName="ATTRIBUTE26" />
+                <ScalarProperty Name="ATTRIBUTE25" ColumnName="ATTRIBUTE25" />
+                <ScalarProperty Name="ATTRIBUTE24" ColumnName="ATTRIBUTE24" />
+                <ScalarProperty Name="ATTRIBUTE23" ColumnName="ATTRIBUTE23" />
+                <ScalarProperty Name="ATTRIBUTE22" ColumnName="ATTRIBUTE22" />
+                <ScalarProperty Name="ATTRIBUTE21" ColumnName="ATTRIBUTE21" />
+                <ScalarProperty Name="ATTRIBUTE20" ColumnName="ATTRIBUTE20" />
+                <ScalarProperty Name="ATTRIBUTE19" ColumnName="ATTRIBUTE19" />
+                <ScalarProperty Name="ATTRIBUTE18" ColumnName="ATTRIBUTE18" />
+                <ScalarProperty Name="ATTRIBUTE17" ColumnName="ATTRIBUTE17" />
+                <ScalarProperty Name="ATTRIBUTE16" ColumnName="ATTRIBUTE16" />
+                <ScalarProperty Name="ATTRIBUTE15" ColumnName="ATTRIBUTE15" />
+                <ScalarProperty Name="ATTRIBUTE14" ColumnName="ATTRIBUTE14" />
+                <ScalarProperty Name="ATTRIBUTE13" ColumnName="ATTRIBUTE13" />
+                <ScalarProperty Name="ATTRIBUTE12" ColumnName="ATTRIBUTE12" />
+                <ScalarProperty Name="ATTRIBUTE11" ColumnName="ATTRIBUTE11" />
+                <ScalarProperty Name="SYNC_STATUS" ColumnName="SYNC_STATUS" />
+                <ScalarProperty Name="READMISSION_SESSION_ID" ColumnName="READMISSION_SESSION_ID" />
+                <ScalarProperty Name="READMISSION_DATE" ColumnName="READMISSION_DATE" />
+                <ScalarProperty Name="EFFECTIVE_TO" ColumnName="EFFECTIVE_TO" />
+                <ScalarProperty Name="EFFECTIVE_FROM" ColumnName="EFFECTIVE_FROM" />
+                <ScalarProperty Name="LAST_UPDATE_DATE" ColumnName="LAST_UPDATE_DATE" />
+                <ScalarProperty Name="LAST_UPDATE_BY" ColumnName="LAST_UPDATE_BY" />
+                <ScalarProperty Name="CREATION_DATE" ColumnName="CREATION_DATE" />
+                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+                <ScalarProperty Name="ATTRIBUTE10" ColumnName="ATTRIBUTE10" />
+                <ScalarProperty Name="ATTRIBUTE9" ColumnName="ATTRIBUTE9" />
+                <ScalarProperty Name="ATTRIBUTE8" ColumnName="ATTRIBUTE8" />
+                <ScalarProperty Name="ATTRIBUTE7" ColumnName="ATTRIBUTE7" />
+                <ScalarProperty Name="ATTRIBUTE6" ColumnName="ATTRIBUTE6" />
+                <ScalarProperty Name="ATTRIBUTE5" ColumnName="ATTRIBUTE5" />
+                <ScalarProperty Name="ATTRIBUTE4" ColumnName="ATTRIBUTE4" />
+                <ScalarProperty Name="ATTRIBUTE3" ColumnName="ATTRIBUTE3" />
+                <ScalarProperty Name="ATTRIBUTE2" ColumnName="ATTRIBUTE2" />
+                <ScalarProperty Name="ATTRIBUTE1" ColumnName="ATTRIBUTE1" />
+                <ScalarProperty Name="EXIT_REASONS" ColumnName="EXIT_REASONS" />
+                <ScalarProperty Name="PROXIMITY_NUM" ColumnName="PROXIMITY_NUM" />
+                <ScalarProperty Name="STUDENT_PHOTO_PATH" ColumnName="STUDENT_PHOTO_PATH" />
+                <ScalarProperty Name="LOCAL_GURDIAN_PASSPORT_NO" ColumnName="LOCAL_GURDIAN_PASSPORT_NO" />
+                <ScalarProperty Name="LOCAL_GURDIAN_NATIONAL_ID" ColumnName="LOCAL_GURDIAN_NATIONAL_ID" />
+                <ScalarProperty Name="LOC_GUARDIAN_MOBILE" ColumnName="LOC_GUARDIAN_MOBILE" />
+                <ScalarProperty Name="LOC_GUARDIAN_RELATIONSHIP" ColumnName="LOC_GUARDIAN_RELATIONSHIP" />
+                <ScalarProperty Name="LOC_GUARDIAN_LAST_NAME" ColumnName="LOC_GUARDIAN_LAST_NAME" />
+                <ScalarProperty Name="LOC_GUARDIAN_MIDDLE_NAME" ColumnName="LOC_GUARDIAN_MIDDLE_NAME" />
+                <ScalarProperty Name="LOC_GUARDIAN_FIRST_NAME" ColumnName="LOC_GUARDIAN_FIRST_NAME" />
+                <ScalarProperty Name="MOHER_PASSPORT_NO" ColumnName="MOHER_PASSPORT_NO" />
+                <ScalarProperty Name="MOTHER_NATIONAL_ID" ColumnName="MOTHER_NATIONAL_ID" />
+                <ScalarProperty Name="MOTHER_MOBILE" ColumnName="MOTHER_MOBILE" />
+                <ScalarProperty Name="MOTHER_OFFICE_PHONE" ColumnName="MOTHER_OFFICE_PHONE" />
+                <ScalarProperty Name="MOTHER_OFFICE_ADDRESS" ColumnName="MOTHER_OFFICE_ADDRESS" />
+                <ScalarProperty Name="MOTHER_OCCUPATION_DETAILS" ColumnName="MOTHER_OCCUPATION_DETAILS" />
+                <ScalarProperty Name="MOTHER_OCCUPATION" ColumnName="MOTHER_OCCUPATION" />
+                <ScalarProperty Name="MOTHER_EDUCATION_DETAILS" ColumnName="MOTHER_EDUCATION_DETAILS" />
+                <ScalarProperty Name="MOTHER_EDUCATION" ColumnName="MOTHER_EDUCATION" />
+                <ScalarProperty Name="MOTHER_LAST_NAME" ColumnName="MOTHER_LAST_NAME" />
+                <ScalarProperty Name="MOTHER_MIDDLE_NAME" ColumnName="MOTHER_MIDDLE_NAME" />
+                <ScalarProperty Name="MOTHER_FIRST_NAME" ColumnName="MOTHER_FIRST_NAME" />
+                <ScalarProperty Name="FATHER_PASSPORT_NO" ColumnName="FATHER_PASSPORT_NO" />
+                <ScalarProperty Name="FATHER_NATIONAL_ID" ColumnName="FATHER_NATIONAL_ID" />
+                <ScalarProperty Name="FATHER_MOBILE" ColumnName="FATHER_MOBILE" />
+                <ScalarProperty Name="FATHER_OFFICE_PHONE" ColumnName="FATHER_OFFICE_PHONE" />
+                <ScalarProperty Name="FATHER_OFFICE_ADDRESS" ColumnName="FATHER_OFFICE_ADDRESS" />
+                <ScalarProperty Name="FATHER_OCCUPATION_DETAILS" ColumnName="FATHER_OCCUPATION_DETAILS" />
+                <ScalarProperty Name="FATHER_OCCUPATION" ColumnName="FATHER_OCCUPATION" />
+                <ScalarProperty Name="FATHER_EDUCATION_DETAILS" ColumnName="FATHER_EDUCATION_DETAILS" />
+                <ScalarProperty Name="FATHER_EDUCATION" ColumnName="FATHER_EDUCATION" />
+                <ScalarProperty Name="FATHER_LAST_NAME" ColumnName="FATHER_LAST_NAME" />
+                <ScalarProperty Name="FATHER_MIDDLE_NAME" ColumnName="FATHER_MIDDLE_NAME" />
+                <ScalarProperty Name="FATHER_FIRST_NAME" ColumnName="FATHER_FIRST_NAME" />
+                <ScalarProperty Name="EMERGENCY_MEDICAL_ACTION" ColumnName="EMERGENCY_MEDICAL_ACTION" />
+                <ScalarProperty Name="MEDICAL_HISTORY" ColumnName="MEDICAL_HISTORY" />
+                <ScalarProperty Name="PASSPORT_NO" ColumnName="PASSPORT_NO" />
+                <ScalarProperty Name="BIRTH_CERTIFICATE_NO" ColumnName="BIRTH_CERTIFICATE_NO" />
+                <ScalarProperty Name="NATIONALITY" ColumnName="NATIONALITY" />
+                <ScalarProperty Name="BLOOD_GROUP" ColumnName="BLOOD_GROUP" />
+                <ScalarProperty Name="EMAIL" ColumnName="EMAIL" />
+                <ScalarProperty Name="MOBILE" ColumnName="MOBILE" />
+                <ScalarProperty Name="RES_PHONE" ColumnName="RES_PHONE" />
+                <ScalarProperty Name="RELIGION" ColumnName="RELIGION" />
+                <ScalarProperty Name="GENDER" ColumnName="GENDER" />
+                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+                <ScalarProperty Name="END_DATE" ColumnName="END_DATE" />
+                <ScalarProperty Name="CAMPUS_ID" ColumnName="CAMPUS_ID" />
+                <ScalarProperty Name="SHIFT" ColumnName="SHIFT" />
+                <ScalarProperty Name="SECTION_ID" ColumnName="SECTION_ID" />
+                <ScalarProperty Name="CLASS_ID" ColumnName="CLASS_ID" />
+                <ScalarProperty Name="SESSION_ID" ColumnName="SESSION_ID" />
+                <ScalarProperty Name="ADMISSION_SHIFT" ColumnName="ADMISSION_SHIFT" />
+                <ScalarProperty Name="ADMISSION_SECTION_ID" ColumnName="ADMISSION_SECTION_ID" />
+                <ScalarProperty Name="ADMISSION_CLASS_ID" ColumnName="ADMISSION_CLASS_ID" />
+                <ScalarProperty Name="ADMISSION_SESSION_ID" ColumnName="ADMISSION_SESSION_ID" />
+                <ScalarProperty Name="ADMISSION_DATE" ColumnName="ADMISSION_DATE" />
+                <ScalarProperty Name="PLACE_OF_BIRTH" ColumnName="PLACE_OF_BIRTH" />
+                <ScalarProperty Name="BIRTH_COUNTRY" ColumnName="BIRTH_COUNTRY" />
+                <ScalarProperty Name="BIRTH_CITY" ColumnName="BIRTH_CITY" />
+                <ScalarProperty Name="DOB" ColumnName="DOB" />
+                <ScalarProperty Name="PERM_COUNTRY_ID" ColumnName="PERM_COUNTRY_ID" />
+                <ScalarProperty Name="PERM_DIVISION_ID" ColumnName="PERM_DIVISION_ID" />
+                <ScalarProperty Name="PERM_CITY_ID" ColumnName="PERM_CITY_ID" />
+                <ScalarProperty Name="PERM_THANA_ID" ColumnName="PERM_THANA_ID" />
+                <ScalarProperty Name="PERM_POST_CODE" ColumnName="PERM_POST_CODE" />
+                <ScalarProperty Name="PERM_AREA" ColumnName="PERM_AREA" />
+                <ScalarProperty Name="PERM_STREET" ColumnName="PERM_STREET" />
+                <ScalarProperty Name="PERM_HOLDING_NO" ColumnName="PERM_HOLDING_NO" />
+                <ScalarProperty Name="PRES_COUNTRY_ID" ColumnName="PRES_COUNTRY_ID" />
+                <ScalarProperty Name="PRES_DIVISION_ID" ColumnName="PRES_DIVISION_ID" />
+                <ScalarProperty Name="PRES_CITY_ID" ColumnName="PRES_CITY_ID" />
+                <ScalarProperty Name="PRES_POST_CODE" ColumnName="PRES_POST_CODE" />
+                <ScalarProperty Name="PRES_THANA_ID" ColumnName="PRES_THANA_ID" />
+                <ScalarProperty Name="PRES_AREA" ColumnName="PRES_AREA" />
+                <ScalarProperty Name="PRES_STREET" ColumnName="PRES_STREET" />
+                <ScalarProperty Name="PRES_HOLDING_NO" ColumnName="PRES_HOLDING_NO" />
+                <ScalarProperty Name="NICK_NAME" ColumnName="NICK_NAME" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="MIDDLE_NAME" ColumnName="MIDDLE_NAME" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="STUDENT_ID" ColumnName="STUDENT_ID" />
+                <ScalarProperty Name="STUDENT_HEADER_ID" ColumnName="STUDENT_HEADER_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HR_EMPLOYEE">
+            <EntityTypeMapping TypeName="Model.HR_EMPLOYEE">
+              <MappingFragment StoreEntitySet="HR_EMPLOYEE">
+                <ScalarProperty Name="REJOINING_DATE" ColumnName="REJOINING_DATE" />
+                <ScalarProperty Name="SYNC_STATUS" ColumnName="SYNC_STATUS" />
+                <ScalarProperty Name="EFFECTIVE_TO" ColumnName="EFFECTIVE_TO" />
+                <ScalarProperty Name="EFFECTIVE_FROM" ColumnName="EFFECTIVE_FROM" />
+                <ScalarProperty Name="LAST_UPDATE_DATE" ColumnName="LAST_UPDATE_DATE" />
+                <ScalarProperty Name="LAST_UPDATE_BY" ColumnName="LAST_UPDATE_BY" />
+                <ScalarProperty Name="CREATION_DATE" ColumnName="CREATION_DATE" />
+                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+                <ScalarProperty Name="ATTRIBUTE15" ColumnName="ATTRIBUTE15" />
+                <ScalarProperty Name="ATTRIBUTE14" ColumnName="ATTRIBUTE14" />
+                <ScalarProperty Name="ATTRIBUTE13" ColumnName="ATTRIBUTE13" />
+                <ScalarProperty Name="ATTRIBUTE12" ColumnName="ATTRIBUTE12" />
+                <ScalarProperty Name="ATTRIBUTE11" ColumnName="ATTRIBUTE11" />
+                <ScalarProperty Name="ATTRIBUTE10" ColumnName="ATTRIBUTE10" />
+                <ScalarProperty Name="ATTRIBUTE9" ColumnName="ATTRIBUTE9" />
+                <ScalarProperty Name="ATTRIBUTE8" ColumnName="ATTRIBUTE8" />
+                <ScalarProperty Name="ATTRIBUTE7" ColumnName="ATTRIBUTE7" />
+                <ScalarProperty Name="ATTRIBUTE6" ColumnName="ATTRIBUTE6" />
+                <ScalarProperty Name="ATTRIBUTE5" ColumnName="ATTRIBUTE5" />
+                <ScalarProperty Name="ATTRIBUTE4" ColumnName="ATTRIBUTE4" />
+                <ScalarProperty Name="ATTRIBUTE3" ColumnName="ATTRIBUTE3" />
+                <ScalarProperty Name="ATTRIBUTE2" ColumnName="ATTRIBUTE2" />
+                <ScalarProperty Name="ATTRIBUTE1" ColumnName="ATTRIBUTE1" />
+                <ScalarProperty Name="IMG_URL" ColumnName="IMG_URL" />
+                <ScalarProperty Name="SIGNATURE" ColumnName="SIGNATURE" />
+                <ScalarProperty Name="MEDICAL_HISTORY" ColumnName="MEDICAL_HISTORY" />
+                <ScalarProperty Name="LAST_MEDICAL_CHECK_DATE" ColumnName="LAST_MEDICAL_CHECK_DATE" />
+                <ScalarProperty Name="LAST_MEDICAL_STATUS" ColumnName="LAST_MEDICAL_STATUS" />
+                <ScalarProperty Name="BACKGROUND_CHECK_STATUS" ColumnName="BACKGROUND_CHECK_STATUS" />
+                <ScalarProperty Name="BACKGROUND_CHECK_BY" ColumnName="BACKGROUND_CHECK_BY" />
+                <ScalarProperty Name="BACKGROUND_CHECK_DATE" ColumnName="BACKGROUND_CHECK_DATE" />
+                <ScalarProperty Name="NO_OF_DEPENDENT" ColumnName="NO_OF_DEPENDENT" />
+                <ScalarProperty Name="SPOUSE_NATIONAL_ID" ColumnName="SPOUSE_NATIONAL_ID" />
+                <ScalarProperty Name="SPOUSE_CONTACT_NO" ColumnName="SPOUSE_CONTACT_NO" />
+                <ScalarProperty Name="SPOUSE_LAST_NAME" ColumnName="SPOUSE_LAST_NAME" />
+                <ScalarProperty Name="SPOUSE_MIDDLE_NAME" ColumnName="SPOUSE_MIDDLE_NAME" />
+                <ScalarProperty Name="SPOUSE_FIRST_NAME" ColumnName="SPOUSE_FIRST_NAME" />
+                <ScalarProperty Name="MOTHER_NATIONAL_ID" ColumnName="MOTHER_NATIONAL_ID" />
+                <ScalarProperty Name="MOTHER_CONTACT_NO" ColumnName="MOTHER_CONTACT_NO" />
+                <ScalarProperty Name="MOTHER_LAST_NAME" ColumnName="MOTHER_LAST_NAME" />
+                <ScalarProperty Name="MOTHER_MIDDLE_NAME" ColumnName="MOTHER_MIDDLE_NAME" />
+                <ScalarProperty Name="MOTHER_FIRST_NAME" ColumnName="MOTHER_FIRST_NAME" />
+                <ScalarProperty Name="FATHER_NATIONAL_ID" ColumnName="FATHER_NATIONAL_ID" />
+                <ScalarProperty Name="FATHER_CONTACT_NO" ColumnName="FATHER_CONTACT_NO" />
+                <ScalarProperty Name="FATHER_LAST_NAME" ColumnName="FATHER_LAST_NAME" />
+                <ScalarProperty Name="FATHER_MIDDLE_NAME" ColumnName="FATHER_MIDDLE_NAME" />
+                <ScalarProperty Name="FATHER_FIRST_NAME" ColumnName="FATHER_FIRST_NAME" />
+                <ScalarProperty Name="EMAIL_2" ColumnName="EMAIL_2" />
+                <ScalarProperty Name="EMAIL" ColumnName="EMAIL" />
+                <ScalarProperty Name="PHONE" ColumnName="PHONE" />
+                <ScalarProperty Name="MOBILE" ColumnName="MOBILE" />
+                <ScalarProperty Name="WORK_PHONE" ColumnName="WORK_PHONE" />
+                <ScalarProperty Name="IS_STUDENT" ColumnName="IS_STUDENT" />
+                <ScalarProperty Name="MARITAL_STATUS" ColumnName="MARITAL_STATUS" />
+                <ScalarProperty Name="BLOOD_GROUP" ColumnName="BLOOD_GROUP" />
+                <ScalarProperty Name="DRIVING_LICENSE_NO" ColumnName="DRIVING_LICENSE_NO" />
+                <ScalarProperty Name="SOCIAL_SECURITY_ID" ColumnName="SOCIAL_SECURITY_ID" />
+                <ScalarProperty Name="NATIONAL_ID" ColumnName="NATIONAL_ID" />
+                <ScalarProperty Name="PASSPORT_NO" ColumnName="PASSPORT_NO" />
+                <ScalarProperty Name="NATIONALITY" ColumnName="NATIONALITY" />
+                <ScalarProperty Name="BIRTH_CITY" ColumnName="BIRTH_CITY" />
+                <ScalarProperty Name="BIRTH_COUNTRY" ColumnName="BIRTH_COUNTRY" />
+                <ScalarProperty Name="PLACE_OF_BIRTH" ColumnName="PLACE_OF_BIRTH" />
+                <ScalarProperty Name="RELIGION" ColumnName="RELIGION" />
+                <ScalarProperty Name="GENDER" ColumnName="GENDER" />
+                <ScalarProperty Name="PERM_COUNTRY_ID" ColumnName="PERM_COUNTRY_ID" />
+                <ScalarProperty Name="PERM_DIVISION_ID" ColumnName="PERM_DIVISION_ID" />
+                <ScalarProperty Name="PERM_CITY_ID" ColumnName="PERM_CITY_ID" />
+                <ScalarProperty Name="PERM_POST_CODE" ColumnName="PERM_POST_CODE" />
+                <ScalarProperty Name="PERM_THANA_ID" ColumnName="PERM_THANA_ID" />
+                <ScalarProperty Name="PERM_AREA" ColumnName="PERM_AREA" />
+                <ScalarProperty Name="PERM_STREET" ColumnName="PERM_STREET" />
+                <ScalarProperty Name="PERM_HOLDING_NO" ColumnName="PERM_HOLDING_NO" />
+                <ScalarProperty Name="PRES_COUNTRY_ID" ColumnName="PRES_COUNTRY_ID" />
+                <ScalarProperty Name="PRES_DIVISION_ID" ColumnName="PRES_DIVISION_ID" />
+                <ScalarProperty Name="PRES_CITY_ID" ColumnName="PRES_CITY_ID" />
+                <ScalarProperty Name="PRES_POST_CODE" ColumnName="PRES_POST_CODE" />
+                <ScalarProperty Name="PRES_THANA_ID" ColumnName="PRES_THANA_ID" />
+                <ScalarProperty Name="PRES_AREA" ColumnName="PRES_AREA" />
+                <ScalarProperty Name="PRES_STREET" ColumnName="PRES_STREET" />
+                <ScalarProperty Name="PRES_HOLDING_NO" ColumnName="PRES_HOLDING_NO" />
+                <ScalarProperty Name="INTERNAL_LOCATION_ID" ColumnName="INTERNAL_LOCATION_ID" />
+                <ScalarProperty Name="UNIT_ID" ColumnName="UNIT_ID" />
+                <ScalarProperty Name="BASE_OFFICE_ID" ColumnName="BASE_OFFICE_ID" />
+                <ScalarProperty Name="JOB_LOCATION_ID" ColumnName="JOB_LOCATION_ID" />
+                <ScalarProperty Name="DEATH_DATE" ColumnName="DEATH_DATE" />
+                <ScalarProperty Name="BIRTH_DATE" ColumnName="BIRTH_DATE" />
+                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+                <ScalarProperty Name="IS_PERMENENT" ColumnName="IS_PERMENENT" />
+                <ScalarProperty Name="JOB_END_DATE" ColumnName="JOB_END_DATE" />
+                <ScalarProperty Name="JOINING_DATE" ColumnName="JOINING_DATE" />
+                <ScalarProperty Name="END_TIME" ColumnName="END_TIME" />
+                <ScalarProperty Name="START_TIME" ColumnName="START_TIME" />
+                <ScalarProperty Name="PUNCH_CARD_ID" ColumnName="PUNCH_CARD_ID" />
+                <ScalarProperty Name="DESIG_ID" ColumnName="DESIG_ID" />
+                <ScalarProperty Name="DEPT_ID" ColumnName="DEPT_ID" />
+                <ScalarProperty Name="APPLICANT_ID" ColumnName="APPLICANT_ID" />
+                <ScalarProperty Name="BUSINESS_GROUP_ID" ColumnName="BUSINESS_GROUP_ID" />
+                <ScalarProperty Name="EMP_NICK_NAME" ColumnName="EMP_NICK_NAME" />
+                <ScalarProperty Name="EMP_LAST_NAME" ColumnName="EMP_LAST_NAME" />
+                <ScalarProperty Name="EMP_MIDDLE_NAME" ColumnName="EMP_MIDDLE_NAME" />
+                <ScalarProperty Name="EMP_FIRST_NAME" ColumnName="EMP_FIRST_NAME" />
+                <ScalarProperty Name="EMP_ID" ColumnName="EMP_ID" />
+                <ScalarProperty Name="EMP_HEADER_ID" ColumnName="EMP_HEADER_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
