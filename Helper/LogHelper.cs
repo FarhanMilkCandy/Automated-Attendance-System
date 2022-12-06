@@ -27,6 +27,7 @@ public class LogHelper
             using (StreamWriter w = File.AppendText(_fileName))
             {
                 w.WriteLine($"\r\n{logTime} : {logMessage};");
+                w.Close();
             }
         }
         catch (Exception ex)
