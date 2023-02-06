@@ -9,10 +9,11 @@ namespace Automated_Attendance_System.Helper
     {
         public List<string> GetDevMails()
         {
-            List<string> devMails = new List<string>();
-            devMails.Add("shopon@bssitbd.com");
-            devMails.Add("anikrahman70945@gmail.com");
-            devMails.Add("nhsharif.43@gmail.com");
+            List<string> devMails = new List<string>
+            {
+                "shopon@bssitbd.com",
+                "anikrahman70945@gmail.com"
+            };
 
             return devMails;
         }
@@ -25,15 +26,15 @@ namespace Automated_Attendance_System.Helper
             client.EnableSsl = true;
             client.Credentials = new NetworkCredential(_userName, _password);
             MailAddress from = new MailAddress(_userName, "BSS");
-            MailAddress to = new MailAddress("farhanahmedlb@gmail.com");
+            MailAddress to = new MailAddress("farhan.bssit.bd@gmail.com");
             MailMessage message = new MailMessage(from, to);
-            //foreach (string mailAddress in GetDevMails())
-            //{
-            //    if (!string.IsNullOrEmpty(mailAddress) && mailAddress.Trim() != "")
-            //    {
-            //        message.CC.Add(mailAddress);
-            //    }
-            //}
+            foreach (string mailAddress in GetDevMails())
+            {
+                if (!string.IsNullOrEmpty(mailAddress) && mailAddress.Trim() != "")
+                {
+                    message.CC.Add(mailAddress);
+                }
+            }
 
             message.Subject = subject;
             message.IsBodyHtml = true;
@@ -44,6 +45,69 @@ namespace Automated_Attendance_System.Helper
                 return true;
             }
 
+            catch (Exception ex)
+            {
+                string err = ex.ToString();
+            }
+
+            return true;
+        }
+
+        public bool SendEmailBackup(string status, string subject, string msg)
+        {
+            string _userName = "bss.sys.error.notifier2@gmail.com";
+            string _password = "A2hu-4fdBF98td8";
+            SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
+            client.EnableSsl = true;
+            client.Credentials = new NetworkCredential(_userName, _password);
+            MailAddress from = new MailAddress(_userName, "BSS");
+            MailAddress to = new MailAddress("farhan.bssit.bd@gmail.com");
+            MailMessage message = new MailMessage(from, to);
+            foreach (string mailAddress in GetDevMails())
+            {
+                if (!string.IsNullOrEmpty(mailAddress) && mailAddress.Trim() != "")
+                {
+                    message.CC.Add(mailAddress);
+                }
+            }
+
+            message.Subject = subject;
+            message.IsBodyHtml = true;
+            message.Body = EmailBody(status: status, message: msg);
+            try
+            {
+                client.Send(message);
+                return true;
+            }
+
+            catch (Exception ex)
+            {
+                string err = ex.ToString();
+            }
+
+            return true;
+        }
+
+
+        public bool SendLogExceptionEmail(string status, string subject, string msg)
+        {
+            string _userName = "bss.sys.error.notifier@gmail.com";
+            string _password = "wxtprrhcsftaivri";
+            SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
+            client.EnableSsl = true;
+            client.Credentials = new NetworkCredential(_userName, _password);
+            MailAddress from = new MailAddress(_userName, "BSS");
+            MailAddress to = new MailAddress("farhan.bssit.bd@gmail.com");
+            MailMessage message = new MailMessage(from, to);
+
+            message.Subject = subject;
+            message.IsBodyHtml = true;
+            message.Body = EmailBody(status: status, message: msg);
+            try
+            {
+                client.Send(message);
+                return true;
+            }
             catch (Exception ex)
             {
                 string err = ex.ToString();
@@ -102,15 +166,15 @@ namespace Automated_Attendance_System.Helper
             client.EnableSsl = true;
             client.Credentials = new NetworkCredential(_userName, _password);
             MailAddress from = new MailAddress(_userName, "BSS");
-            MailAddress to = new MailAddress("farhanahmedlb@gmail.com");
+            MailAddress to = new MailAddress("farhan.bssit.bd@gmail.com");
             MailMessage message = new MailMessage(from, to);
 
             message.Subject = "Automated Attendance Log File";
             message.IsBodyHtml = true;
             message.Body = $"Log file of Automated Attendance System for {DateTime.Today.Date}";
             System.Net.Mail.Attachment attachment;
-            /*attachment = new System.Net.Mail.Attachment($"AutomatedAttendanceSystemLogger_{DateTime.Now.Month}_{DateTime.Now.Year}.txt");*/ //For Testing
-            attachment = new System.Net.Mail.Attachment($"H:\\ProcessLogFile\\AutomatedAttendanceSystem\\AutomatedAttendanceSystemLogger_{DateTime.Now.Month}_{DateTime.Now.Year}.txt"); //For deploy
+            //attachment = new System.Net.Mail.Attachment($"AutomatedAttendanceSystemLogger_{DateTime.Now.Month}_{DateTime.Now.Year}.txt"); //For Testing
+            attachment = new System.Net.Mail.Attachment($"H:\\ProcessLogFile\\AutomatedAttendanceSystem\\AutomatedAttendanceSystemLog-{DateTime.Now.Year}{DateTime.Now.Month}.log"); //For deploy
             message.Attachments.Add(attachment);
 
             try

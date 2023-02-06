@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
+using Serilog;
 
 namespace Automated_Attendance_System.Helpers
 {
@@ -17,7 +18,6 @@ namespace Automated_Attendance_System.Helpers
         private ZKTeco_Clients clients;
         private EmailHelper emailHelper = new EmailHelper();
         private static readonly AttendanceController _controller = new AttendanceController();
-        public LogHelper _logger = LogHelper.GetInstance();
         List<BSS_ATTENDANCE_DEVICES> _deviceList = _controller.GetAttendanceDevices();
         List<BSS_ATTENDANCE_DEVICES> unconnDevice = _controller.GetAttendanceDevices();
         public static int connectedDeviceCount = 0;
@@ -45,19 +45,19 @@ namespace Automated_Attendance_System.Helpers
             {
                 if (ValidateIP(device.DeviceIP) && unconnDevice.Contains(device))
                 {
-                    _logger.Log($"IP validated {device.DeviceIP}");
+                    Log.Information($"IP validated {device.DeviceIP}\n");
                     if (PingTheDevice(device.DeviceIP))
                     {
-                        _logger.Log($"Device pinged successfully");
+                        Log.Information($"Device pinged successfully\n");
                         int port = 0;
                         if (int.TryParse(device.DevicePort, out port))
                         {
-                            _logger.Log($"Device Port: {port} parsed successfully");
+                            Log.Information($"Device Port: {port} parsed successfully\n");
                             clients = new ZKTeco_Clients(RaiseDeviceEvent);
                             bool status = clients.Connect_Net(device.DeviceIP, port);
                             if (status)
                             {
-                                _logger.Log($"Connected Successfully with Device @ {device.DeviceIP} : {device.DevicePort}");
+                                Log.Information($"Connected Successfully with Device @ {device.DeviceIP} : {device.DevicePort}\n");
                                 //Console.BackgroundColor = ConsoleColor.Blue;
                                 //Console.ForegroundColor = ConsoleColor.Black;
                                 //Console.WriteLine($"\n>> Connected successfully to device with IP: {device.DeviceIP}. and Port: {device.DevicePort}.");
@@ -65,7 +65,7 @@ namespace Automated_Attendance_System.Helpers
                             }
                             else
                             {
-                                _logger.Log($"Connection unsuccessful with Device @ {device.DeviceIP} : {device.DevicePort}");
+                                Log.Fatal($"Connection unsuccessful with Device @ {device.DeviceIP} : {device.DevicePort}\n");
                                 Console.BackgroundColor = ConsoleColor.Red;
                                 Console.ForegroundColor = ConsoleColor.Black;
                                 Console.WriteLine($"\n>> Connected unsuccessfully to device with IP: {device.DeviceIP}. and Port: {device.DevicePort}.");
@@ -73,7 +73,7 @@ namespace Automated_Attendance_System.Helpers
                         }
                         else
                         {
-                            _logger.Log($"Could not connect to device with IP: {device.DeviceIP}. Invalid Port: {device.DevicePort}.");
+                            Log.Error($"Could not connect to device with IP: {device.DeviceIP}. Invalid Port: {device.DevicePort}\n");
                             Console.BackgroundColor = ConsoleColor.Red;
                             Console.ForegroundColor = ConsoleColor.Black;
                             Console.WriteLine($"\n>> Could not connect to device with IP: {device.DeviceIP}. Invalid Port: {device.DevicePort}.");
@@ -81,7 +81,7 @@ namespace Automated_Attendance_System.Helpers
                     }
                     else
                     {
-                        _logger.Log($"Could not connect to device with IP: {device.DeviceIP}. The device could not be pinged!");
+                        Log.Error($"Could not connect to device with IP: {device.DeviceIP}. The device could not be pinged!\n");
                         Console.BackgroundColor = ConsoleColor.Red;
                         Console.ForegroundColor = ConsoleColor.Black;
                         Console.WriteLine($"\n>> Could not connect to device with IP: {device.DeviceIP}. The device could not be pinged!");
@@ -89,7 +89,7 @@ namespace Automated_Attendance_System.Helpers
                 }
                 else
                 {
-                    _logger.Log($"Could not connect to device with IP: {device.DeviceIP}. Invalid IP Address.");
+                    Log.Error($"Could not connect to device with IP: {device.DeviceIP}. Invalid IP Address.\n");
                     Console.BackgroundColor = ConsoleColor.Red;
                     Console.ForegroundColor = ConsoleColor.Black;
                     Console.WriteLine($"\n>> Could not connect to device with IP: {device.DeviceIP}. Invalid IP Address.");
@@ -97,29 +97,39 @@ namespace Automated_Attendance_System.Helpers
             }
             if (unconnDevice.Count > 0)
             {
-                _logger.Log($"Total unconnected device(s) : {unconnDevice.Count}");
+                Log.Information($"Total unconnected device(s) : {unconnDevice.Count}\n");
                 while (true)
                 {
                     if (unconnDevice.Count > 0 && retryCount <= 20)
                     {
                         retryCount++;
-                        _logger.Log($"Retrying to connect to unconnected device(s). Retry Attempt: {retryCount}");
+                        Log.Information($"Retrying to connect to unconnected device(s). Retry Attempt: {retryCount}\n");
                         goto unconnected;
                     }
                     else
                     {
                         if (unconnDevice.Count > 0)
                         {
-                            _logger.Log($"Device no {string.Join(", ", unconnDevice.Select(s => s.DeviceMachineNumber))} cannot be connected. System Retried {retryCount} times");
+                            Log.Fatal($"Device no {string.Join(", ", unconnDevice.Select(s => s.DeviceMachineNumber))} cannot be connected. System Retried {retryCount} times\n");
                             Console.BackgroundColor = ConsoleColor.Yellow;
                             Console.ForegroundColor = ConsoleColor.Black;
                             Console.WriteLine("\n>> Stopping retry.");
-                            _logger.Log("Stopping retry.");
+                            Log.Fatal("Stopping retry.\n");
                             bool mailFlag = emailHelper.SendEmail("error", "Device Connection Failed", $"Device no {string.Join(", ", unconnDevice.Select(s => s.DeviceMachineNumber))} cannot be connected. System Retried {retryCount} times");
-                            if (mailFlag) { _logger.Log($"\"Device Connection Failed\" email sent successfully."); }
+                            if (mailFlag) { Log.Information($"\"Device Connection Failed\" email sent successfully.\n"); }
                             else
                             {
-                                _logger.Log($"\"Device Connection Failed\" email sending unsuccessful.");
+                                Log.Error($"\"Device Connection Failed\" email sending unsuccessful.\n");
+                                Log.Information($"\"Trying Backup email.\n");
+                                bool bkpMailFlag = emailHelper.SendEmailBackup("error", "Device Connection Failed", $"Device no {string.Join(", ", unconnDevice.Select(s => s.DeviceMachineNumber))} cannot be connected. System Retried {retryCount} times");
+                                if (bkpMailFlag)
+                                {
+                                    Log.Information($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
+                                }
+                                else
+                                {
+                                    Log.Fatal($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
+                                }
                             }
                         }
                         break;
@@ -147,7 +157,7 @@ namespace Automated_Attendance_System.Helpers
                         Console.BackgroundColor = ConsoleColor.Green;
                         Console.ForegroundColor = ConsoleColor.Black;
                         Console.WriteLine($"\n>>Device {temp} data is erased.");
-                        _logger.Log($"Device {temp} data is erased.");
+                        Log.Information($"Device {temp} data is erased.\n");
                         #endregion
                     }
                     else
@@ -156,12 +166,12 @@ namespace Automated_Attendance_System.Helpers
                         Console.BackgroundColor = ConsoleColor.Red;
                         Console.ForegroundColor = ConsoleColor.Black;
                         Console.WriteLine($"\n>>Device {temp} data could not be erased. Either the device has no data or Disconnected.");
-                        _logger.Log($"Device {temp} data could not be erased. Either the device has no data or Disconnected.");
+                        Log.Fatal($"Device {temp} data could not be erased. Either the device has no data or Disconnected.\n");
                         #endregion
                     }
                 }
             }
-            _logger.Log($"Disconnecting SDK");
+            Log.Information($"Disconnecting SDK.\n");
             clients.Disconnect(); //Testing needed
         }
 
@@ -205,7 +215,8 @@ namespace Automated_Attendance_System.Helpers
 
         public void CheckConnectivity()
         {
-            _logger.Log("Checking device(s) connection status");
+
+            Log.Information("Checking device(s) connection status\n");
             unconnDevice.Clear();
             while (true)
             {
@@ -214,25 +225,25 @@ namespace Automated_Attendance_System.Helpers
                     int retryCounter = 0;
                     if (ValidateIP(device.DeviceIP))
                     {
-                        _logger.Log($"IP validated {device.DeviceIP}");
+                        Log.Information($"IP validated {device.DeviceIP}\n");
                         if (!PingTheDevice(device.DeviceIP) || unconnDevice.Contains(device))
                         {
-                            _logger.Log($"Cannot ping device @ {device.DeviceIP}");
+                            Log.Information($"Cannot ping device @ {device.DeviceIP}\n");
                             int port = 0;
                             if (int.TryParse(device.DevicePort, out port))
                             {
-                                _logger.Log($"Device Port : {port} parsed successfuly for connection check");
+                                Log.Information($"Device Port : {port} parsed successfuly for connection check\n");
                             //clients = new ZKTeco_Clients(RaiseDeviceEvent); //Raise Event Not Necessary
                             retry:
                                 retryCounter++;
-                                _logger.Log($"Reconnect to device attempt: {retryCount}");
+                                Log.Information($"Reconnect to device attempt: {retryCount}\n");
                                 //bool status = clients.Reconnect_Net(device.DeviceIP, port); //Reconnect is not necessary
                                 bool status = PingTheDevice(device.DeviceIP);
                                 if (status)
                                 {
                                     unconnDevice.RemoveAll(r => r == device);
                                     #region Console
-                                    _logger.Log($"Connected successfully to device with IP: {device.DeviceIP}. and Port: {device.DevicePort}. Retry count: {retryCounter}");
+                                    Log.Information($"Connected successfully to device with IP: {device.DeviceIP}. and Port: {device.DevicePort}. Retry count: {retryCounter}\n");
                                     Console.BackgroundColor = ConsoleColor.Blue;
                                     Console.ForegroundColor = ConsoleColor.Black;
                                     Console.WriteLine($"\n>> Connected successfully to device with IP: {device.DeviceIP}. and Port: {device.DevicePort}. Retry count: {retryCounter}.");
@@ -240,53 +251,82 @@ namespace Automated_Attendance_System.Helpers
 
                                     if (emailFlag)
                                     {
-                                        _logger.Log($"Notifying email sent successfully");
+                                        Log.Information($"Notifying email sent successfully\n");
                                         Console.BackgroundColor = ConsoleColor.Black;
                                         Console.ForegroundColor = ConsoleColor.Green;
                                         Console.WriteLine("\n>> Notifying email sent successfully.");
                                     }
                                     else
                                     {
-                                        _logger.Log($"Email send unsuccessful. Network connectivity or other error may have occured");
-                                        Console.BackgroundColor = ConsoleColor.Green;
+                                        Console.BackgroundColor = ConsoleColor.Red;
                                         Console.ForegroundColor = ConsoleColor.Black;
-                                        Console.WriteLine("\n>> Email send unsuccessful. Check network connectivity or other error may have occured.");
+                                        Console.WriteLine("\n>> Email send unsuccessful. Check network connectivity or other error may have occured. Trying Backup email.");
+
+                                        Log.Error($"Email send unsuccessful. Network connectivity or other error may have occured.\n");
+                                        Log.Information($"\"Trying Backup email.\n");
+                                        bool bkpMailFlag = emailHelper.SendEmailBackup("Success", "Device Connection Established", $"<p style=\"color:green;\">Device no: {device.DeviceMachineNumber} @ IP: {device.DeviceIP} : {device.DevicePort} is connected after {retryCounter} times retrying.</p>");
+                                        if (bkpMailFlag)
+                                        {
+                                            Log.Information($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
+                                        }
+                                        else
+                                        {
+                                            Log.Fatal($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
+                                            Console.BackgroundColor = ConsoleColor.Red;
+                                            Console.ForegroundColor = ConsoleColor.Black;
+                                            Console.WriteLine("\n>> Email send unsuccessful. Check network connectivity or other error may have occured. Backup email failed!!.");
+                                        }
+                                    
                                     }
                                     #endregion
                                 }
                                 else
                                 {
                                     #region Console
-                                    _logger.Log($"Cannot connect to device with IP: {device.DeviceIP}. and Port: {device.DevicePort}. Retrying to connect. Attempt Remaining: {20 - retryCounter}");
+                                    Log.Fatal($"Cannot connect to device with IP: {device.DeviceIP}. and Port: {device.DevicePort}. Retrying to connect. Attempt Remaining: {20 - retryCounter}\n");
                                     Console.BackgroundColor = ConsoleColor.Red;
                                     Console.ForegroundColor = ConsoleColor.Black;
                                     Console.WriteLine($"\n>> Cannot connect to device with IP: {device.DeviceIP}. and Port: {device.DevicePort}. Retrying to connect. Attempt Remaining: {20 - retryCounter}.");
                                     #endregion
                                     if (retryCounter < 20)
                                     {
-                                        _logger.Log($"Retrying again in 2 mins. Attempt {retryCounter}");
+                                        Log.Information($"Retrying again in 2 mins. Attempt {retryCounter} \n");
                                         Thread.Sleep(120 * 1000); //Sleep for 2 mins
                                         goto retry;
                                     }
                                     else
                                     {
-                                        _logger.Log($"Device no: {device.DeviceMachineNumber} @ IP: {device.DeviceIP} : {device.DevicePort}. Kindly check if the device is turned on or connected to the internet");
+                                        Log.Error($"Device no: {device.DeviceMachineNumber} @ IP: {device.DeviceIP} : {device.DevicePort}. Kindly check if the device is turned on or connected to the internet\n");
                                         unconnDevice.Add(device);
                                         bool emailFlag = emailHelper.SendEmail("Error", "Device Connection Lost", $"Device no: {device.DeviceMachineNumber} @ IP: {device.DeviceIP} : {device.DevicePort}. Kindly check if the device is turned on or connected to the internet.");
 
                                         if (emailFlag)
                                         {
-                                            _logger.Log($"Notifying email sent successfully");
+                                            Log.Information($"Notifying email sent successfully\n");
                                             Console.BackgroundColor = ConsoleColor.Black;
                                             Console.ForegroundColor = ConsoleColor.Red;
                                             Console.WriteLine("\n>> Error Mail Sent Successfully.");
                                         }
                                         else
                                         {
-                                            _logger.Log($"Email send unsuccessful. Network connectivity or other error may have occured");
+                                            Log.Error($"Email send unsuccessful. Network connectivity or other error may have occured\n");
                                             Console.BackgroundColor = ConsoleColor.Red;
                                             Console.ForegroundColor = ConsoleColor.Black;
-                                            Console.WriteLine("\n>> Error mail send unsuccessful. Check network connectivity or other error may have occured.");
+                                            Console.WriteLine("\n>> Error mail send unsuccessful. Check network connectivity or other error may have occured. Trying backup email.");
+
+                                            Log.Information($"\"Trying Backup email.\n");
+                                            bool bkpMailFlag = emailHelper.SendEmailBackup("Error", "Device Connection Lost", $"Device no: {device.DeviceMachineNumber} @ IP: {device.DeviceIP} : {device.DevicePort}. Kindly check if the device is turned on or connected to the internet.");
+                                            if (bkpMailFlag)
+                                            {
+                                                Log.Information($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
+                                            }
+                                            else
+                                            {
+                                                Log.Fatal($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
+                                                Console.BackgroundColor = ConsoleColor.Red;
+                                            Console.ForegroundColor = ConsoleColor.Black;
+                                            Console.WriteLine("\n>> Error mail send unsuccessful. Check network connectivity or other error may have occured. Backup email failed!!.");
+                                            }
                                         }
                                     }
                                 }
@@ -294,7 +334,6 @@ namespace Automated_Attendance_System.Helpers
                         }
                     }
                 }
-                _logger.Log($"Reconnect thread will go to sleep for {TimeSpan.FromMilliseconds(1800 * 1000).TotalMinutes} Minutes");
                 //30 mins check
                 Thread.Sleep(1800 * 1000);
             }

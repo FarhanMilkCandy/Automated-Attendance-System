@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using zkemkeeper;
+using Serilog;
 
 namespace Automated_Attendance_System.ZKTeco
 {
@@ -13,7 +14,6 @@ namespace Automated_Attendance_System.ZKTeco
     {
         #region Instantiating Class and Device object.
         private List<string> upFailed = new List<string>();
-        private readonly LogHelper _logger = LogHelper.GetInstance();
         private static readonly AttendanceController _controller = new AttendanceController();
         private static readonly UpdateController _updateCcontroller = new UpdateController();
         private readonly ConnectionHelper _connectionHelper = new ConnectionHelper();
@@ -74,16 +74,28 @@ namespace Automated_Attendance_System.ZKTeco
                     GetHRUpdate(machineNumber, _updateCcontroller.GetHRUpdates());
                     if (upFailed != null && upFailed.Count > 0)
                     {
-                        _logger.Log($"Enrollment ID : {string.Join(", ", upFailed.Distinct().ToList())} was not synced properly with device {machineNumber}");
+                        Log.Error($"Enrollment ID : {string.Join(", ", upFailed.Distinct().ToList())} was not synced properly with device {machineNumber}");
                         bool emailFlag = emailHelper.SendEmail("Error", "Latest Data Sync Failed", $"Enrollment ID : {string.Join(", ", upFailed.Distinct().ToList())} was not synced properly with device {machineNumber}");
                         upFailed.Clear();
                         if (emailFlag)
                         {
-                            _logger.Log($"Enrollment sync failure email sent successfully");
+                            Log.Information($"Enrollment sync failure email sent successfully");
                         }
                         else
                         {
-                            _logger.Log("Error sending enrollment sync failure email");
+                            Log.Error("Error sending enrollment sync failure email");
+                            Log.Information($"\"Trying Backup email.\n");
+                            bool bkpMailFlag = emailHelper.SendEmailBackup("Error", "Latest Data Sync Failed", $"Enrollment ID : {string.Join(", ", upFailed.Distinct().ToList())} was not synced properly with device {machineNumber}");
+                            if (bkpMailFlag)
+                            {
+                                Log.Information($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
+                                Console.WriteLine($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
+                            }
+                            else
+                            {
+                                Log.Fatal($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
+                                Console.WriteLine($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
+                            }
                         }
                     }
                 }
@@ -140,7 +152,7 @@ namespace Automated_Attendance_System.ZKTeco
             List<HR_EMPLOYEE> empList = hrList.ToList();
             if (empList != null && empList.Count > 0)
             {
-                _logger.Log($"Employee data updates found. Total: {empList.Count}. Data will sync to Device {machineNumber}");
+                Log.Information($"Employee data updates found. Total: {empList.Count}. Data will sync to Device {machineNumber}\n");
                 foreach (HR_EMPLOYEE emp in _updateCcontroller.GetHRUpdates())
                 {
                     if (int.TryParse("2200" + emp.EMP_ID.Substring(emp.EMP_ID.Length - 4), out temp))
@@ -153,11 +165,11 @@ namespace Automated_Attendance_System.ZKTeco
                             {
                                 if (_deviceCount == ConnectionHelper.connectedDeviceCount)
                                 {
-                                    _logger.Log($"Latest updated data upload complete. Uploaded to all {ConnectionHelper.connectedDeviceCount}/{_deviceCount} devices");
+                                    Log.Information($"Latest updated data upload complete. Uploaded to all {ConnectionHelper.connectedDeviceCount}/{_deviceCount} devices\n");
                                     int flag = _updateCcontroller.SetHRSyncStatus(emp);
                                     if (flag <= 0)
                                     {
-                                        _logger.Log($"Could not update database flag for latest data of Employee ID : {temp}");
+                                        Log.Error($"Could not update database flag for latest data of Employee ID : {temp}\n");
                                         upFailed.Add(temp.ToString());
                                         Console.BackgroundColor = ConsoleColor.Red; Console.ForegroundColor = ConsoleColor.Black;
                                         Console.WriteLine($"\n>> Could not upload latest data of Employee ID : {temp}");
@@ -177,11 +189,11 @@ namespace Automated_Attendance_System.ZKTeco
                             {
                                 if (_deviceCount == ConnectionHelper.connectedDeviceCount)
                                 {
-                                    _logger.Log($"Latest updated data upload complete. Uploaded to all {ConnectionHelper.connectedDeviceCount}/{_deviceCount} devices");
+                                    Log.Information($"Latest updated data upload complete. Uploaded to all {ConnectionHelper.connectedDeviceCount}/{_deviceCount} devices\n");
                                     int flag = _updateCcontroller.SetHRSyncStatus(emp);
                                     if (flag <= 0)
                                     {
-                                        _logger.Log($"Could not upload latest data of Employee ID : {temp}");
+                                        Log.Error($"Could not upload latest data of Employee ID : {temp}\n");
                                         upFailed.Add(temp.ToString());
                                         Console.BackgroundColor = ConsoleColor.Red; Console.ForegroundColor = ConsoleColor.Black;
                                         Console.WriteLine($"\n>> Could not upload latest data of Employee ID : {temp}");
@@ -194,13 +206,13 @@ namespace Automated_Attendance_System.ZKTeco
                             }
                             else
                             {
-                                _logger.Log($"Could not upload latest data of Employee ID : {temp}. Card sync: {syncCard} & Information sync: {syncInfo}");
+                                Log.Error($"Could not upload latest data of Employee ID : {temp}. Card sync: {syncCard} & Information sync: {syncInfo}\n");
                             }
                         }
                     }
                     else
                     {
-                        _logger.Log($"Could not parse Employee ID : {"2200" + emp.EMP_ID.Substring(emp.EMP_ID.Length - 4)}");
+                        Log.Error($"Could not parse Employee ID : {"2200" + emp.EMP_ID.Substring(emp.EMP_ID.Length - 4)}\n");
                         Console.BackgroundColor = ConsoleColor.Red; Console.ForegroundColor = ConsoleColor.Black;
                         Console.WriteLine($"\n>> Could not parse Employee ID : {"2200" + emp.EMP_ID.Substring(emp.EMP_ID.Length - 4)}");
                     }
@@ -208,7 +220,7 @@ namespace Automated_Attendance_System.ZKTeco
             }
             else
             {
-                _logger.Log($"No new employee updatable data found");
+                Log.Information($"No new employee updatable data found");
             }
         }
 
@@ -224,7 +236,7 @@ namespace Automated_Attendance_System.ZKTeco
             List<BSS_STUDENT> stdList = studentList.ToList();
             if (stdList != null && stdList.Count > 0)
             {
-                _logger.Log($"Student data updates found. Total: {stdList.Count}. Data will sync to Device {machineNumber}");
+                Log.Information($"Student data updates found. Total: {stdList.Count}. Data will sync to Device {machineNumber}\n");
                 foreach (BSS_STUDENT std in _updateCcontroller.GetStudentUpdates())
                 {
                     if (int.TryParse("2200" + std.STUDENT_ID.Substring(std.STUDENT_ID.Length - 4), out temp))
@@ -238,11 +250,11 @@ namespace Automated_Attendance_System.ZKTeco
                             {
                                 if (_deviceCount == ConnectionHelper.connectedDeviceCount)
                                 {
-                                    _logger.Log($"Latest updated data upload complete. Uploaded to all {ConnectionHelper.connectedDeviceCount}/{_deviceCount} devices");
+                                    Log.Information($"Latest updated data upload complete. Uploaded to all {ConnectionHelper.connectedDeviceCount}/{_deviceCount} devices\n");
                                     int flag = _updateCcontroller.SetStudentSyncStatus(std);
                                     if (flag <= 0)
                                     {
-                                        _logger.Log($"Could not sync latest data of Student ID : {temp}");
+                                        Log.Error($"Could not sync latest data of Student ID : {temp} \n");
                                         upFailed.Add(temp.ToString());
                                         Console.BackgroundColor = ConsoleColor.Red; Console.ForegroundColor = ConsoleColor.Black;
                                         Console.WriteLine($"\n>> Could not upload latest data of Student ID : {temp}");
@@ -255,7 +267,7 @@ namespace Automated_Attendance_System.ZKTeco
                             }
                             else
                             {
-                                _logger.Log($"Could not upload latest data of Student ID : {temp}. Card sync: {syncCard} & Information sync: {syncInfo}");
+                                Log.Error($"Could not upload latest data of Student ID : {temp}. Card sync: {syncCard} & Information sync: {syncInfo}\n");
                             }
                         }
                         else
@@ -266,11 +278,11 @@ namespace Automated_Attendance_System.ZKTeco
                             {
                                 if (_deviceCount == ConnectionHelper.connectedDeviceCount)
                                 {
-                                    _logger.Log($"Latest updated data upload complete. Uploaded to all {ConnectionHelper.connectedDeviceCount}/{_deviceCount} devices");
+                                    Log.Information($"Latest updated data upload complete. Uploaded to all {ConnectionHelper.connectedDeviceCount}/{_deviceCount} devices\n");
                                     int flag = _updateCcontroller.SetStudentSyncStatus(std);
                                     if (flag <= 0)
                                     {
-                                        _logger.Log($"Could not upload latest data of Student ID : {temp}");
+                                        Log.Error($"Could not upload latest data of Student ID : {temp}\n");
                                         upFailed.Add(temp.ToString());
                                         Console.BackgroundColor = ConsoleColor.Red; Console.ForegroundColor = ConsoleColor.Black;
                                         Console.WriteLine($"\n>> Could not upload latest data of Student ID : {temp}");
@@ -283,13 +295,13 @@ namespace Automated_Attendance_System.ZKTeco
                             }
                             else
                             {
-                                _logger.Log($"Could not upload latest data of Student ID : {temp}. Card sync: {syncCard} & Information sync: {syncInfo}");
+                                Log.Error($"Could not upload latest data of Student ID : {temp}. Card sync: {syncCard} & Information sync: {syncInfo}\n");
                             }
                         }
                     }
                     else
                     {
-                        _logger.Log($"Could not parse Student ID : {"2200" + std.STUDENT_ID.Substring(std.STUDENT_ID.Length - 4)}");
+                        Log.Error($"Could not parse Student ID : {"2200" + std.STUDENT_ID.Substring(std.STUDENT_ID.Length - 4)}\n");
                         Console.BackgroundColor = ConsoleColor.Red; Console.ForegroundColor = ConsoleColor.Black;
                         Console.WriteLine($"\n>> Could not parse Student ID : {"2200" + std.STUDENT_ID.Substring(std.STUDENT_ID.Length - 4)}");
                     }
@@ -297,7 +309,7 @@ namespace Automated_Attendance_System.ZKTeco
             }
             else
             {
-                _logger.Log($"No new updatable student data found");
+                Log.Information($"No new updatable student data found\n");
             }
         }
 
@@ -353,24 +365,36 @@ namespace Automated_Attendance_System.ZKTeco
                     if (errorEnroll.Count > 0)
                     {
                         errorEnroll = errorEnroll.Distinct().ToList();
-                        _logger.Log($"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up");
+                        Log.Fatal($"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up\n");
                         bool emailFlag = emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.");
                         if (!emailFlag)
                         {
-                            _logger.Log($"Error sending email for data recording after wakeup");
+                            Log.Error($"Error sending email for data recording after wakeup\n");
                         }
                         else
                         {
-                            _logger.Log($"Sending email for data recording after wakeup was success");
+                            Log.Information($"Sending email for data recording after wakeup was success\n");
+                            Log.Information($"\"Trying Backup email.\n");
+                            bool bkpMailFlag = emailHelper.SendEmailBackup("error", "Error in Automated Attendance System", $"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.");
+                            if (bkpMailFlag)
+                            {
+                                Log.Information($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
+                                Console.WriteLine($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
+                            }
+                            else
+                            {
+                                Log.Fatal($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
+                                Console.WriteLine($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
+                            }
                         }
                     }
                     else
                     {
-                        _logger.Log($"No error while wake-up data recording to device");
+                        Log.Information($"No error while wake-up data recording to device\n");
                     }
 
-                    #region Console
-                    _logger.Log($"Read Data successfull from device {objCZKEM.MachineNumber}");
+                    #region Console adn Log
+                    Log.Information($"Read Data successfull from device {objCZKEM.MachineNumber}\n");
                     Console.BackgroundColor = ConsoleColor.Green;
                     Console.ForegroundColor = ConsoleColor.Black;
                     Console.WriteLine($"\n>>Read Data successfull from device {objCZKEM.MachineNumber}");
@@ -381,7 +405,7 @@ namespace Automated_Attendance_System.ZKTeco
                     if (clearFlag)
                     {
                         #region Console
-                        _logger.Log($"Clear device {objCZKEM.MachineNumber} was success");
+                        Log.Information($"Clear device {objCZKEM.MachineNumber} was success\n");
                         Console.BackgroundColor = ConsoleColor.Green;
                         Console.ForegroundColor = ConsoleColor.Black;
                         Console.WriteLine($"\n>>Clear device {objCZKEM.MachineNumber} was success.");
@@ -390,7 +414,7 @@ namespace Automated_Attendance_System.ZKTeco
                     else
                     {
                         #region Console
-                        _logger.Log($"Could not clear data from device {objCZKEM.MachineNumber}. The device may not have any data or unknown error occured");
+                        Log.Error($"Could not clear data from device {objCZKEM.MachineNumber}. The device may not have any data or unknown error occured\n");
                         Console.BackgroundColor = ConsoleColor.Red;
                         Console.ForegroundColor = ConsoleColor.Black;
                         Console.WriteLine($"\n>>Could not clear data from device {objCZKEM.MachineNumber}. The device may not have any data or unknown error occured.");
@@ -400,8 +424,8 @@ namespace Automated_Attendance_System.ZKTeco
             }
             catch (Exception ex)
             {
-                #region Console
-                _logger.Log($"Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}.\r\nStackTrace:\r\n{ex.StackTrace}");
+                #region Console and log
+                Log.Error($"Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}.\r\nStackTrace:\r\n{ex.StackTrace}\n");
                 Console.BackgroundColor = ConsoleColor.Red;
                 Console.ForegroundColor = ConsoleColor.Black;
                 Console.WriteLine($"\n>>Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}");
@@ -424,7 +448,7 @@ namespace Automated_Attendance_System.ZKTeco
                 if (errorEnroll.Count > 0 && DateTime.Now.TimeOfDay.Subtract(lastSendTime) > new TimeSpan(0, 2, 0))
                 {
                     errorEnroll = errorEnroll.Distinct().ToList();
-                    _logger.Log($"Exception storing attendance data to DB in real time");
+                    Log.Fatal($"Exception storing attendance data to DB in real time");
                     emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing attendance data to DB in real time.");
                     lastSendTime = DateTime.Now.TimeOfDay;
                     errorEnroll.Clear();
@@ -433,8 +457,8 @@ namespace Automated_Attendance_System.ZKTeco
             }
             catch (Exception ex)
             {
-                #region Console
-                _logger.Log($"Exception while recording realtime data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}.\r\nStackTrace:\r\n{ex.StackTrace}");
+                #region Console and log
+                Log.Error($"Exception while recording realtime data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}.\r\nStackTrace:\r\n{ex.StackTrace}\n");
                 Console.BackgroundColor = ConsoleColor.Red;
                 Console.ForegroundColor = ConsoleColor.Black;
                 Console.WriteLine($"\n>>Error while recodring realtime data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}");
