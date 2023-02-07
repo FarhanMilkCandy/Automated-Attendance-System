@@ -35,6 +35,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>AttDeviceIcon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.AspNetCore.Hosting.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.AspNetCore.Hosting.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.Hosting.Abstractions.dll</HintPath>
@@ -350,6 +357,7 @@
     <None Include="SDK\SDKUninstall32.bat" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AttDeviceIcon.ico" />
     <Content Include="Entity\BSSWinEntityModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>BSSWinEntityModel.edmx</DependentUpon>
@@ -360,6 +368,7 @@
       <DependentUpon>BSSWinEntityModel.edmx</DependentUpon>
       <LastGenOutput>BSSWinEntityModel.cs</LastGenOutput>
     </Content>
+    <Content Include="Resources\AttDeviceIcon.ico" />
     <Content Include="SDK\commpro.dll" />
     <Content Include="SDK\comms.dll" />
     <Content Include="SDK\IOTCAPIs.dll" />

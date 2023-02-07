@@ -1,12 +1,8 @@
 ﻿using Automated_Attendance_System.Entity;
-using Automated_Attendance_System.Helper;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Automated_Attendance_System.Controller
@@ -22,12 +18,28 @@ namespace Automated_Attendance_System.Controller
 
         public int GetAttendanceDeviceCount()
         {
-            return GetAttendanceDevices().Count;
+            try
+            {
+                return _db.BSS_ATTENDANCE_DEVICES.Where(w => w.Status == true).Count();
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal($"Exception: {ex.Message} occured while fetching device count.");
+                return -1;
+            }
         }
 
         public List<BSS_ATTENDANCE_DEVICES> GetAttendanceDevices()
         {
-            return _db.BSS_ATTENDANCE_DEVICES.Where(w => w.Status == true).ToList();
+            try
+            {
+                return _db.BSS_ATTENDANCE_DEVICES.Where(w => w.Status == true).ToList();
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal($"Exception: {ex.Message} occured while fetching attendance devices.");
+                return null;
+            }
         }
 
         //Inserts Attendance to Database
@@ -54,7 +66,8 @@ namespace Automated_Attendance_System.Controller
             {
                 Console.BackgroundColor = ConsoleColor.Red;
                 Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine($"\n>>Exception storing {enrollmentNumber} attendance data to DB. Exception: {ex.Message}. >> AttendanceController.cs <<");
+                Console.WriteLine($"\n>>Exception storing {enrollmentNumber} attendance data to DB. Exception: {ex.Message}");
+                Log.Fatal($"Exception {ex.Message} occured while inserting {enrollmentNumber} attendance data to DB.");
                 exceptionList.Add(enrollmentNumber);
             }
 

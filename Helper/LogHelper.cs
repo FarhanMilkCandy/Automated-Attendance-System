@@ -1,8 +1,4 @@
-﻿using Automated_Attendance_System.Helper;
-using System;
-using System.IO;
-
-public class LogHelper
+﻿public class LogHelper
 {
     //private static LogHelper _instance;
     ////private string _fileName = Environment.CurrentDirectory + $"\\AutomatedAttendanceSystemLogger_{DateTime.Now.Month}_{DateTime.Now.Year}.txt"; //For Test

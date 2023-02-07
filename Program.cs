@@ -1,10 +1,9 @@
 ﻿using Automated_Attendance_System.Helper;
 using Automated_Attendance_System.Helpers;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 using System;
 using System.Threading;
-using Serilog;
-using Microsoft.Extensions.Logging;
 
 namespace Automated_Attendance_System
 {
@@ -52,6 +51,7 @@ namespace Automated_Attendance_System
 
                         _connector.EstablishConnections();
                         Thread timerThread = new Thread(new ThreadStart(Program.ApplicationExitTime));
+                        timerThread.IsBackground = false;
                         timerThread.Start();
                         break;
                     }
@@ -81,7 +81,7 @@ namespace Automated_Attendance_System
             }
 
 
-            
+
         }
 
         public static void ApplicationExitTime()
@@ -108,9 +108,10 @@ namespace Automated_Attendance_System
             else
             {
                 int milisecs = Convert.ToInt32(endTime.TimeOfDay.Subtract(DateTime.Now.TimeOfDay).TotalMilliseconds);
-                Console.WriteLine($"\n>> Time is now {DateTime.Now.TimeOfDay} || Application will close after {TimeSpan.FromSeconds(milisecs)} hours.");
+                TimeSpan calculatedExitTime = TimeSpan.FromMilliseconds(milisecs);
+                Console.WriteLine($"\n>> Time is now {DateTime.Now.TimeOfDay} || Application will close after {calculatedExitTime.Hours} hours and {calculatedExitTime.Minutes} minutes.");
                 Log.Information($"Application termination time is set to > {endTime.TimeOfDay}");
-                Log.Information($"Time is now {DateTime.Now.TimeOfDay} || Application will close after {TimeSpan.FromMilliseconds(milisecs)}");
+                Log.Information($"Time is now {DateTime.Now.TimeOfDay} || Application will close after {calculatedExitTime.Hours} hours and {calculatedExitTime.Minutes} minutes.");
                 Thread.Sleep(milisecs);
                 goto Exitng;
             }

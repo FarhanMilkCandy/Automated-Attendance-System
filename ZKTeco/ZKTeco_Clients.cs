@@ -2,11 +2,11 @@
 using Automated_Attendance_System.Entity;
 using Automated_Attendance_System.Helper;
 using Automated_Attendance_System.Helpers;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using zkemkeeper;
-using Serilog;
 
 namespace Automated_Attendance_System.ZKTeco
 {

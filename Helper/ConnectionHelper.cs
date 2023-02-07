@@ -2,6 +2,7 @@
 using Automated_Attendance_System.Entity;
 using Automated_Attendance_System.Helper;
 using Automated_Attendance_System.ZKTeco;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,6 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
-using Serilog;
 
 namespace Automated_Attendance_System.Helpers
 {
@@ -139,6 +139,7 @@ namespace Automated_Attendance_System.Helpers
             clients.connectionFlag = true;
 
             Thread ConnectionCheckThread = new Thread(new ThreadStart(this.CheckConnectivity));
+            ConnectionCheckThread.IsBackground = false;
             ConnectionCheckThread.Start();
         }
 
@@ -276,7 +277,7 @@ namespace Automated_Attendance_System.Helpers
                                             Console.ForegroundColor = ConsoleColor.Black;
                                             Console.WriteLine("\n>> Email send unsuccessful. Check network connectivity or other error may have occured. Backup email failed!!.");
                                         }
-                                    
+
                                     }
                                     #endregion
                                 }
@@ -324,8 +325,8 @@ namespace Automated_Attendance_System.Helpers
                                             {
                                                 Log.Fatal($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
                                                 Console.BackgroundColor = ConsoleColor.Red;
-                                            Console.ForegroundColor = ConsoleColor.Black;
-                                            Console.WriteLine("\n>> Error mail send unsuccessful. Check network connectivity or other error may have occured. Backup email failed!!.");
+                                                Console.ForegroundColor = ConsoleColor.Black;
+                                                Console.WriteLine("\n>> Error mail send unsuccessful. Check network connectivity or other error may have occured. Backup email failed!!.");
                                             }
                                         }
                                     }
