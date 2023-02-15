@@ -174,7 +174,7 @@ namespace Automated_Attendance_System.Helper
             message.Body = $"Log file of Automated Attendance System for {DateTime.Today.Date}";
             System.Net.Mail.Attachment attachment;
             //attachment = new System.Net.Mail.Attachment($"AutomatedAttendanceSystemLogger_{DateTime.Now.Month}_{DateTime.Now.Year}.txt"); //For Testing
-            attachment = new System.Net.Mail.Attachment($"H:\\ProcessLogFile\\AutomatedAttendanceSystem\\AutomatedAttendanceSystemLog-{DateTime.Now.Year}{DateTime.Now.Month}.log"); //For deploy
+            attachment = new System.Net.Mail.Attachment($"H:\\ProcessLogFile\\utomatedAttendanceSystemAutomatedAttendanceSystemLog-{DateTime.Now:yyyy}{DateTime.Now:MM}.log"); //For deploy
             message.Attachments.Add(attachment);
 
             try

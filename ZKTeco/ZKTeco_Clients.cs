@@ -6,6 +6,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using zkemkeeper;
 
 namespace Automated_Attendance_System.ZKTeco
@@ -393,7 +394,7 @@ namespace Automated_Attendance_System.ZKTeco
                         Log.Information($"No error while wake-up data recording to device\n");
                     }
 
-                    #region Console adn Log
+                    #region Console and Log
                     Log.Information($"Read Data successfull from device {objCZKEM.MachineNumber}\n");
                     Console.BackgroundColor = ConsoleColor.Green;
                     Console.ForegroundColor = ConsoleColor.Black;
@@ -436,6 +437,11 @@ namespace Automated_Attendance_System.ZKTeco
 
         private async void zkemClient_OnAttTransactionEx(string EnrollNumber, int IsInValid, int AttState, int VerifyMethod, int Year, int Month, int Day, int Hour, int Minute, int Second, int WorkCode)
         {
+           await RealTimePush(EnrollNumber, IsInValid, AttState, VerifyMethod, Year, Month, Day, Hour, Minute, Second, WorkCode);
+        }
+
+        private async Task RealTimePush(string EnrollNumber, int IsInValid, int AttState, int VerifyMethod, int Year, int Month, int Day, int Hour, int Minute, int Second, int WorkCode)
+        {
             DateTime PunchDate = new DateTime(Year, Month, Day);
             TimeSpan PunchTime = new TimeSpan(Hour, Minute, Second);
             try
@@ -448,8 +454,8 @@ namespace Automated_Attendance_System.ZKTeco
                 if (errorEnroll.Count > 0 && DateTime.Now.TimeOfDay.Subtract(lastSendTime) > new TimeSpan(0, 2, 0))
                 {
                     errorEnroll = errorEnroll.Distinct().ToList();
-                    Log.Fatal($"Exception storing attendance data to DB in real time");
-                    emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing attendance data to DB in real time.");
+                    Log.Fatal($"Exception storing attendance data to DB in real time for: {string.Join("\n", errorEnroll)}");
+                    emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing attendance data to DB in real time for: {string.Join("\n", errorEnroll)}");
                     lastSendTime = DateTime.Now.TimeOfDay;
                     errorEnroll.Clear();
                     Console.WriteLine($"\n>> Error mail sent at {lastSendTime}");

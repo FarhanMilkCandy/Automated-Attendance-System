@@ -14,7 +14,6 @@ namespace Automated_Attendance_System
         //DateTime endTime;
         static void Main(string[] args)
         {
-
             #region Logger Settings
 
             //Created the "appsettings.json" file only for the logger. Sketchy solution, but hey, it works...
@@ -37,7 +36,7 @@ namespace Automated_Attendance_System
 
                 while (true)
                 {
-                    DateTime startTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Today.Day, 8, 00, 0, millisecond: 001);
+                    DateTime startTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Today.Day, 7, 39, 59, millisecond: 999);
                     if (TimeSpan.Compare(DateTime.Now.TimeOfDay, startTime.TimeOfDay) == 1)
                     {
                         #region Console and log

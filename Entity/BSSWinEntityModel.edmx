@@ -296,17 +296,23 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="BSS_ATTENDANCE_DEVICES" EntityType="Model.BSS_ATTENDANCE_DEVICES" />
+          <EntitySet Name="BSS_ATTENDANCE_ZK" EntityType="Model.BSS_ATTENDANCE_ZK" />
+          <EntitySet Name="BSS_STUDENT" EntityType="Model.BSS_STUDENT" />
+          <EntitySet Name="HR_EMPLOYEE" EntityType="Model.HR_EMPLOYEE" />
+        </EntityContainer>
         <EntityType Name="BSS_ATTENDANCE_DEVICES">
           <Key>
             <PropertyRef Name="DeviceId" />
           </Key>
           <Property Name="DeviceId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="DeviceName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="DeviceIP" Type="String" MaxLength="250" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="DevicePort" Type="String" MaxLength="250" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DeviceName" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="DeviceIP" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="DevicePort" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="DeviceLocation" Type="Int32" />
           <Property Name="DeviceFor" Type="Int32" />
-          <Property Name="DeviceSerial" Type="String" MaxLength="250" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DeviceSerial" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="DeviceMAC" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="DeviceFirmwareVersion" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="DeviceSDKVersion" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
@@ -341,12 +347,6 @@
           <Property Name="Work_Code" Type="Int32" />
           <Property Name="Sync_Status" Type="Boolean" />
         </EntityType>
-        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="BSS_ATTENDANCE_DEVICES" EntityType="Self.BSS_ATTENDANCE_DEVICES" />
-          <EntitySet Name="BSS_ATTENDANCE_ZK" EntityType="Self.BSS_ATTENDANCE_ZK" />
-          <EntitySet Name="BSS_STUDENT" EntityType="Model.BSS_STUDENT" />
-          <EntitySet Name="HR_EMPLOYEE" EntityType="Model.HR_EMPLOYEE" />
-        </EntityContainer>
         <EntityType Name="BSS_STUDENT">
           <Key>
             <PropertyRef Name="STUDENT_HEADER_ID" />
@@ -592,32 +592,32 @@
           <EntitySetMapping Name="BSS_ATTENDANCE_DEVICES">
             <EntityTypeMapping TypeName="Model.BSS_ATTENDANCE_DEVICES">
               <MappingFragment StoreEntitySet="BSS_ATTENDANCE_DEVICES">
-                <ScalarProperty Name="DeviceId" ColumnName="DeviceId" />
-                <ScalarProperty Name="DeviceName" ColumnName="DeviceName" />
-                <ScalarProperty Name="DeviceIP" ColumnName="DeviceIP" />
-                <ScalarProperty Name="DevicePort" ColumnName="DevicePort" />
-                <ScalarProperty Name="DeviceLocation" ColumnName="DeviceLocation" />
-                <ScalarProperty Name="DeviceFor" ColumnName="DeviceFor" />
-                <ScalarProperty Name="DeviceSerial" ColumnName="DeviceSerial" />
-                <ScalarProperty Name="DeviceMAC" ColumnName="DeviceMAC" />
-                <ScalarProperty Name="DeviceFirmwareVersion" ColumnName="DeviceFirmwareVersion" />
-                <ScalarProperty Name="DeviceSDKVersion" ColumnName="DeviceSDKVersion" />
-                <ScalarProperty Name="DeviceProductCode" ColumnName="DeviceProductCode" />
-                <ScalarProperty Name="DeviceMachineNumber" ColumnName="DeviceMachineNumber" />
-                <ScalarProperty Name="DeviceLastSynced" ColumnName="DeviceLastSynced" />
-                <ScalarProperty Name="DeviceAdminCount" ColumnName="DeviceAdminCount" />
-                <ScalarProperty Name="DeviceUserCount" ColumnName="DeviceUserCount" />
-                <ScalarProperty Name="DeviceTrxCount" ColumnName="DeviceTrxCount" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="ATTRIBUTE1" ColumnName="ATTRIBUTE1" />
-                <ScalarProperty Name="ATTRIBUTE2" ColumnName="ATTRIBUTE2" />
-                <ScalarProperty Name="ATTRIBUTE3" ColumnName="ATTRIBUTE3" />
-                <ScalarProperty Name="ATTRIBUTE4" ColumnName="ATTRIBUTE4" />
-                <ScalarProperty Name="ATTRIBUTE5" ColumnName="ATTRIBUTE5" />
-                <ScalarProperty Name="DeviceAddedDate" ColumnName="DeviceAddedDate" />
-                <ScalarProperty Name="DeviceAddedBy" ColumnName="DeviceAddedBy" />
-                <ScalarProperty Name="DeviceUpdateDate" ColumnName="DeviceUpdateDate" />
                 <ScalarProperty Name="DeviceUpdatedBy" ColumnName="DeviceUpdatedBy" />
+                <ScalarProperty Name="DeviceUpdateDate" ColumnName="DeviceUpdateDate" />
+                <ScalarProperty Name="DeviceAddedBy" ColumnName="DeviceAddedBy" />
+                <ScalarProperty Name="DeviceAddedDate" ColumnName="DeviceAddedDate" />
+                <ScalarProperty Name="ATTRIBUTE5" ColumnName="ATTRIBUTE5" />
+                <ScalarProperty Name="ATTRIBUTE4" ColumnName="ATTRIBUTE4" />
+                <ScalarProperty Name="ATTRIBUTE3" ColumnName="ATTRIBUTE3" />
+                <ScalarProperty Name="ATTRIBUTE2" ColumnName="ATTRIBUTE2" />
+                <ScalarProperty Name="ATTRIBUTE1" ColumnName="ATTRIBUTE1" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="DeviceTrxCount" ColumnName="DeviceTrxCount" />
+                <ScalarProperty Name="DeviceUserCount" ColumnName="DeviceUserCount" />
+                <ScalarProperty Name="DeviceAdminCount" ColumnName="DeviceAdminCount" />
+                <ScalarProperty Name="DeviceLastSynced" ColumnName="DeviceLastSynced" />
+                <ScalarProperty Name="DeviceMachineNumber" ColumnName="DeviceMachineNumber" />
+                <ScalarProperty Name="DeviceProductCode" ColumnName="DeviceProductCode" />
+                <ScalarProperty Name="DeviceSDKVersion" ColumnName="DeviceSDKVersion" />
+                <ScalarProperty Name="DeviceFirmwareVersion" ColumnName="DeviceFirmwareVersion" />
+                <ScalarProperty Name="DeviceMAC" ColumnName="DeviceMAC" />
+                <ScalarProperty Name="DeviceSerial" ColumnName="DeviceSerial" />
+                <ScalarProperty Name="DeviceFor" ColumnName="DeviceFor" />
+                <ScalarProperty Name="DeviceLocation" ColumnName="DeviceLocation" />
+                <ScalarProperty Name="DevicePort" ColumnName="DevicePort" />
+                <ScalarProperty Name="DeviceIP" ColumnName="DeviceIP" />
+                <ScalarProperty Name="DeviceName" ColumnName="DeviceName" />
+                <ScalarProperty Name="DeviceId" ColumnName="DeviceId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -625,14 +625,14 @@
             <EntityTypeMapping TypeName="Model.BSS_ATTENDANCE_ZK">
               <MappingFragment StoreEntitySet="BSS_ATTENDANCE_ZK">
                 <ScalarProperty Name="Sync_Status" ColumnName="Sync_Status" />
-                <ScalarProperty Name="AttendaceID" ColumnName="AttendaceID" />
-                <ScalarProperty Name="Enrollment_Number" ColumnName="Enrollment_Number" />
-                <ScalarProperty Name="Machine_Number" ColumnName="Machine_Number" />
-                <ScalarProperty Name="InOut_Mode" ColumnName="InOut_Mode" />
-                <ScalarProperty Name="Verify_Method" ColumnName="Verify_Method" />
-                <ScalarProperty Name="Punch_Date" ColumnName="Punch_Date" />
-                <ScalarProperty Name="Punch_Time" ColumnName="Punch_Time" />
                 <ScalarProperty Name="Work_Code" ColumnName="Work_Code" />
+                <ScalarProperty Name="Punch_Time" ColumnName="Punch_Time" />
+                <ScalarProperty Name="Punch_Date" ColumnName="Punch_Date" />
+                <ScalarProperty Name="Verify_Method" ColumnName="Verify_Method" />
+                <ScalarProperty Name="InOut_Mode" ColumnName="InOut_Mode" />
+                <ScalarProperty Name="Machine_Number" ColumnName="Machine_Number" />
+                <ScalarProperty Name="Enrollment_Number" ColumnName="Enrollment_Number" />
+                <ScalarProperty Name="AttendaceID" ColumnName="AttendaceID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

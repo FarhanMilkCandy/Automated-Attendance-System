@@ -3,6 +3,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Automated_Attendance_System.Controller
@@ -10,6 +11,7 @@ namespace Automated_Attendance_System.Controller
     public class AttendanceController
     {
         private List<string> exceptionList = new List<string>();
+        private SemaphoreSlim _semaphore = new SemaphoreSlim(4);
 
         public Entities _db = new Entities();
 
@@ -44,9 +46,10 @@ namespace Automated_Attendance_System.Controller
 
         //Inserts Attendance to Database
         public async Task<List<string>> RecordAttendance(int machineNumber, string enrollmentNumber, int verifyMethod, DateTime punchDate, TimeSpan punchTime, int workCode)
-        {
+        {     
             try
             {
+                await _semaphore.WaitAsync();
                 temp = 0;
                 attendance = new BSS_ATTENDANCE_ZK
                 {
@@ -67,11 +70,15 @@ namespace Automated_Attendance_System.Controller
                 Console.BackgroundColor = ConsoleColor.Red;
                 Console.ForegroundColor = ConsoleColor.Black;
                 Console.WriteLine($"\n>>Exception storing {enrollmentNumber} attendance data to DB. Exception: {ex.Message}");
-                Log.Fatal($"Exception {ex.Message} occured while inserting {enrollmentNumber} attendance data to DB.");
+                Log.Fatal($"Exception {ex.Message} occured while inserting {enrollmentNumber} attendance data to DB. Exception: {ex.Message}");
                 exceptionList.Add(enrollmentNumber);
             }
+            finally
+            {
+                _semaphore.Release();
+            }
 
-            return exceptionList;
+             return exceptionList;
+            }
         }
-    }
 }

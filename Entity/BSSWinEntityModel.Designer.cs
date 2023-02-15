@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'D:\Console Applications\BACKUP\Automated Attendance System\Automated Attendance System\Entity\BSSWinEntityModel.edmx'. 
+﻿// T4 code generation is enabled for model 'D:\Console Applications\Automated Attendance System\Entity\BSSWinEntityModel.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.
