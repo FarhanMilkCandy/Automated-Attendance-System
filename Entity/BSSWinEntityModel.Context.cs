@@ -29,5 +29,6 @@ namespace Automated_Attendance_System.Entity
         public virtual DbSet<BSS_ATTENDANCE_ZK> BSS_ATTENDANCE_ZK { get; set; }
         public virtual DbSet<BSS_STUDENT> BSS_STUDENT { get; set; }
         public virtual DbSet<HR_EMPLOYEE> HR_EMPLOYEE { get; set; }
+        public virtual DbSet<BSS_SMS_HISTORY> BSS_SMS_HISTORY { get; set; }
     }
 }

@@ -6,9 +6,10 @@
     <edmx:Diagrams>
       <Diagram DiagramId="5505bedc72854d21a33a1664a9bc5200" Name="Diagram1" ZoomLevel="96">
         <EntityTypeShape EntityType="Model.BSS_ATTENDANCE_DEVICES" Width="1.5" PointX="0.75" PointY="0.75" />
-        <EntityTypeShape EntityType="Model.BSS_ATTENDANCE_ZK" Width="1.5" PointX="2.75" PointY="0.75" />
-        <EntityTypeShape EntityType="Model.BSS_STUDENT" Width="1.5" PointX="4.75" PointY="0.75" />
-        <EntityTypeShape EntityType="Model.HR_EMPLOYEE" Width="1.5" PointX="6.75" PointY="0.75" />
+        <EntityTypeShape EntityType="Model.BSS_ATTENDANCE_ZK" Width="1.5" PointX="6.75" PointY="0.75" />
+        <EntityTypeShape EntityType="Model.BSS_STUDENT" Width="1.5" PointX="3.375" PointY="0.75" />
+        <EntityTypeShape EntityType="Model.HR_EMPLOYEE" Width="1.5" PointX="5.375" PointY="4.75" />
+        <EntityTypeShape EntityType="Model.BSS_SMS_HISTORY" Width="1.5" PointX="0.75" PointY="7.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

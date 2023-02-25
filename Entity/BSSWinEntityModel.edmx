@@ -50,6 +50,32 @@
           <Property Name="Work_Code" Type="int" />
           <Property Name="Sync_Status" Type="bit" />
         </EntityType>
+        <EntityType Name="BSS_SMS_HISTORY">
+          <Key>
+            <PropertyRef Name="SMS_ID" />
+            <PropertyRef Name="SENT_TO" />
+          </Key>
+          <Property Name="SMS_ID" Type="bigint" Nullable="false" />
+          <Property Name="SENT_TO" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="SMS_SUBJECT" Type="nvarchar" MaxLength="200" />
+          <Property Name="SMS_CONTENT" Type="nvarchar" MaxLength="200" />
+          <Property Name="IS_SEND" Type="bit" />
+          <Property Name="STATUS" Type="int" />
+          <Property Name="STATUS_TEXT" Type="nvarchar" MaxLength="200" />
+          <Property Name="ERROR_CODE" Type="int" />
+          <Property Name="ERROR_TEXT" Type="nvarchar" MaxLength="200" />
+          <Property Name="ATTRIBUTE1" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE2" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE3" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE4" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE5" Type="nvarchar" MaxLength="250" />
+          <Property Name="CREATED_BY" Type="bigint" />
+          <Property Name="CREATION_DATE" Type="datetime" />
+          <Property Name="LAST_UPDATE_BY" Type="bigint" />
+          <Property Name="LAST_UPDATE_DATE" Type="datetime" />
+          <Property Name="EFFECTIVE_FROM" Type="datetime" />
+          <Property Name="EFFECTIVE_TO" Type="datetime" />
+        </EntityType>
         <EntityType Name="BSS_STUDENT">
           <Key>
             <PropertyRef Name="STUDENT_HEADER_ID" />
@@ -289,6 +315,7 @@
         <EntityContainer Name="ModelStoreContainer">
           <EntitySet Name="BSS_ATTENDANCE_DEVICES" EntityType="Self.BSS_ATTENDANCE_DEVICES" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BSS_ATTENDANCE_ZK" EntityType="Self.BSS_ATTENDANCE_ZK" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BSS_SMS_HISTORY" EntityType="Self.BSS_SMS_HISTORY" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BSS_STUDENT" EntityType="Self.BSS_STUDENT" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="HR_EMPLOYEE" EntityType="Self.HR_EMPLOYEE" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
@@ -301,6 +328,7 @@
           <EntitySet Name="BSS_ATTENDANCE_ZK" EntityType="Model.BSS_ATTENDANCE_ZK" />
           <EntitySet Name="BSS_STUDENT" EntityType="Model.BSS_STUDENT" />
           <EntitySet Name="HR_EMPLOYEE" EntityType="Model.HR_EMPLOYEE" />
+          <EntitySet Name="BSS_SMS_HISTORY" EntityType="Model.BSS_SMS_HISTORY" />
         </EntityContainer>
         <EntityType Name="BSS_ATTENDANCE_DEVICES">
           <Key>
@@ -583,7 +611,33 @@
           <Property Name="SYNC_STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
           <Property Name="REJOINING_DATE" Type="DateTime" Precision="3" />
         </EntityType>
-      </Schema>
+        <EntityType Name="BSS_SMS_HISTORY">
+          <Key>
+            <PropertyRef Name="SMS_ID" />
+            <PropertyRef Name="SENT_TO" />
+          </Key>
+          <Property Name="SMS_ID" Type="Int64" Nullable="false" />
+          <Property Name="SENT_TO" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SMS_SUBJECT" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="SMS_CONTENT" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="IS_SEND" Type="Boolean" />
+          <Property Name="STATUS" Type="Int32" />
+          <Property Name="STATUS_TEXT" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ERROR_CODE" Type="Int32" />
+          <Property Name="ERROR_TEXT" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE1" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE2" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE3" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE4" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE5" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="CREATED_BY" Type="Int64" />
+          <Property Name="CREATION_DATE" Type="DateTime" Precision="3" />
+          <Property Name="LAST_UPDATE_BY" Type="Int64" />
+          <Property Name="LAST_UPDATE_DATE" Type="DateTime" Precision="3" />
+          <Property Name="EFFECTIVE_FROM" Type="DateTime" Precision="3" />
+          <Property Name="EFFECTIVE_TO" Type="DateTime" Precision="3" />
+        </EntityType>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -871,6 +925,32 @@
                 <ScalarProperty Name="EMP_FIRST_NAME" ColumnName="EMP_FIRST_NAME" />
                 <ScalarProperty Name="EMP_ID" ColumnName="EMP_ID" />
                 <ScalarProperty Name="EMP_HEADER_ID" ColumnName="EMP_HEADER_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BSS_SMS_HISTORY">
+            <EntityTypeMapping TypeName="Model.BSS_SMS_HISTORY">
+              <MappingFragment StoreEntitySet="BSS_SMS_HISTORY">
+                <ScalarProperty Name="EFFECTIVE_TO" ColumnName="EFFECTIVE_TO" />
+                <ScalarProperty Name="EFFECTIVE_FROM" ColumnName="EFFECTIVE_FROM" />
+                <ScalarProperty Name="LAST_UPDATE_DATE" ColumnName="LAST_UPDATE_DATE" />
+                <ScalarProperty Name="LAST_UPDATE_BY" ColumnName="LAST_UPDATE_BY" />
+                <ScalarProperty Name="CREATION_DATE" ColumnName="CREATION_DATE" />
+                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+                <ScalarProperty Name="ATTRIBUTE5" ColumnName="ATTRIBUTE5" />
+                <ScalarProperty Name="ATTRIBUTE4" ColumnName="ATTRIBUTE4" />
+                <ScalarProperty Name="ATTRIBUTE3" ColumnName="ATTRIBUTE3" />
+                <ScalarProperty Name="ATTRIBUTE2" ColumnName="ATTRIBUTE2" />
+                <ScalarProperty Name="ATTRIBUTE1" ColumnName="ATTRIBUTE1" />
+                <ScalarProperty Name="ERROR_TEXT" ColumnName="ERROR_TEXT" />
+                <ScalarProperty Name="ERROR_CODE" ColumnName="ERROR_CODE" />
+                <ScalarProperty Name="STATUS_TEXT" ColumnName="STATUS_TEXT" />
+                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+                <ScalarProperty Name="IS_SEND" ColumnName="IS_SEND" />
+                <ScalarProperty Name="SMS_CONTENT" ColumnName="SMS_CONTENT" />
+                <ScalarProperty Name="SMS_SUBJECT" ColumnName="SMS_SUBJECT" />
+                <ScalarProperty Name="SENT_TO" ColumnName="SENT_TO" />
+                <ScalarProperty Name="SMS_ID" ColumnName="SMS_ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

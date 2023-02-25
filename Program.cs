@@ -49,6 +49,8 @@ namespace Automated_Attendance_System
                         #endregion
 
                         _connector.EstablishConnections();
+                        _connector.TestRTPush();
+
                         Thread timerThread = new Thread(new ThreadStart(Program.ApplicationExitTime));
                         timerThread.IsBackground = false;
                         timerThread.Start();

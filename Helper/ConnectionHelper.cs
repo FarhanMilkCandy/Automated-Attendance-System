@@ -18,8 +18,8 @@ namespace Automated_Attendance_System.Helpers
         private ZKTeco_Clients clients;
         private EmailHelper emailHelper = new EmailHelper();
         private static readonly AttendanceController _controller = new AttendanceController();
-        List<BSS_ATTENDANCE_DEVICES> _deviceList = _controller.GetAttendanceDevices();
-        List<BSS_ATTENDANCE_DEVICES> unconnDevice = _controller.GetAttendanceDevices();
+        static List<BSS_ATTENDANCE_DEVICES> _deviceList = _controller.GetAttendanceDevices();
+        static List<BSS_ATTENDANCE_DEVICES> unconnDevice = _controller.GetAttendanceDevices();
         public static int connectedDeviceCount = 0;
         private void RaiseDeviceEvent(object sender, string actionType)
         {
@@ -58,9 +58,6 @@ namespace Automated_Attendance_System.Helpers
                             if (status)
                             {
                                 Log.Information($"Connected Successfully with Device @ {device.DeviceIP} : {device.DevicePort}\n");
-                                //Console.BackgroundColor = ConsoleColor.Blue;
-                                //Console.ForegroundColor = ConsoleColor.Black;
-                                //Console.WriteLine($"\n>> Connected successfully to device with IP: {device.DeviceIP}. and Port: {device.DevicePort}.");
                                 unconnDevice.Remove(device);
                             }
                             else
@@ -143,11 +140,19 @@ namespace Automated_Attendance_System.Helpers
             ConnectionCheckThread.Start();
         }
 
+        public void TestRTPush()
+        {
+            clients = new ZKTeco_Clients(RaiseDeviceEvent);
+            clients.zkemClient_OnAttTransactionEx("22001123", 1, 0, 4, 2023, 02, 25, 10, 49, 00, 0);
+            clients.zkemClient_OnAttTransactionEx("22001119", 1, 0, 4, 2023, 02, 25, 10, 49, 00, 0);
+            clients.zkemClient_OnAttTransactionEx("22000030", 1, 0, 4, 2023, 02, 25, 10, 49, 00, 0);
+            clients.zkemClient_OnAttTransactionEx("22001111", 1, 0, 4, 2023, 02, 25, 10, 49, 00, 0);
+        }
+
         public void BreakConnection()
         {
             foreach (BSS_ATTENDANCE_DEVICES device in _deviceList)
             {
-                //clients.Connect_Net(device.DeviceIP, int.Parse(device.DevicePort));
                 int temp = 0;
                 if (int.TryParse(device.DeviceMachineNumber, out temp))
                 {
@@ -216,7 +221,6 @@ namespace Automated_Attendance_System.Helpers
 
         public void CheckConnectivity()
         {
-
             Log.Information("Checking device(s) connection status\n");
             unconnDevice.Clear();
             while (true)

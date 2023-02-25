@@ -19,12 +19,13 @@ namespace Automated_Attendance_System.ZKTeco
         private static readonly UpdateController _updateCcontroller = new UpdateController();
         private readonly ConnectionHelper _connectionHelper = new ConnectionHelper();
         public bool connectionFlag = false;
-        private List<string> errorEnroll = new List<string>();
+        private static List<BSS_ATTENDANCE_ZK> errorEnroll = new List<BSS_ATTENDANCE_ZK>();
         private readonly List<BSS_ATTENDANCE_DEVICES> _deviceList = new List<BSS_ATTENDANCE_DEVICES>();
         private EmailHelper emailHelper = new EmailHelper();
         private TimeSpan lastSendTime = DateTime.Now.TimeOfDay;
         private readonly int _deviceCount = _controller.GetAttendanceDeviceCount();
         Action<object, string> RaiseDeviceEvent;
+        private SMSHelper _smsHelper;
         public ZKTeco_Clients(Action<object, string> RaiseDeviceEvent)
         {
             this.RaiseDeviceEvent = RaiseDeviceEvent;
@@ -56,7 +57,7 @@ namespace Automated_Attendance_System.ZKTeco
                     // [ Register your events here ]
                     // [ Go through the _IZKEMEvents_Event class for a complete list of events ]
                     this.objCZKEM.OnDisConnected += objCZKEM_OnDisConnected;
-                    this.objCZKEM.OnAttTransactionEx += new _IZKEMEvents_OnAttTransactionExEventHandler(zkemClient_OnAttTransactionEx);
+                    this.objCZKEM.OnAttTransactionEx += zkemClient_OnAttTransactionEx;
                     this.objCZKEM.OnGeneralEvent += new _IZKEMEvents_OnGeneralEventEventHandler(ObjCZKEM_OnGeneralEvent);
 
                     int machineNumber = 0;
@@ -67,12 +68,12 @@ namespace Automated_Attendance_System.ZKTeco
                     objCZKEM.GetProductCode(machineNumber, out productCode);
                     Console.BackgroundColor = ConsoleColor.Yellow; Console.ForegroundColor = ConsoleColor.Black;
                     Console.WriteLine($"\n>>Device {machineNumber} @{IPAdd}; Model: {productCode} is connected successfully!");
-                    if (productCode != "MB560-VL/ID" && !connectionFlag)
-                    {
-                        ObjCZKEM_OnConnected(machineNumber);
-                        GetStdUpdate(machineNumber, _updateCcontroller.GetStudentUpdates());
-                    }
-                    GetHRUpdate(machineNumber, _updateCcontroller.GetHRUpdates());
+                    //if (productCode != "MB560-VL/ID" && !connectionFlag)
+                    //{
+                    ObjCZKEM_OnConnected(machineNumber);
+                    GetStdUpdate(machineNumber, _updateCcontroller.GetStudentUpdates()).GetAwaiter();
+                    //}
+                    GetHRUpdate(machineNumber, _updateCcontroller.GetHRUpdates()).GetAwaiter();
                     if (upFailed != null && upFailed.Count > 0)
                     {
                         Log.Error($"Enrollment ID : {string.Join(", ", upFailed.Distinct().ToList())} was not synced properly with device {machineNumber}");
@@ -105,7 +106,7 @@ namespace Automated_Attendance_System.ZKTeco
             return false;
         }
 
-        //Connect to device
+        //Reconnect to device
         public bool Reconnect_Net(string IPAdd, int Port)
         {
             if (objCZKEM.Connect_Net(IPAdd, Port))
@@ -113,24 +114,14 @@ namespace Automated_Attendance_System.ZKTeco
                 //65535, 32767
                 if (objCZKEM.RegEvent(1, 65535))
                 {
-                    // [ Register your events here ]
-                    // [ Go through the _IZKEMEvents_Event class for a complete list of events ]
-                    //this.objCZKEM.OnDisConnected += objCZKEM_OnDisConnected;
-                    //this.objCZKEM.OnAttTransactionEx += new _IZKEMEvents_OnAttTransactionExEventHandler(zkemClient_OnAttTransactionEx);
-                    //this.objCZKEM.OnGeneralEvent += new _IZKEMEvents_OnGeneralEventEventHandler(ObjCZKEM_OnGeneralEvent);
-
                     int machineNumber = 0;
                     string productCode = string.Empty;
                     this.GetDeviceInfo(1, 2, ref machineNumber);
                     objCZKEM.MachineNumber = machineNumber;
                     objCZKEM.SetDeviceTime(objCZKEM.MachineNumber);
                     objCZKEM.GetProductCode(machineNumber, out productCode);
-                    //Console.BackgroundColor = ConsoleColor.Yellow; Console.ForegroundColor = ConsoleColor.Black;
-                    //Console.WriteLine($"\n>>Device {machineNumber} @{IPAdd}; Model: {productCode} is connected successfully!");
-                    if (productCode != "MB560-VL/ID" && !connectionFlag)
-                    {
-                        ObjCZKEM_OnConnected(machineNumber);
-                    }
+                    ObjCZKEM_OnConnected(machineNumber);
+
                 }
                 return true;
             }
@@ -141,7 +132,7 @@ namespace Automated_Attendance_System.ZKTeco
 
         #endregion
 
-        public void GetHRUpdate(int machineNumber, List<HR_EMPLOYEE> hrList)
+        public async Task GetHRUpdate(int machineNumber, List<HR_EMPLOYEE> hrList)
         {
             bool syncCard = false;
             bool syncInfo = false;
@@ -160,55 +151,61 @@ namespace Automated_Attendance_System.ZKTeco
                     {
                         if (this.SSR_GetUserInfo(machineNumber, temp.ToString(), out dwname, out dwpassword, out dwprivillege, out dwenabled))
                         {
-                            syncCard = this.SetStrCardNumber(emp.PUNCH_CARD_ID);
-                            syncInfo = this.SSR_SetUserInfo(machineNumber, temp.ToString(), emp.EMP_FIRST_NAME + " " + emp.EMP_MIDDLE_NAME + " " + emp.EMP_LAST_NAME, dwpassword, dwprivillege, dwenabled);
-                            if (syncCard && syncInfo)
+                            await Task.Run(() =>
                             {
-                                if (_deviceCount == ConnectionHelper.connectedDeviceCount)
+                                syncCard = this.SetStrCardNumber(emp.PUNCH_CARD_ID);
+                                syncInfo = this.SSR_SetUserInfo(machineNumber, temp.ToString(), emp.EMP_FIRST_NAME + " " + emp.EMP_MIDDLE_NAME + " " + emp.EMP_LAST_NAME, dwpassword, dwprivillege, dwenabled);
+                                if (syncCard && syncInfo)
                                 {
-                                    Log.Information($"Latest updated data upload complete. Uploaded to all {ConnectionHelper.connectedDeviceCount}/{_deviceCount} devices\n");
-                                    int flag = _updateCcontroller.SetHRSyncStatus(emp);
-                                    if (flag <= 0)
+                                    if (_deviceCount == ConnectionHelper.connectedDeviceCount)
                                     {
-                                        Log.Error($"Could not update database flag for latest data of Employee ID : {temp}\n");
-                                        upFailed.Add(temp.ToString());
-                                        Console.BackgroundColor = ConsoleColor.Red; Console.ForegroundColor = ConsoleColor.Black;
-                                        Console.WriteLine($"\n>> Could not upload latest data of Employee ID : {temp}");
-                                    }
-                                    else
-                                    {
-                                        empList.Clear();
+                                        Log.Information($"Latest updated data upload complete. Uploaded to all {ConnectionHelper.connectedDeviceCount}/{_deviceCount} devices\n");
+                                        int flag = _updateCcontroller.SetHRSyncStatus(emp);
+                                        if (flag <= 0)
+                                        {
+                                            Log.Error($"Could not update database flag for latest data of Employee ID : {temp}\n");
+                                            upFailed.Add(temp.ToString());
+                                            Console.BackgroundColor = ConsoleColor.Red; Console.ForegroundColor = ConsoleColor.Black;
+                                            Console.WriteLine($"\n>> Could not upload latest data of Employee ID : {temp}");
+                                        }
+                                        else
+                                        {
+                                            empList.Clear();
+                                        }
                                     }
                                 }
-                            }
+                            });
                         }
                         else
                         {
-                            syncCard = this.SetStrCardNumber(emp.PUNCH_CARD_ID);
-                            syncInfo = this.SSR_SetUserInfo(machineNumber, "2200" + emp.EMP_ID.Substring(emp.EMP_ID.Length - 4), emp.EMP_FIRST_NAME + " " + emp.EMP_MIDDLE_NAME + " " + emp.EMP_LAST_NAME, string.Empty, 0, true);
-                            if (syncCard && syncInfo)
+                            await Task.Run(() =>
                             {
-                                if (_deviceCount == ConnectionHelper.connectedDeviceCount)
+                                syncCard = this.SetStrCardNumber(emp.PUNCH_CARD_ID);
+                                syncInfo = this.SSR_SetUserInfo(machineNumber, "2200" + emp.EMP_ID.Substring(emp.EMP_ID.Length - 4), emp.EMP_FIRST_NAME + " " + emp.EMP_MIDDLE_NAME + " " + emp.EMP_LAST_NAME, string.Empty, 0, true);
+                                if (syncCard && syncInfo)
                                 {
-                                    Log.Information($"Latest updated data upload complete. Uploaded to all {ConnectionHelper.connectedDeviceCount}/{_deviceCount} devices\n");
-                                    int flag = _updateCcontroller.SetHRSyncStatus(emp);
-                                    if (flag <= 0)
+                                    if (_deviceCount == ConnectionHelper.connectedDeviceCount)
                                     {
-                                        Log.Error($"Could not upload latest data of Employee ID : {temp}\n");
-                                        upFailed.Add(temp.ToString());
-                                        Console.BackgroundColor = ConsoleColor.Red; Console.ForegroundColor = ConsoleColor.Black;
-                                        Console.WriteLine($"\n>> Could not upload latest data of Employee ID : {temp}");
-                                    }
-                                    else
-                                    {
-                                        empList.Clear();
+                                        Log.Information($"Latest updated data upload complete. Uploaded to all {ConnectionHelper.connectedDeviceCount}/{_deviceCount} devices\n");
+                                        int flag = _updateCcontroller.SetHRSyncStatus(emp);
+                                        if (flag <= 0)
+                                        {
+                                            Log.Error($"Could not upload latest data of Employee ID : {temp}\n");
+                                            upFailed.Add(temp.ToString());
+                                            Console.BackgroundColor = ConsoleColor.Red; Console.ForegroundColor = ConsoleColor.Black;
+                                            Console.WriteLine($"\n>> Could not upload latest data of Employee ID : {temp}");
+                                        }
+                                        else
+                                        {
+                                            empList.Clear();
+                                        }
                                     }
                                 }
-                            }
-                            else
-                            {
-                                Log.Error($"Could not upload latest data of Employee ID : {temp}. Card sync: {syncCard} & Information sync: {syncInfo}\n");
-                            }
+                                else
+                                {
+                                    Log.Error($"Could not upload latest data of Employee ID : {temp}. Card sync: {syncCard} & Information sync: {syncInfo}\n");
+                                }
+                            });
                         }
                     }
                     else
@@ -225,7 +222,7 @@ namespace Automated_Attendance_System.ZKTeco
             }
         }
 
-        public void GetStdUpdate(int machineNumber, List<BSS_STUDENT> studentList)
+        public async Task GetStdUpdate(int machineNumber, List<BSS_STUDENT> studentList)
         {
             bool syncCard = false;
             bool syncInfo = false;
@@ -242,37 +239,41 @@ namespace Automated_Attendance_System.ZKTeco
                 {
                     if (int.TryParse("2200" + std.STUDENT_ID.Substring(std.STUDENT_ID.Length - 4), out temp))
                     {
-
                         if (this.SSR_GetUserInfo(machineNumber, temp.ToString(), out dwname, out dwpassword, out dwprivillege, out dwenabled))
                         {
-                            syncCard = this.SetStrCardNumber(std.PROXIMITY_NUM);
-                            syncInfo = this.SSR_SetUserInfo(machineNumber, temp.ToString(), std.FIRST_NAME + " " + std.MIDDLE_NAME + " " + std.LAST_NAME, dwpassword, dwprivillege, dwenabled);
-                            if (syncCard && syncInfo)
+                            await Task.Run(() =>
                             {
-                                if (_deviceCount == ConnectionHelper.connectedDeviceCount)
+                                syncCard = this.SetStrCardNumber(std.PROXIMITY_NUM);
+                                syncInfo = this.SSR_SetUserInfo(machineNumber, temp.ToString(), std.FIRST_NAME + " " + std.MIDDLE_NAME + " " + std.LAST_NAME, dwpassword, dwprivillege, dwenabled);
+                                if (syncCard && syncInfo)
                                 {
-                                    Log.Information($"Latest updated data upload complete. Uploaded to all {ConnectionHelper.connectedDeviceCount}/{_deviceCount} devices\n");
-                                    int flag = _updateCcontroller.SetStudentSyncStatus(std);
-                                    if (flag <= 0)
+                                    if (_deviceCount == ConnectionHelper.connectedDeviceCount)
                                     {
-                                        Log.Error($"Could not sync latest data of Student ID : {temp} \n");
-                                        upFailed.Add(temp.ToString());
-                                        Console.BackgroundColor = ConsoleColor.Red; Console.ForegroundColor = ConsoleColor.Black;
-                                        Console.WriteLine($"\n>> Could not upload latest data of Student ID : {temp}");
-                                    }
-                                    else
-                                    {
-                                        stdList.Clear();
+                                        Log.Information($"Latest updated data upload complete. Uploaded to all {ConnectionHelper.connectedDeviceCount}/{_deviceCount} devices\n");
+                                        int flag = _updateCcontroller.SetStudentSyncStatus(std);
+                                        if (flag <= 0)
+                                        {
+                                            Log.Error($"Could not sync latest data of Student ID : {temp} \n");
+                                            upFailed.Add(temp.ToString());
+                                            Console.BackgroundColor = ConsoleColor.Red; Console.ForegroundColor = ConsoleColor.Black;
+                                            Console.WriteLine($"\n>> Could not upload latest data of Student ID : {temp}");
+                                        }
+                                        else
+                                        {
+                                            stdList.Clear();
+                                        }
                                     }
                                 }
-                            }
-                            else
-                            {
-                                Log.Error($"Could not upload latest data of Student ID : {temp}. Card sync: {syncCard} & Information sync: {syncInfo}\n");
-                            }
+                                else
+                                {
+                                    Log.Error($"Could not upload latest data of Student ID : {temp}. Card sync: {syncCard} & Information sync: {syncInfo}\n");
+                                }
+                            });
                         }
                         else
                         {
+                            await Task.Run(()=>
+                            {
                             syncCard = this.SetStrCardNumber(std.PROXIMITY_NUM);
                             syncInfo = this.SSR_SetUserInfo(machineNumber, "2200" + std.STUDENT_ID.Substring(std.STUDENT_ID.Length - 4), std.FIRST_NAME + " " + std.MIDDLE_NAME + " " + std.LAST_NAME, string.Empty, 0, true);
                             if (syncCard && syncInfo)
@@ -298,6 +299,7 @@ namespace Automated_Attendance_System.ZKTeco
                             {
                                 Log.Error($"Could not upload latest data of Student ID : {temp}. Card sync: {syncCard} & Information sync: {syncInfo}\n");
                             }
+                            });
                         }
                     }
                     else
@@ -336,108 +338,109 @@ namespace Automated_Attendance_System.ZKTeco
 
         private async void ObjCZKEM_OnConnected(int machineNumber)
         {
-            try
-            {
-                #region Variables
-                string dwEnrollNumber = string.Empty;
-                int dwVerifyMode = 0;
-                int dwInOutMode = 0;
-                int dwYear = 0;
-                int dwMonth = 0;
-                int dwDay = 0;
-                int dwHour = 0;
-                int dwMinute = 0;
-                int dwSecond = 0;
-                int dwWorkCode = 0;
-                #endregion
-                if (!connectionFlag)
-                {
-                    objCZKEM.SetDeviceTime(machineNumber);
-                    objCZKEM.ReadAllGLogData(machineNumber);
-                    while (objCZKEM.SSR_GetGeneralLogData(machineNumber, out dwEnrollNumber, out dwVerifyMode, out dwInOutMode, out dwYear, out dwMonth, out dwDay, out dwHour, out dwMinute, out dwSecond, ref dwWorkCode))
-                    {
-                        #region push attendance to DB
-                        DateTime PunchDate = new DateTime(dwYear, dwMonth, dwDay);
-                        TimeSpan PunchTime = new TimeSpan(dwHour, dwMinute, dwSecond);
-                        errorEnroll = await _controller.RecordAttendance(machineNumber, dwEnrollNumber, dwVerifyMode, PunchDate, PunchTime, dwWorkCode);
-                        #endregion
-                    }
-                    bool clearFlag = objCZKEM.ClearData(machineNumber, 1);
-                    if (errorEnroll.Count > 0)
-                    {
-                        errorEnroll = errorEnroll.Distinct().ToList();
-                        Log.Fatal($"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up\n");
-                        bool emailFlag = emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.");
-                        if (!emailFlag)
-                        {
-                            Log.Error($"Error sending email for data recording after wakeup\n");
-                        }
-                        else
-                        {
-                            Log.Information($"Sending email for data recording after wakeup was success\n");
-                            Log.Information($"\"Trying Backup email.\n");
-                            bool bkpMailFlag = emailHelper.SendEmailBackup("error", "Error in Automated Attendance System", $"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.");
-                            if (bkpMailFlag)
-                            {
-                                Log.Information($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
-                                Console.WriteLine($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
-                            }
-                            else
-                            {
-                                Log.Fatal($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
-                                Console.WriteLine($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Log.Information($"No error while wake-up data recording to device\n");
-                    }
+            //try
+            //{
+            //    #region Variables
+            //    string dwEnrollNumber = string.Empty;
+            //    int dwVerifyMode = 0;
+            //    int dwInOutMode = 0;
+            //    int dwYear = 0;
+            //    int dwMonth = 0;
+            //    int dwDay = 0;
+            //    int dwHour = 0;
+            //    int dwMinute = 0;
+            //    int dwSecond = 0;
+            //    int dwWorkCode = 0;
+            //    #endregion
+            //    if (!connectionFlag)
+            //    {
+            //        objCZKEM.SetDeviceTime(machineNumber);
+            //        objCZKEM.ReadAllGLogData(machineNumber);
+            //        while (objCZKEM.SSR_GetGeneralLogData(machineNumber, out dwEnrollNumber, out dwVerifyMode, out dwInOutMode, out dwYear, out dwMonth, out dwDay, out dwHour, out dwMinute, out dwSecond, ref dwWorkCode))
+            //        {
+            //            #region push attendance to DB
+            //            DateTime PunchDate = new DateTime(dwYear, dwMonth, dwDay);
+            //            TimeSpan PunchTime = new TimeSpan(dwHour, dwMinute, dwSecond);
+            //            errorEnroll = await _controller.RecordPreviousAttendance(machineNumber, dwEnrollNumber, dwVerifyMode, PunchDate, PunchTime, dwWorkCode);
+            //            #endregion
+            //        }
+            //        bool clearFlag = objCZKEM.ClearData(machineNumber, 1);
+            //        if (errorEnroll.Count > 0)
+            //        {
+            //            errorEnroll = errorEnroll.Distinct().ToList();
+            //            Log.Fatal($"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up\n");
+            //            bool emailFlag = emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.");
+            //            if (!emailFlag)
+            //            {
+            //                Log.Error($"Error sending email for data recording after wakeup\n");
+            //            }
+            //            else
+            //            {
+            //                Log.Information($"Sending email for data recording after wakeup was success\n");
+            //                Log.Information($"\"Trying Backup email.\n");
+            //                bool bkpMailFlag = emailHelper.SendEmailBackup("error", "Error in Automated Attendance System", $"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.");
+            //                if (bkpMailFlag)
+            //                {
+            //                    Log.Information($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
+            //                    Console.WriteLine($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
+            //                }
+            //                else
+            //                {
+            //                    Log.Fatal($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
+            //                    Console.WriteLine($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
+            //                }
+            //            }
+            //        }
+            //        else
+            //        {
+            //            Log.Information($"No error while wake-up data recording to device\n");
+            //        }
 
-                    #region Console and Log
-                    Log.Information($"Read Data successfull from device {objCZKEM.MachineNumber}\n");
-                    Console.BackgroundColor = ConsoleColor.Green;
-                    Console.ForegroundColor = ConsoleColor.Black;
-                    Console.WriteLine($"\n>>Read Data successfull from device {objCZKEM.MachineNumber}");
-                    Console.WriteLine($"\n>>Clearing device {objCZKEM.MachineNumber}");
-                    #endregion
+            //        #region Console and Log
+            //        Log.Information($"Read Data successfull from device {objCZKEM.MachineNumber}\n");
+            //        Console.BackgroundColor = ConsoleColor.Green;
+            //        Console.ForegroundColor = ConsoleColor.Black;
+            //        Console.WriteLine($"\n>>Read Data successfull from device {objCZKEM.MachineNumber}");
+            //        Console.WriteLine($"\n>>Clearing device {objCZKEM.MachineNumber}");
+            //        #endregion
 
 
-                    if (clearFlag)
-                    {
-                        #region Console
-                        Log.Information($"Clear device {objCZKEM.MachineNumber} was success\n");
-                        Console.BackgroundColor = ConsoleColor.Green;
-                        Console.ForegroundColor = ConsoleColor.Black;
-                        Console.WriteLine($"\n>>Clear device {objCZKEM.MachineNumber} was success.");
-                        #endregion
-                    }
-                    else
-                    {
-                        #region Console
-                        Log.Error($"Could not clear data from device {objCZKEM.MachineNumber}. The device may not have any data or unknown error occured\n");
-                        Console.BackgroundColor = ConsoleColor.Red;
-                        Console.ForegroundColor = ConsoleColor.Black;
-                        Console.WriteLine($"\n>>Could not clear data from device {objCZKEM.MachineNumber}. The device may not have any data or unknown error occured.");
-                        #endregion
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                #region Console and log
-                Log.Error($"Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}.\r\nStackTrace:\r\n{ex.StackTrace}\n");
-                Console.BackgroundColor = ConsoleColor.Red;
-                Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine($"\n>>Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}");
-                bool emailFlag = emailHelper.SendEmail("Error", "Exception while recording device data on wakeup", $"Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}.</br>StackTrace:</br><code>{ex.StackTrace}</code>");
-                #endregion
-            }
+            //        if (clearFlag)
+            //        {
+            //            #region Console
+            //            Log.Information($"Clear device {objCZKEM.MachineNumber} was success\n");
+            //            Console.BackgroundColor = ConsoleColor.Green;
+            //            Console.ForegroundColor = ConsoleColor.Black;
+            //            Console.WriteLine($"\n>>Clear device {objCZKEM.MachineNumber} was success.");
+            //            #endregion
+            //        }
+            //        else
+            //        {
+            //            #region Console
+            //            Log.Error($"Could not clear data from device {objCZKEM.MachineNumber}. The device may not have any data or unknown error occured\n");
+            //            Console.BackgroundColor = ConsoleColor.Red;
+            //            Console.ForegroundColor = ConsoleColor.Black;
+            //            Console.WriteLine($"\n>>Could not clear data from device {objCZKEM.MachineNumber}. The device may not have any data or unknown error occured.");
+            //            #endregion
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    #region Console and log
+            //    Log.Error($"Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}.\r\nStackTrace:\r\n{ex.StackTrace}\n");
+            //    Console.BackgroundColor = ConsoleColor.Red;
+            //    Console.ForegroundColor = ConsoleColor.Black;
+            //    Console.WriteLine($"\n>>Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}");
+            //    bool emailFlag = emailHelper.SendEmail("Error", "Exception while recording device data on wakeup", $"Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}.</br>StackTrace:</br><code>{ex.StackTrace}</code>");
+            //    #endregion
+            //}
         }
 
-        private async void zkemClient_OnAttTransactionEx(string EnrollNumber, int IsInValid, int AttState, int VerifyMethod, int Year, int Month, int Day, int Hour, int Minute, int Second, int WorkCode)
+        public async void zkemClient_OnAttTransactionEx(string EnrollNumber, int IsInValid, int AttState, int VerifyMethod, int Year, int Month, int Day, int Hour, int Minute, int Second, int WorkCode)
         {
            await RealTimePush(EnrollNumber, IsInValid, AttState, VerifyMethod, Year, Month, Day, Hour, Minute, Second, WorkCode);
+           /*await*/ RealTimeMessageSend(EnrollNumber, Hour, Minute, Second);
         }
 
         private async Task RealTimePush(string EnrollNumber, int IsInValid, int AttState, int VerifyMethod, int Year, int Month, int Day, int Hour, int Minute, int Second, int WorkCode)
@@ -451,28 +454,45 @@ namespace Automated_Attendance_System.ZKTeco
                     //Console.WriteLine("\n>>Transaction happened");
                     errorEnroll = await _controller.RecordAttendance(objCZKEM.MachineNumber, EnrollNumber, VerifyMethod, PunchDate, PunchTime, WorkCode);
                 }
-                if (errorEnroll.Count > 0 && DateTime.Now.TimeOfDay.Subtract(lastSendTime) > new TimeSpan(0, 2, 0))
+                if (errorEnroll.Count > 0 && DateTime.Now.TimeOfDay.Subtract(lastSendTime) > new TimeSpan(0, 5, 0))
                 {
                     errorEnroll = errorEnroll.Distinct().ToList();
-                    Log.Fatal($"Exception storing attendance data to DB in real time for: {string.Join("\n", errorEnroll)}");
-                    emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing attendance data to DB in real time for: {string.Join("\n", errorEnroll)}");
+                    Log.Fatal($"Exception storing attendance data to DB in real time for: {string.Join("\n", errorEnroll)}.\n");
+                    emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing attendance data to DB in real time for: {string.Join(",", errorEnroll)}.\n");
                     lastSendTime = DateTime.Now.TimeOfDay;
+                    await RetryErrorPush();
                     errorEnroll.Clear();
-                    Console.WriteLine($"\n>> Error mail sent at {lastSendTime}");
+                    Console.WriteLine($"\n>>Error mail sent at {lastSendTime}\n");
                 }
             }
             catch (Exception ex)
             {
-                #region Console and log
-                Log.Error($"Exception while recording realtime data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}.\r\nStackTrace:\r\n{ex.StackTrace}\n");
-                Console.BackgroundColor = ConsoleColor.Red;
-                Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine($"\n>>Error while recodring realtime data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}");
-                bool emailFlag = emailHelper.SendEmail("Error", "Exception while recording realtime data on wakeup", $"Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}.</br>StackTrace:</br><code>{ex.StackTrace}</code>");
-                #endregion
+                await ExceptionHandler(objCZKEM.MachineNumber, ex);
             }
         }
 
+        private async Task RealTimeMessageSend(string idNumber, int Hour, int Minute, int Second)
+        {
+            TimeSpan PunchTime = new TimeSpan(Hour, Minute, Second);
+            _smsHelper = new SMSHelper();
+            await _smsHelper.sendSMS(idNumber, PunchTime.ToString());
+        }
+
+        private async Task RetryErrorPush() => await Task.Run(async () =>
+        {
+            errorEnroll = await _controller.RetryDBEntry(errorEnroll);
+        });
+
+        private async Task ExceptionHandler(int MachineNumber, Exception ex) => await Task.Run(() =>
+                                                                                         {
+                                                                                             #region Console and log
+                                                                                             Log.Error($"Exception while recording realtime data from device {MachineNumber}. Exception: {ex.Message}.\r\nStackTrace:\r\n{ex.StackTrace}\n");
+                                                                                             Console.BackgroundColor = ConsoleColor.Red;
+                                                                                             Console.ForegroundColor = ConsoleColor.Black;
+                                                                                             Console.WriteLine($"\n>>Error while recodring realtime data from device {MachineNumber}. Exception: {ex.Message}");
+                                                                                             bool emailFlag = emailHelper.SendEmail("Error", "Exception while recording realtime data on wakeup", $"Error while acquiring data from device {MachineNumber}. Exception: {ex.Message}.</br>StackTrace:</br><code>{ex.StackTrace}</code>");
+                                                                                             #endregion
+                                                                                         });
         void objCZKEM_OnDisConnected()
         {
             // Implementing the Event

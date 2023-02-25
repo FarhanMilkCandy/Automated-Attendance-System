@@ -179,8 +179,8 @@
     <Reference Include="Microsoft.IdentityModel.Tokens, Version=5.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.IdentityModel.Tokens.5.5.0\lib\net461\Microsoft.IdentityModel.Tokens.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NMemory, Version=3.0.0.0, Culture=neutral, PublicKeyToken=afc61983f100d280, processorArchitecture=MSIL">
       <HintPath>packages\NMemory.3.1.2\lib\net45\NMemory.dll</HintPath>
@@ -331,6 +331,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller\AttendanceController.cs" />
+    <Compile Include="Controller\SMSController.cs" />
     <Compile Include="Controller\UpdateController.cs" />
     <Compile Include="Entity\BSSWinEntityModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -353,15 +354,20 @@
     <Compile Include="Entity\BSS_ATTENDANCE_ZK.cs">
       <DependentUpon>BSSWinEntityModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entity\BSS_SMS_HISTORY.cs">
+      <DependentUpon>BSSWinEntityModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entity\BSS_STUDENT.cs">
       <DependentUpon>BSSWinEntityModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entity\HR_EMPLOYEE.cs">
       <DependentUpon>BSSWinEntityModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entity\Model\SMSDTO.cs" />
     <Compile Include="Helper\ConnectionHelper.cs" />
     <Compile Include="Helper\EmailHelper.cs" />
     <Compile Include="Helper\LogHelper.cs" />
+    <Compile Include="Helper\SMSHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ZKTeco\ZKTeco_Clients.cs" />
@@ -373,7 +379,6 @@
       <LastGenOutput>BSSWinEntityModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
     <None Include="appsettings.json" />
-    <None Include="Automated Attendance System_TemporaryKey.pfx" />
     <None Include="Entity\BSSWinEntityModel.edmx.diagram">
       <DependentUpon>BSSWinEntityModel.edmx</DependentUpon>
     </None>
