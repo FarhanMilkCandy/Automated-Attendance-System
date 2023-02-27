@@ -19,10 +19,10 @@ namespace Automated_Attendance_System.ZKTeco
         private static readonly UpdateController _updateCcontroller = new UpdateController();
         private readonly ConnectionHelper _connectionHelper = new ConnectionHelper();
         public bool connectionFlag = false;
-        private static List<BSS_ATTENDANCE_ZK> errorEnroll = new List<BSS_ATTENDANCE_ZK>();
+        private static BSS_ATTENDANCE_ZK errorEnroll = new BSS_ATTENDANCE_ZK();
         private readonly List<BSS_ATTENDANCE_DEVICES> _deviceList = new List<BSS_ATTENDANCE_DEVICES>();
         private EmailHelper emailHelper = new EmailHelper();
-        private TimeSpan lastSendTime = DateTime.Now.TimeOfDay;
+        //private TimeSpan lastSendTime = DateTime.Now.TimeOfDay;
         private readonly int _deviceCount = _controller.GetAttendanceDeviceCount();
         Action<object, string> RaiseDeviceEvent;
         private SMSHelper _smsHelper;
@@ -127,8 +127,6 @@ namespace Automated_Attendance_System.ZKTeco
             }
             return false;
         }
-
-        #endregion
 
         #endregion
 
@@ -272,33 +270,33 @@ namespace Automated_Attendance_System.ZKTeco
                         }
                         else
                         {
-                            await Task.Run(()=>
+                            await Task.Run(() =>
                             {
-                            syncCard = this.SetStrCardNumber(std.PROXIMITY_NUM);
-                            syncInfo = this.SSR_SetUserInfo(machineNumber, "2200" + std.STUDENT_ID.Substring(std.STUDENT_ID.Length - 4), std.FIRST_NAME + " " + std.MIDDLE_NAME + " " + std.LAST_NAME, string.Empty, 0, true);
-                            if (syncCard && syncInfo)
-                            {
-                                if (_deviceCount == ConnectionHelper.connectedDeviceCount)
+                                syncCard = this.SetStrCardNumber(std.PROXIMITY_NUM);
+                                syncInfo = this.SSR_SetUserInfo(machineNumber, "2200" + std.STUDENT_ID.Substring(std.STUDENT_ID.Length - 4), std.FIRST_NAME + " " + std.MIDDLE_NAME + " " + std.LAST_NAME, string.Empty, 0, true);
+                                if (syncCard && syncInfo)
                                 {
-                                    Log.Information($"Latest updated data upload complete. Uploaded to all {ConnectionHelper.connectedDeviceCount}/{_deviceCount} devices\n");
-                                    int flag = _updateCcontroller.SetStudentSyncStatus(std);
-                                    if (flag <= 0)
+                                    if (_deviceCount == ConnectionHelper.connectedDeviceCount)
                                     {
-                                        Log.Error($"Could not upload latest data of Student ID : {temp}\n");
-                                        upFailed.Add(temp.ToString());
-                                        Console.BackgroundColor = ConsoleColor.Red; Console.ForegroundColor = ConsoleColor.Black;
-                                        Console.WriteLine($"\n>> Could not upload latest data of Student ID : {temp}");
-                                    }
-                                    else
-                                    {
-                                        stdList.Clear();
+                                        Log.Information($"Latest updated data upload complete. Uploaded to all {ConnectionHelper.connectedDeviceCount}/{_deviceCount} devices\n");
+                                        int flag = _updateCcontroller.SetStudentSyncStatus(std);
+                                        if (flag <= 0)
+                                        {
+                                            Log.Error($"Could not upload latest data of Student ID : {temp}\n");
+                                            upFailed.Add(temp.ToString());
+                                            Console.BackgroundColor = ConsoleColor.Red; Console.ForegroundColor = ConsoleColor.Black;
+                                            Console.WriteLine($"\n>> Could not upload latest data of Student ID : {temp}");
+                                        }
+                                        else
+                                        {
+                                            stdList.Clear();
+                                        }
                                     }
                                 }
-                            }
-                            else
-                            {
-                                Log.Error($"Could not upload latest data of Student ID : {temp}. Card sync: {syncCard} & Information sync: {syncInfo}\n");
-                            }
+                                else
+                                {
+                                    Log.Error($"Could not upload latest data of Student ID : {temp}. Card sync: {syncCard} & Information sync: {syncInfo}\n");
+                                }
                             });
                         }
                     }
@@ -316,131 +314,110 @@ namespace Automated_Attendance_System.ZKTeco
             }
         }
 
-        public void ObjCZKEM_OnFinger()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ObjCZKEM_OnKeyPress(int key)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ObjCZKEM_OnGeneralEvent(string dataString)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ObjCZKEM_OnEnrollFinger(int EnrollNumber, int FingerIndex, int ActionResult, int TemplateLength)
-        {
-            throw new NotImplementedException();
-        }
-
         private async void ObjCZKEM_OnConnected(int machineNumber)
         {
-            //try
-            //{
-            //    #region Variables
-            //    string dwEnrollNumber = string.Empty;
-            //    int dwVerifyMode = 0;
-            //    int dwInOutMode = 0;
-            //    int dwYear = 0;
-            //    int dwMonth = 0;
-            //    int dwDay = 0;
-            //    int dwHour = 0;
-            //    int dwMinute = 0;
-            //    int dwSecond = 0;
-            //    int dwWorkCode = 0;
-            //    #endregion
-            //    if (!connectionFlag)
-            //    {
-            //        objCZKEM.SetDeviceTime(machineNumber);
-            //        objCZKEM.ReadAllGLogData(machineNumber);
-            //        while (objCZKEM.SSR_GetGeneralLogData(machineNumber, out dwEnrollNumber, out dwVerifyMode, out dwInOutMode, out dwYear, out dwMonth, out dwDay, out dwHour, out dwMinute, out dwSecond, ref dwWorkCode))
-            //        {
-            //            #region push attendance to DB
-            //            DateTime PunchDate = new DateTime(dwYear, dwMonth, dwDay);
-            //            TimeSpan PunchTime = new TimeSpan(dwHour, dwMinute, dwSecond);
-            //            errorEnroll = await _controller.RecordPreviousAttendance(machineNumber, dwEnrollNumber, dwVerifyMode, PunchDate, PunchTime, dwWorkCode);
-            //            #endregion
-            //        }
-            //        bool clearFlag = objCZKEM.ClearData(machineNumber, 1);
-            //        if (errorEnroll.Count > 0)
-            //        {
-            //            errorEnroll = errorEnroll.Distinct().ToList();
-            //            Log.Fatal($"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up\n");
-            //            bool emailFlag = emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.");
-            //            if (!emailFlag)
-            //            {
-            //                Log.Error($"Error sending email for data recording after wakeup\n");
-            //            }
-            //            else
-            //            {
-            //                Log.Information($"Sending email for data recording after wakeup was success\n");
-            //                Log.Information($"\"Trying Backup email.\n");
-            //                bool bkpMailFlag = emailHelper.SendEmailBackup("error", "Error in Automated Attendance System", $"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.");
-            //                if (bkpMailFlag)
-            //                {
-            //                    Log.Information($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
-            //                    Console.WriteLine($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
-            //                }
-            //                else
-            //                {
-            //                    Log.Fatal($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
-            //                    Console.WriteLine($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
-            //                }
-            //            }
-            //        }
-            //        else
-            //        {
-            //            Log.Information($"No error while wake-up data recording to device\n");
-            //        }
+            try
+            {
+                #region Variables
+                string dwEnrollNumber = string.Empty;
+                int dwVerifyMode = 0;
+                int dwInOutMode = 0;
+                int dwYear = 0;
+                int dwMonth = 0;
+                int dwDay = 0;
+                int dwHour = 0;
+                int dwMinute = 0;
+                int dwSecond = 0;
+                int dwWorkCode = 0;
+                #endregion
+                if (!connectionFlag)
+                {
+                    objCZKEM.SetDeviceTime(machineNumber);
+                    objCZKEM.ReadAllGLogData(machineNumber);
+                    while (objCZKEM.SSR_GetGeneralLogData(machineNumber, out dwEnrollNumber, out dwVerifyMode, out dwInOutMode, out dwYear, out dwMonth, out dwDay, out dwHour, out dwMinute, out dwSecond, ref dwWorkCode))
+                    {
+                        #region push attendance to DB
+                        DateTime PunchDate = new DateTime(dwYear, dwMonth, dwDay);
+                        TimeSpan PunchTime = new TimeSpan(dwHour, dwMinute, dwSecond);
+                        errorEnroll = await _controller.RecordPreviousAttendance(machineNumber, dwEnrollNumber, dwVerifyMode, PunchDate, PunchTime, dwWorkCode);
+                        #endregion
+                    }
+                    bool clearFlag = objCZKEM.ClearData(machineNumber, 1);
+                    if (errorEnroll != null)
+                    {
+                        Log.Fatal($"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.\n");
+                        bool emailFlag = emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.");
+                        if (!emailFlag)
+                        {
+                            Log.Error($"Error sending email for data recording after wakeup\n");
+                        }
+                        else
+                        {
+                            Log.Information($"Sending email for data recording after wakeup was success\n");
+                            Log.Information($"\"Trying Backup email.\n");
+                            bool bkpMailFlag = emailHelper.SendEmailBackup("error", "Error in Automated Attendance System", $"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.");
+                            if (bkpMailFlag)
+                            {
+                                Log.Information($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
+                                Console.WriteLine($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
+                            }
+                            else
+                            {
+                                Log.Fatal($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
+                                Console.WriteLine($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Log.Information($"No error while wake-up data recording to device.\n");
+                    }
 
-            //        #region Console and Log
-            //        Log.Information($"Read Data successfull from device {objCZKEM.MachineNumber}\n");
-            //        Console.BackgroundColor = ConsoleColor.Green;
-            //        Console.ForegroundColor = ConsoleColor.Black;
-            //        Console.WriteLine($"\n>>Read Data successfull from device {objCZKEM.MachineNumber}");
-            //        Console.WriteLine($"\n>>Clearing device {objCZKEM.MachineNumber}");
-            //        #endregion
+                    #region Console and Log
+                    Log.Information($"Read Data successfull from device {objCZKEM.MachineNumber}\n");
+                    Console.BackgroundColor = ConsoleColor.Green;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.WriteLine($"\n>>Read Data successfull from device {objCZKEM.MachineNumber}");
+                    Console.WriteLine($"\n>>Clearing device {objCZKEM.MachineNumber}");
+                    #endregion
 
 
-            //        if (clearFlag)
-            //        {
-            //            #region Console
-            //            Log.Information($"Clear device {objCZKEM.MachineNumber} was success\n");
-            //            Console.BackgroundColor = ConsoleColor.Green;
-            //            Console.ForegroundColor = ConsoleColor.Black;
-            //            Console.WriteLine($"\n>>Clear device {objCZKEM.MachineNumber} was success.");
-            //            #endregion
-            //        }
-            //        else
-            //        {
-            //            #region Console
-            //            Log.Error($"Could not clear data from device {objCZKEM.MachineNumber}. The device may not have any data or unknown error occured\n");
-            //            Console.BackgroundColor = ConsoleColor.Red;
-            //            Console.ForegroundColor = ConsoleColor.Black;
-            //            Console.WriteLine($"\n>>Could not clear data from device {objCZKEM.MachineNumber}. The device may not have any data or unknown error occured.");
-            //            #endregion
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    #region Console and log
-            //    Log.Error($"Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}.\r\nStackTrace:\r\n{ex.StackTrace}\n");
-            //    Console.BackgroundColor = ConsoleColor.Red;
-            //    Console.ForegroundColor = ConsoleColor.Black;
-            //    Console.WriteLine($"\n>>Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}");
-            //    bool emailFlag = emailHelper.SendEmail("Error", "Exception while recording device data on wakeup", $"Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}.</br>StackTrace:</br><code>{ex.StackTrace}</code>");
-            //    #endregion
-            //}
+                    if (clearFlag)
+                    {
+                        #region Console
+                        Log.Information($"Clear device {objCZKEM.MachineNumber} was success\n");
+                        Console.BackgroundColor = ConsoleColor.Green;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.WriteLine($"\n>>Clear device {objCZKEM.MachineNumber} was success.");
+                        #endregion
+                    }
+                    else
+                    {
+                        #region Console
+                        Log.Error($"Could not clear data from device {objCZKEM.MachineNumber}. The device may not have any data or unknown error occured\n");
+                        Console.BackgroundColor = ConsoleColor.Red;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.WriteLine($"\n>>Could not clear data from device {objCZKEM.MachineNumber}. The device may not have any data or unknown error occured.");
+                        #endregion
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                #region Console and log
+                Log.Error($"Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}.\r\nStackTrace:\r\n{ex.StackTrace}\n");
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.WriteLine($"\n>>Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}");
+                bool emailFlag = emailHelper.SendEmail("Error", "Exception while recording device data on wakeup", $"Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}.</br>StackTrace:</br><code>{ex.StackTrace}</code>");
+                #endregion
+            }
         }
 
         public async void zkemClient_OnAttTransactionEx(string EnrollNumber, int IsInValid, int AttState, int VerifyMethod, int Year, int Month, int Day, int Hour, int Minute, int Second, int WorkCode)
         {
-           await RealTimePush(EnrollNumber, IsInValid, AttState, VerifyMethod, Year, Month, Day, Hour, Minute, Second, WorkCode);
-           /*await*/ RealTimeMessageSend(EnrollNumber, Hour, Minute, Second);
+            await RealTimePush(EnrollNumber, IsInValid, AttState, VerifyMethod, Year, Month, Day, Hour, Minute, Second, WorkCode);
+            await RealTimeMessageSend(EnrollNumber, Hour, Minute, Second);
         }
 
         private async Task RealTimePush(string EnrollNumber, int IsInValid, int AttState, int VerifyMethod, int Year, int Month, int Day, int Hour, int Minute, int Second, int WorkCode)
@@ -454,15 +431,12 @@ namespace Automated_Attendance_System.ZKTeco
                     //Console.WriteLine("\n>>Transaction happened");
                     errorEnroll = await _controller.RecordAttendance(objCZKEM.MachineNumber, EnrollNumber, VerifyMethod, PunchDate, PunchTime, WorkCode);
                 }
-                if (errorEnroll.Count > 0 && DateTime.Now.TimeOfDay.Subtract(lastSendTime) > new TimeSpan(0, 5, 0))
+                if (errorEnroll != null)
                 {
-                    errorEnroll = errorEnroll.Distinct().ToList();
-                    Log.Fatal($"Exception storing attendance data to DB in real time for: {string.Join("\n", errorEnroll)}.\n");
-                    emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing attendance data to DB in real time for: {string.Join(",", errorEnroll)}.\n");
-                    lastSendTime = DateTime.Now.TimeOfDay;
-                    await RetryErrorPush();
-                    errorEnroll.Clear();
-                    Console.WriteLine($"\n>>Error mail sent at {lastSendTime}\n");
+                    Log.Fatal($"Exception storing attendance data to DB in real time for: {string.Join("\n", errorEnroll)}.\n Data could not be inserted even after retry.\n");
+                    emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing attendance data to DB in real time for: {string.Join(",", errorEnroll)}\n Data could not be inserted even after retry.\n");
+                    Console.WriteLine($"\n>>Error mail sent at {DateTime.Now}\n");
+                    errorEnroll = null;
                 }
             }
             catch (Exception ex)
@@ -475,50 +449,31 @@ namespace Automated_Attendance_System.ZKTeco
         {
             TimeSpan PunchTime = new TimeSpan(Hour, Minute, Second);
             _smsHelper = new SMSHelper();
-            await _smsHelper.sendSMS(idNumber, PunchTime.ToString());
+            await _smsHelper.SendSMS(idNumber, PunchTime.ToString());
         }
 
-        private async Task RetryErrorPush() => await Task.Run(async () =>
+        private async Task ExceptionHandler(int MachineNumber, Exception ex) => await Task.Run(() =>
         {
-            errorEnroll = await _controller.RetryDBEntry(errorEnroll);
+            #region Console and log
+            Log.Error($"Exception while recording realtime data from device {MachineNumber}. Exception: {ex.Message}.\r\nStackTrace:\r\n{ex.StackTrace}\n");
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.WriteLine($"\n>>Error while recodring realtime data from device {MachineNumber}. Exception: {ex.Message}");
+            bool emailFlag = emailHelper.SendEmail("Error", "Exception while recording realtime data on wakeup", $"Error while acquiring data from device {MachineNumber}. Exception: {ex.Message}.</br>StackTrace:</br><code>{ex.StackTrace}</code>");
+            #endregion
         });
 
-        private async Task ExceptionHandler(int MachineNumber, Exception ex) => await Task.Run(() =>
-                                                                                         {
-                                                                                             #region Console and log
-                                                                                             Log.Error($"Exception while recording realtime data from device {MachineNumber}. Exception: {ex.Message}.\r\nStackTrace:\r\n{ex.StackTrace}\n");
-                                                                                             Console.BackgroundColor = ConsoleColor.Red;
-                                                                                             Console.ForegroundColor = ConsoleColor.Black;
-                                                                                             Console.WriteLine($"\n>>Error while recodring realtime data from device {MachineNumber}. Exception: {ex.Message}");
-                                                                                             bool emailFlag = emailHelper.SendEmail("Error", "Exception while recording realtime data on wakeup", $"Error while acquiring data from device {MachineNumber}. Exception: {ex.Message}.</br>StackTrace:</br><code>{ex.StackTrace}</code>");
-                                                                                             #endregion
-                                                                                         });
         void objCZKEM_OnDisConnected()
         {
             // Implementing the Event
             RaiseDeviceEvent(this, "Disconnected");
         }
 
-        public bool ClearAdministrators(int dwMachineNumber)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool DeleteEnrollData(int dwMachineNumber, int dwEnrollNumber, int dwEMachineNumber, int dwBackupNumber)
-        {
-            throw new NotImplementedException();
-        }
 
         public bool ReadSuperLogData(int dwMachineNumber)
         {
             return objCZKEM.ReadSuperLogData(dwMachineNumber);
         }
-
-        public bool ReadAllSLogData(int dwMachineNumber)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool ReadGeneralLogData(int dwMachineNumber)
         {
             return objCZKEM.ReadGeneralLogData(dwMachineNumber);
@@ -528,17 +483,6 @@ namespace Automated_Attendance_System.ZKTeco
         {
             return objCZKEM.ReadAllGLogData(dwMachineNumber);
         }
-
-        public bool EnableUser(int dwMachineNumber, int dwEnrollNumber, int dwEMachineNumber, int dwBackupNumber, bool bFlag)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool EnableDevice(int dwMachineNumber, bool bFlag)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool GetDeviceStatus(int dwMachineNumber, int dwStatus, ref int dwValue)
         {
             return objCZKEM.GetDeviceStatus(dwMachineNumber, dwStatus, ref dwValue);
@@ -549,37 +493,10 @@ namespace Automated_Attendance_System.ZKTeco
             var x = objCZKEM.GetDeviceInfo(dwMachineNumber, dwInfo, ref dwValue);
             return x;
         }
-
-        public bool SetDeviceInfo(int dwMachineNumber, int dwInfo, int dwValue)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool SetDeviceTime(int dwMachineNumber)
         {
             return objCZKEM.SetDeviceTime(dwMachineNumber);
         }
-
-        public void PowerOnAllDevice()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool PowerOffDevice(int dwMachineNumber)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool ModifyPrivilege(int dwMachineNumber, int dwEnrollNumber, int dwEMachineNumber, int dwBackupNumber, int dwMachinePrivilege)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void GetLastError(ref int dwErrorCode)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool GetEnrollData(int dwMachineNumber, int dwEnrollNumber, int dwEMachineNumber, int dwBackupNumber, ref int dwMachinePrivilege, ref int dwEnrollData, ref int dwPassWord)
         {
             return objCZKEM.GetEnrollData(dwMachineNumber, dwEnrollNumber, dwEMachineNumber, dwBackupNumber, ref dwMachinePrivilege, ref dwEnrollData, ref dwPassWord);
@@ -599,27 +516,6 @@ namespace Automated_Attendance_System.ZKTeco
         {
             return objCZKEM.GetGeneralLogData(dwMachineNumber, ref dwTMachineNumber, ref dwEnrollNumber, ref dwEMachineNumber, ref dwVerifyMode, ref dwInOutMode, ref dwYear, ref dwMonth, ref dwDay, ref dwHour, ref dwMinute);
         }
-
-        public bool GetSuperLogData(int dwMachineNumber, ref int dwTMachineNumber, ref int dwSEnrollNumber, ref int Params4, ref int Params1, ref int Params2, ref int dwManipulation, ref int Params3, ref int dwYear, ref int dwMonth, ref int dwDay, ref int dwHour, ref int dwMinute)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetAllSLogData(int dwMachineNumber, ref int dwTMachineNumber, ref int dwSEnrollNumber, ref int Params4, ref int Params1, ref int Params2, ref int dwManipulation, ref int Params3, ref int dwYear, ref int dwMonth, ref int dwDay, ref int dwHour, ref int dwMinute)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetAllGLogData(int dwMachineNumber, ref int dwTMachineNumber, ref int dwEnrollNumber, ref int dwEMachineNumber, ref int dwVerifyMode, ref int dwInOutMode, ref int dwYear, ref int dwMonth, ref int dwDay, ref int dwHour, ref int dwMinute)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ConvertPassword(int dwSrcPSW, ref int dwDestPSW, int dwLength)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool ReadAllUserID(int dwMachineNumber)
         {
             return objCZKEM.ReadAllUserID(dwMachineNumber);
@@ -634,12 +530,6 @@ namespace Automated_Attendance_System.ZKTeco
         {
             return objCZKEM.GetSerialNumber(dwMachineNumber, out dwSerialNumber);
         }
-
-        public bool ClearKeeperData(int dwMachineNumber)
-        {
-            throw new NotImplementedException();
-        }
-
         public int GetBackupNumber(int dwMachineNumber)
         {
             return objCZKEM.GetBackupNumber(dwMachineNumber);
@@ -664,22 +554,10 @@ namespace Automated_Attendance_System.ZKTeco
         {
             return objCZKEM.ClearGLog(dwMachineNumber);
         }
-
-        public int GetFPTempLength(ref byte dwEnrollData)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Connect_Com(int ComPort, int MachineNumber, int BaudRate)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Disconnect()
         {
             objCZKEM.Disconnect();
         }
-
         public bool SetUserInfo(int dwMachineNumber, int dwEnrollNumber, string Name, string Password, int Privilege, bool Enabled)
         {
             return objCZKEM.SetUserInfo(dwMachineNumber, dwEnrollNumber, Name, Password, Privilege, Enabled);
@@ -689,387 +567,52 @@ namespace Automated_Attendance_System.ZKTeco
         {
             return objCZKEM.GetUserInfo(dwMachineNumber, dwEnrollNumber, ref Name, ref Password, ref Privilege, ref Enabled);
         }
-
-        public bool SetDeviceIP(int dwMachineNumber, string IPAddr)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool GetDeviceIP(int dwMachineNumber, ref string IPAddr)
         {
             return objCZKEM.GetDeviceIP(dwMachineNumber, ref IPAddr);
         }
-
-        public bool GetUserTmp(int dwMachineNumber, int dwEnrollNumber, int dwFingerIndex, ref byte TmpData, ref int TmpLength)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetUserTmp(int dwMachineNumber, int dwEnrollNumber, int dwFingerIndex, ref byte TmpData)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool GetAllUserInfo(int dwMachineNumber, ref int dwEnrollNumber, ref string Name, ref string Password, ref int Privilege, ref bool Enabled)
         {
             return objCZKEM.GetAllUserInfo(dwMachineNumber, ref dwEnrollNumber, ref Name, ref Password, ref Privilege, ref Enabled);
         }
-
-        public bool DelUserTmp(int dwMachineNumber, int dwEnrollNumber, int dwFingerIndex)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool RefreshData(int dwMachineNumber)
         {
             return objCZKEM.RefreshData(dwMachineNumber);
-        }
-
-        public bool FPTempConvert(ref byte TmpData1, ref byte TmpData2, ref int Size)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetCommPassword(int CommKey)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetUserGroup(int dwMachineNumber, int dwEnrollNumber, ref int UserGrp)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetUserGroup(int dwMachineNumber, int dwEnrollNumber, int UserGrp)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetTZInfo(int dwMachineNumber, int TZIndex, ref string TZ)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetTZInfo(int dwMachineNumber, int TZIndex, string TZ)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetUnlockGroups(int dwMachineNumber, ref string Grps)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetUnlockGroups(int dwMachineNumber, string Grps)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetGroupTZs(int dwMachineNumber, int GroupIndex, ref int TZs)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetGroupTZs(int dwMachineNumber, int GroupIndex, ref int TZs)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetUserTZs(int dwMachineNumber, int dwEnrollNumber, ref int TZs)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetUserTZs(int dwMachineNumber, int dwEnrollNumber, ref int TZs)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool ACUnlock(int dwMachineNumber, int Delay)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetACFun(ref int ACFun)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetGeneralLogDataStr(int dwMachineNumber, ref int dwEnrollNumber, ref int dwVerifyMode, ref int dwInOutMode, ref string TimeStr)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetUserTmpStr(int dwMachineNumber, int dwEnrollNumber, int dwFingerIndex, ref string TmpData, ref int TmpLength)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetUserTmpStr(int dwMachineNumber, int dwEnrollNumber, int dwFingerIndex, string TmpData)
-        {
-            throw new NotImplementedException();
         }
 
         public bool GetEnrollDataStr(int dwMachineNumber, int dwEnrollNumber, int dwEMachineNumber, int dwBackupNumber, ref int dwMachinePrivilege, ref string dwEnrollData, ref int dwPassWord)
         {
             return objCZKEM.GetEnrollDataStr(dwMachineNumber, dwEnrollNumber, dwEMachineNumber, dwBackupNumber, ref dwMachinePrivilege, ref dwEnrollData, ref dwPassWord);
         }
-
-        public bool SetEnrollDataStr(int dwMachineNumber, int dwEnrollNumber, int dwEMachineNumber, int dwBackupNumber, int dwMachinePrivilege, string dwEnrollData, int dwPassWord)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetGroupTZStr(int dwMachineNumber, int GroupIndex, ref string TZs)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetGroupTZStr(int dwMachineNumber, int GroupIndex, string TZs)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetUserTZStr(int dwMachineNumber, int dwEnrollNumber, ref string TZs)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetUserTZStr(int dwMachineNumber, int dwEnrollNumber, string TZs)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool FPTempConvertStr(string TmpData1, ref string TmpData2, ref int Size)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int GetFPTempLengthStr(string dwEnrollData)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetUserInfoByPIN2(int dwMachineNumber, ref string Name, ref string Password, ref int Privilege, ref bool Enabled)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetUserInfoByCard(int dwMachineNumber, ref string Name, ref string Password, ref int Privilege, ref bool Enabled)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool CaptureImage(bool FullImage, ref int Width, ref int Height, ref byte Image, string ImageFile)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool UpdateFirmware(string FirmwareFile)
         {
             return objCZKEM.UpdateFirmware(FirmwareFile);
         }
-
-        public bool StartEnroll(int UserID, int FingerID)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool StartVerify(int UserID, int FingerID)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool StartIdentify()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool CancelOperation()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool QueryState(ref int State)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool BackupData(string DataFile)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool RestoreData(string DataFile)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool WriteLCD(int Row, int Col, string Text)
         {
             return objCZKEM.WriteLCD(2, 2, "Test");
         }
-
-        public bool ClearLCD()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Beep(int DelayMS)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool PlayVoice(int Position, int Length)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool PlayVoiceByIndex(int Index)
         {
             return objCZKEM.PlayVoiceByIndex(Index);
         }
-
-        public bool EnableClock(int Enabled)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetUserIDByPIN2(int PIN2, ref int UserID)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetPIN2(int UserID, ref int PIN2)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool FPTempConvertNew(ref byte TmpData1, ref byte TmpData2, ref int Size)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool FPTempConvertNewStr(string TmpData1, ref string TmpData2, ref int Size)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool ReadAllTemplate(int dwMachineNumber)
         {
             return objCZKEM.ReadAllTemplate(dwMachineNumber);
-        }
-
-        public bool DisableDeviceWithTimeOut(int dwMachineNumber, int TimeOutSec)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetDeviceTime2(int dwMachineNumber, int dwYear, int dwMonth, int dwDay, int dwHour, int dwMinute, int dwSecond)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool ClearSLog(int dwMachineNumber)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool RestartDevice(int dwMachineNumber)
-        {
-            throw new NotImplementedException();
         }
 
         public bool GetDeviceMAC(int dwMachineNumber, ref string sMAC)
         {
             return objCZKEM.GetDeviceMAC(dwMachineNumber, sMAC);
         }
-
-        public bool SetDeviceMAC(int dwMachineNumber, string sMAC)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool GetWiegandFmt(int dwMachineNumber, ref string sWiegandFmt)
         {
             return objCZKEM.GetWiegandFmt(dwMachineNumber, sWiegandFmt);
         }
-
-        public bool SetWiegandFmt(int dwMachineNumber, string sWiegandFmt)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool ClearSMS(int dwMachineNumber)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetSMS(int dwMachineNumber, int ID, ref int Tag, ref int ValidMinutes, ref string StartTime, ref string Content)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetSMS(int dwMachineNumber, int ID, int Tag, int ValidMinutes, string StartTime, string Content)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool DeleteSMS(int dwMachineNumber, int ID)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetUserSMS(int dwMachineNumber, int dwEnrollNumber, int SMSID)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool DeleteUserSMS(int dwMachineNumber, int dwEnrollNumber, int SMSID)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetCardFun(int dwMachineNumber, ref int CardFun)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool ClearUserSMS(int dwMachineNumber)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetDeviceCommPwd(int dwMachineNumber, int CommKey)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetDoorState(int MachineNumber, ref int State)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool GetVendor(ref string strVendor)
         {
             return objCZKEM.GetVendor(strVendor);
         }
-
-        public bool GetSensorSN(int dwMachineNumber, ref string SensorSN)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool ReadCustData(int dwMachineNumber, ref string CustData)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool WriteCustData(int dwMachineNumber, string CustData)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool BeginBatchUpdate(int dwMachineNumber, int UpdateFlag)
         {
             return objCZKEM.BeginBatchUpdate(dwMachineNumber, UpdateFlag);
@@ -1084,52 +627,10 @@ namespace Automated_Attendance_System.ZKTeco
         {
             return objCZKEM.ClearData(dwMachineNumber, DataFlag);
         }
-
-        public bool GetDataFile(int dwMachineNumber, int DataFlag, string FileName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool WriteCard(int dwMachineNumber, int dwEnrollNumber, int dwFingerIndex1, ref byte TmpData1, int dwFingerIndex2, ref byte TmpData2, int dwFingerIndex3, ref byte TmpData3, int dwFingerIndex4, ref byte TmpData4)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool GetGeneralExtLogData(int dwMachineNumber, ref int dwEnrollNumber, ref int dwVerifyMode, ref int dwInOutMode, ref int dwYear, ref int dwMonth, ref int dwDay, ref int dwHour, ref int dwMinute, ref int dwSecond, ref int dwWorkCode, ref int dwReserved)
         {
             return objCZKEM.GetGeneralExtLogData(dwMachineNumber, ref dwEnrollNumber, ref dwVerifyMode, ref dwInOutMode, ref dwYear, ref dwMonth, ref dwDay, ref dwHour, ref dwMinute, ref dwSecond, ref dwWorkCode, ref dwReserved);
         }
-
-        public bool EmptyCard(int dwMachineNumber)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetDeviceStrInfo(int dwMachineNumber, int dwInfo, out string Value)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetSysOption(int dwMachineNumber, string Option, out string Value)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetUserInfoEx(int dwMachineNumber, int dwEnrollNumber, int VerifyStyle, ref byte Reserved)
-        {
-            return objCZKEM.SetUserInfoEx(dwMachineNumber, dwEnrollNumber, VerifyStyle, ref Reserved);
-        }
-
-        public bool GetUserInfoEx(int dwMachineNumber, int dwEnrollNumber, out int VerifyStyle, out byte Reserved)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool DeleteUserInfoEx(int dwMachineNumber, int dwEnrollNumber)
-        {
-            throw new NotImplementedException();
-        }
-        #region SSR_ZOne
 
         public bool SSR_GetGeneralLogData(int dwMachineNumber, out string dwEnrollNumber, out int dwVerifyMode, out int dwInOutMode, out int dwYear, out int dwMonth, out int dwDay, out int dwHour, out int dwMinute, out int dwSecond, ref int dwWorkCode)
         {
@@ -1145,22 +646,10 @@ namespace Automated_Attendance_System.ZKTeco
         {
             return objCZKEM.SSR_GetUserInfo(dwMachineNumber, dwEnrollNumber, out Name, out Password, out Privilege, out Enabled);
         }
-
-        public bool SSR_GetUserTmp(int dwMachineNumber, string dwEnrollNumber, int dwFingerIndex, out byte TmpData, out int TmpLength)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool SSR_GetUserTmpStr(int dwMachineNumber, string dwEnrollNumber, int dwFingerIndex, out string TmpData, out int TmpLength)
         {
             return objCZKEM.SSR_GetUserTmpStr(dwMachineNumber, dwEnrollNumber, dwFingerIndex, out TmpData, out TmpLength);
         }
-
-        public bool SSR_DeleteEnrollData(int dwMachineNumber, string dwEnrollNumber, int dwBackupNumber)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool SSR_SetUserInfo(int dwMachineNumber, string dwEnrollNumber, string Name, string Password, int Privilege, bool Enabled)
         {
             return objCZKEM.SSR_SetUserInfo(dwMachineNumber, dwEnrollNumber, Name, Password, Privilege, Enabled);
@@ -1173,7 +662,84 @@ namespace Automated_Attendance_System.ZKTeco
 
         public bool SSR_SetUserTmpStr(int dwMachineNumber, string dwEnrollNumber, int dwFingerIndex, string TmpData)
         {
-            return objCZKEM.SSR_SetUserTmpStr((int)dwMachineNumber, dwEnrollNumber, dwFingerIndex, TmpData);
+            return objCZKEM.SSR_SetUserTmpStr(dwMachineNumber, dwEnrollNumber, dwFingerIndex, TmpData);
+        }
+        public bool SetStrCardNumber(string ACardNumber)
+        {
+            return objCZKEM.SetStrCardNumber(ACardNumber);
+        }
+
+        public bool RegEvent(int dwMachineNumber, int EventMask)
+        {
+            return objCZKEM.RegEvent(dwMachineNumber, EventMask);
+        }
+        public bool StartEnrollEx(string UserID, int FingerID, int Flag)
+        {
+            return objCZKEM.StartEnrollEx(UserID, FingerID, Flag);
+        }
+
+        public bool GetUserTmpExStr(int dwMachineNumber, string dwEnrollNumber, int dwFingerIndex, out int Flag, out string TmpData, out int TmpLength)
+        {
+            return objCZKEM.GetUserTmpExStr(dwMachineNumber, dwEnrollNumber, dwFingerIndex, out Flag, out TmpData, out TmpLength);
+        }
+        public int PINWidth => objCZKEM.PINWidth;
+
+        public int MachineNumber { get => objCZKEM.MachineNumber; set => objCZKEM.MachineNumber = value; }
+
+        public int BatchDataMode { get => objCZKEM.BatchDataMode; set => objCZKEM.BatchDataMode = value; }
+
+        public bool SSR_GetGeneralLogDataWithMask(int dwMachineNumber, out string dwEnrollNumber, out int dwVerifyMode, out int dwInOutMode, out int dwYear, out int dwMonth, out int dwDay, out int dwHour, out int dwMinute, out int dwSecond, ref int dwWorkCode, out int dwMask, out string dwTemperature)
+        {
+            return objCZKEM.SSR_GetGeneralLogDataWithMask(dwMachineNumber, out dwEnrollNumber, out dwVerifyMode, out dwInOutMode, out dwYear, out dwMonth, out dwDay, out dwHour, out dwMinute, out dwSecond, ref dwWorkCode, out dwMask, out dwTemperature);
+        }
+
+        public bool SaveThermalImage(int dwMachineNumber)
+        {
+            return objCZKEM.SaveThermalImage(dwMachineNumber);
+        }
+
+        public bool SendFileByProduce(int dwMachineNumber, string FileName)
+        {
+            return objCZKEM.SendFileByProduce(dwMachineNumber, FileName);
+        }
+
+        public bool SSR_GetGeneralLogDataWithMaskEx(int dwMachineNumber, out string dwEnrollNumber, out int dwVerifyMode, out int dwInOutMode, out int dwYear, out int dwMonth, out int dwDay, out int dwHour, out int dwMinute, out int dwSecond, ref int dwWorkCode, out int dwMask, out string dwTemperature, out int dwhelmelhat)
+        {
+            return objCZKEM.SSR_GetGeneralLogDataWithMaskEx(dwMachineNumber, out dwEnrollNumber, out dwVerifyMode, out dwInOutMode, out dwYear, out dwMonth, out dwDay, out dwHour, out dwMinute, out dwSecond, ref dwWorkCode, out dwMask, out dwTemperature, out dwhelmelhat);
+        }
+
+        public bool SaveThermalImage_V2(int dwMachineNumber, string Reserved)
+        {
+            return objCZKEM.SaveThermalImage_V2(dwMachineNumber, Reserved);
+        }
+
+        public bool GetUserFacePhotoByNameEx(int dwMachineNumber, string PhotoName, out string PhotoData, out int PhotoLength)
+        {
+            return objCZKEM.GetUserFacePhotoByNameEx(dwMachineNumber, PhotoName, out PhotoData, out PhotoLength);
+        }
+
+        public bool UploadUserPhotoDataStr(int dwMachineNumber, string FileName, string FileDataStr, int DataLen)
+        {
+            return objCZKEM.UploadUserPhotoDataStr(dwMachineNumber, FileName, FileDataStr, DataLen);
+        }
+
+        public bool DownloadUserPhotoDataStr(int dwMachineNumber, string FileName, out string FileDataStr, out int DataLen)
+        {
+            return objCZKEM.DownloadUserPhotoDataStr(dwMachineNumber, FileName, out FileDataStr, out DataLen);
+        }
+
+        #endregion
+
+        #region SSR_ZOne
+
+        public bool SSR_GetUserTmp(int dwMachineNumber, string dwEnrollNumber, int dwFingerIndex, out byte TmpData, out int TmpLength)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SSR_DeleteEnrollData(int dwMachineNumber, string dwEnrollNumber, int dwBackupNumber)
+        {
+            throw new NotImplementedException();
         }
 
         public bool SSR_DelUserTmp(int dwMachineNumber, string dwEnrollNumber, int dwFingerIndex)
@@ -1318,6 +884,479 @@ namespace Automated_Attendance_System.ZKTeco
 
         #endregion
 
+        #region Unused Codes
+
+
+        public void ObjCZKEM_OnFinger()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ObjCZKEM_OnKeyPress(int key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ObjCZKEM_OnGeneralEvent(string dataString)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ObjCZKEM_OnEnrollFinger(int EnrollNumber, int FingerIndex, int ActionResult, int TemplateLength)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ClearAdministrators(int dwMachineNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DeleteEnrollData(int dwMachineNumber, int dwEnrollNumber, int dwEMachineNumber, int dwBackupNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ReadAllSLogData(int dwMachineNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool EnableUser(int dwMachineNumber, int dwEnrollNumber, int dwEMachineNumber, int dwBackupNumber, bool bFlag)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool EnableDevice(int dwMachineNumber, bool bFlag)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetDeviceInfo(int dwMachineNumber, int dwInfo, int dwValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PowerOnAllDevice()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool PowerOffDevice(int dwMachineNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ModifyPrivilege(int dwMachineNumber, int dwEnrollNumber, int dwEMachineNumber, int dwBackupNumber, int dwMachinePrivilege)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GetLastError(ref int dwErrorCode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetSuperLogData(int dwMachineNumber, ref int dwTMachineNumber, ref int dwSEnrollNumber, ref int Params4, ref int Params1, ref int Params2, ref int dwManipulation, ref int Params3, ref int dwYear, ref int dwMonth, ref int dwDay, ref int dwHour, ref int dwMinute)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetAllSLogData(int dwMachineNumber, ref int dwTMachineNumber, ref int dwSEnrollNumber, ref int Params4, ref int Params1, ref int Params2, ref int dwManipulation, ref int Params3, ref int dwYear, ref int dwMonth, ref int dwDay, ref int dwHour, ref int dwMinute)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetAllGLogData(int dwMachineNumber, ref int dwTMachineNumber, ref int dwEnrollNumber, ref int dwEMachineNumber, ref int dwVerifyMode, ref int dwInOutMode, ref int dwYear, ref int dwMonth, ref int dwDay, ref int dwHour, ref int dwMinute)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ConvertPassword(int dwSrcPSW, ref int dwDestPSW, int dwLength)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ClearKeeperData(int dwMachineNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetFPTempLength(ref byte dwEnrollData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Connect_Com(int ComPort, int MachineNumber, int BaudRate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetDeviceIP(int dwMachineNumber, string IPAddr)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetUserTmp(int dwMachineNumber, int dwEnrollNumber, int dwFingerIndex, ref byte TmpData, ref int TmpLength)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetUserTmp(int dwMachineNumber, int dwEnrollNumber, int dwFingerIndex, ref byte TmpData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DelUserTmp(int dwMachineNumber, int dwEnrollNumber, int dwFingerIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool FPTempConvert(ref byte TmpData1, ref byte TmpData2, ref int Size)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetCommPassword(int CommKey)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetUserGroup(int dwMachineNumber, int dwEnrollNumber, ref int UserGrp)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetUserGroup(int dwMachineNumber, int dwEnrollNumber, int UserGrp)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetTZInfo(int dwMachineNumber, int TZIndex, ref string TZ)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetTZInfo(int dwMachineNumber, int TZIndex, string TZ)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetUnlockGroups(int dwMachineNumber, ref string Grps)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetUnlockGroups(int dwMachineNumber, string Grps)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetGroupTZs(int dwMachineNumber, int GroupIndex, ref int TZs)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetGroupTZs(int dwMachineNumber, int GroupIndex, ref int TZs)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetUserTZs(int dwMachineNumber, int dwEnrollNumber, ref int TZs)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetUserTZs(int dwMachineNumber, int dwEnrollNumber, ref int TZs)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ACUnlock(int dwMachineNumber, int Delay)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetACFun(ref int ACFun)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetGeneralLogDataStr(int dwMachineNumber, ref int dwEnrollNumber, ref int dwVerifyMode, ref int dwInOutMode, ref string TimeStr)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetUserTmpStr(int dwMachineNumber, int dwEnrollNumber, int dwFingerIndex, ref string TmpData, ref int TmpLength)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetUserTmpStr(int dwMachineNumber, int dwEnrollNumber, int dwFingerIndex, string TmpData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetEnrollDataStr(int dwMachineNumber, int dwEnrollNumber, int dwEMachineNumber, int dwBackupNumber, int dwMachinePrivilege, string dwEnrollData, int dwPassWord)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetGroupTZStr(int dwMachineNumber, int GroupIndex, ref string TZs)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetGroupTZStr(int dwMachineNumber, int GroupIndex, string TZs)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetUserTZStr(int dwMachineNumber, int dwEnrollNumber, ref string TZs)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetUserTZStr(int dwMachineNumber, int dwEnrollNumber, string TZs)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool FPTempConvertStr(string TmpData1, ref string TmpData2, ref int Size)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetFPTempLengthStr(string dwEnrollData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetUserInfoByPIN2(int dwMachineNumber, ref string Name, ref string Password, ref int Privilege, ref bool Enabled)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetUserInfoByCard(int dwMachineNumber, ref string Name, ref string Password, ref int Privilege, ref bool Enabled)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool CaptureImage(bool FullImage, ref int Width, ref int Height, ref byte Image, string ImageFile)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool StartEnroll(int UserID, int FingerID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool StartVerify(int UserID, int FingerID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool StartIdentify()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool CancelOperation()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool QueryState(ref int State)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool BackupData(string DataFile)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool RestoreData(string DataFile)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ClearLCD()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Beep(int DelayMS)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool PlayVoice(int Position, int Length)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool EnableClock(int Enabled)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetUserIDByPIN2(int PIN2, ref int UserID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetPIN2(int UserID, ref int PIN2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool FPTempConvertNew(ref byte TmpData1, ref byte TmpData2, ref int Size)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool FPTempConvertNewStr(string TmpData1, ref string TmpData2, ref int Size)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DisableDeviceWithTimeOut(int dwMachineNumber, int TimeOutSec)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetDeviceTime2(int dwMachineNumber, int dwYear, int dwMonth, int dwDay, int dwHour, int dwMinute, int dwSecond)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ClearSLog(int dwMachineNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool RestartDevice(int dwMachineNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetDeviceMAC(int dwMachineNumber, string sMAC)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetWiegandFmt(int dwMachineNumber, string sWiegandFmt)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ClearSMS(int dwMachineNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetSMS(int dwMachineNumber, int ID, ref int Tag, ref int ValidMinutes, ref string StartTime, ref string Content)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetSMS(int dwMachineNumber, int ID, int Tag, int ValidMinutes, string StartTime, string Content)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DeleteSMS(int dwMachineNumber, int ID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetUserSMS(int dwMachineNumber, int dwEnrollNumber, int SMSID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DeleteUserSMS(int dwMachineNumber, int dwEnrollNumber, int SMSID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetCardFun(int dwMachineNumber, ref int CardFun)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ClearUserSMS(int dwMachineNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetDeviceCommPwd(int dwMachineNumber, int CommKey)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetDoorState(int MachineNumber, ref int State)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetSensorSN(int dwMachineNumber, ref string SensorSN)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ReadCustData(int dwMachineNumber, ref string CustData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool WriteCustData(int dwMachineNumber, string CustData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetDataFile(int dwMachineNumber, int DataFlag, string FileName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool WriteCard(int dwMachineNumber, int dwEnrollNumber, int dwFingerIndex1, ref byte TmpData1, int dwFingerIndex2, ref byte TmpData2, int dwFingerIndex3, ref byte TmpData3, int dwFingerIndex4, ref byte TmpData4)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool EmptyCard(int dwMachineNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetDeviceStrInfo(int dwMachineNumber, int dwInfo, out string Value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetSysOption(int dwMachineNumber, string Option, out string Value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SetUserInfoEx(int dwMachineNumber, int dwEnrollNumber, int VerifyStyle, ref byte Reserved)
+        {
+            return objCZKEM.SetUserInfoEx(dwMachineNumber, dwEnrollNumber, VerifyStyle, ref Reserved);
+        }
+
+        public bool GetUserInfoEx(int dwMachineNumber, int dwEnrollNumber, out int VerifyStyle, out byte Reserved)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DeleteUserInfoEx(int dwMachineNumber, int dwEnrollNumber)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool SetWorkCode(int WorkCodeID, int AWorkCode)
         {
             throw new NotImplementedException();
@@ -1381,16 +1420,6 @@ namespace Automated_Attendance_System.ZKTeco
         public bool GetStrCardNumber(out string ACardNumber)
         {
             throw new NotImplementedException();
-        }
-
-        public bool SetStrCardNumber(string ACardNumber)
-        {
-            return objCZKEM.SetStrCardNumber(ACardNumber);
-        }
-
-        public bool RegEvent(int dwMachineNumber, int EventMask)
-        {
-            return objCZKEM.RegEvent(dwMachineNumber, EventMask);
         }
 
         public bool CancelBatchUpdate(int dwMachineNumber)
@@ -1488,11 +1517,6 @@ namespace Automated_Attendance_System.ZKTeco
             throw new NotImplementedException();
         }
 
-        public bool StartEnrollEx(string UserID, int FingerID, int Flag)
-        {
-            return objCZKEM.StartEnrollEx(UserID, FingerID, Flag);
-        }
-
         public bool Connect_USB(int MachineNumber)
         {
             throw new NotImplementedException();
@@ -1531,11 +1555,6 @@ namespace Automated_Attendance_System.ZKTeco
         public bool GetUserTmpEx(int dwMachineNumber, string dwEnrollNumber, int dwFingerIndex, out int Flag, out byte TmpData, out int TmpLength)
         {
             throw new NotImplementedException();
-        }
-
-        public bool GetUserTmpExStr(int dwMachineNumber, string dwEnrollNumber, int dwFingerIndex, out int Flag, out string TmpData, out int TmpLength)
-        {
-            return objCZKEM.GetUserTmpExStr(dwMachineNumber, dwEnrollNumber, dwFingerIndex, out Flag, out TmpData, out TmpLength);
         }
 
         public bool SetUserTmpEx(int dwMachineNumber, string dwEnrollNumber, int dwFingerIndex, int Flag, ref byte TmpData)
@@ -2015,9 +2034,6 @@ namespace Automated_Attendance_System.ZKTeco
             throw new NotImplementedException();
         }
 
-        public int PINWidth => objCZKEM.PINWidth;
-
-        public int MachineNumber { get => objCZKEM.MachineNumber; set => objCZKEM.MachineNumber = value; }
         //public string STR_CardNumber { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public void set_STR_CardNumber(int Index, string pVal)
         {
@@ -2033,46 +2049,8 @@ namespace Automated_Attendance_System.ZKTeco
 
         public int MaxP4PConnect => objCZKEM.MaxP4PConnect;
 
-        public int BatchDataMode { get => objCZKEM.BatchDataMode; set => objCZKEM.BatchDataMode = value; }
 
-        public bool SSR_GetGeneralLogDataWithMask(int dwMachineNumber, out string dwEnrollNumber, out int dwVerifyMode, out int dwInOutMode, out int dwYear, out int dwMonth, out int dwDay, out int dwHour, out int dwMinute, out int dwSecond, ref int dwWorkCode, out int dwMask, out string dwTemperature)
-        {
-            return objCZKEM.SSR_GetGeneralLogDataWithMask(dwMachineNumber, out dwEnrollNumber, out dwVerifyMode, out dwInOutMode, out dwYear, out dwMonth, out dwDay, out dwHour, out dwMinute, out dwSecond, ref dwWorkCode, out dwMask, out dwTemperature);
-        }
 
-        public bool SaveThermalImage(int dwMachineNumber)
-        {
-            return objCZKEM.SaveThermalImage(dwMachineNumber);
-        }
-
-        public bool SendFileByProduce(int dwMachineNumber, string FileName)
-        {
-            return objCZKEM.SendFileByProduce(dwMachineNumber, FileName);
-        }
-
-        public bool SSR_GetGeneralLogDataWithMaskEx(int dwMachineNumber, out string dwEnrollNumber, out int dwVerifyMode, out int dwInOutMode, out int dwYear, out int dwMonth, out int dwDay, out int dwHour, out int dwMinute, out int dwSecond, ref int dwWorkCode, out int dwMask, out string dwTemperature, out int dwhelmelhat)
-        {
-            return objCZKEM.SSR_GetGeneralLogDataWithMaskEx(dwMachineNumber, out dwEnrollNumber, out dwVerifyMode, out dwInOutMode, out dwYear, out dwMonth, out dwDay, out dwHour, out dwMinute, out dwSecond, ref dwWorkCode, out dwMask, out dwTemperature, out dwhelmelhat);
-        }
-
-        public bool SaveThermalImage_V2(int dwMachineNumber, string Reserved)
-        {
-            return objCZKEM.SaveThermalImage_V2(dwMachineNumber, Reserved);
-        }
-
-        public bool GetUserFacePhotoByNameEx(int dwMachineNumber, string PhotoName, out string PhotoData, out int PhotoLength)
-        {
-            return objCZKEM.GetUserFacePhotoByNameEx(dwMachineNumber, PhotoName, out PhotoData, out PhotoLength);
-        }
-
-        public bool UploadUserPhotoDataStr(int dwMachineNumber, string FileName, string FileDataStr, int DataLen)
-        {
-            return objCZKEM.UploadUserPhotoDataStr(dwMachineNumber, FileName, FileDataStr, DataLen);
-        }
-
-        public bool DownloadUserPhotoDataStr(int dwMachineNumber, string FileName, out string FileDataStr, out int DataLen)
-        {
-            return objCZKEM.DownloadUserPhotoDataStr(dwMachineNumber, FileName, out FileDataStr, out DataLen);
-        }
+        #endregion
     }
 }

@@ -1,12 +1,35 @@
-﻿using System;
+﻿using Automated_Attendance_System.Controller;
+using Automated_Attendance_System.Entity.Model;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
 
 namespace Automated_Attendance_System.Helper
 {
+    /// <summary>
+    /// Only contains codes to send various emails
+    /// </summary>
     public class EmailHelper
     {
+
+        /// <summary>
+        /// Static variables to reduce instantiation in every thread.
+        /// The objects are only used for reading. Thus, does not require to be thread-safe.
+        /// </summary>
+        private static EmailController _emailController = new EmailController();
+
+        private static EmailDTO _primaryEmail = _emailController.loadPrimaryEmail();
+        private static EmailDTO _backupEmail = _emailController.loadBackupEmail();
+
+
+        /// <summary>
+        /// Dev Email List generator.
+        /// Hardcoded emails given.
+        /// </summary>
+        /// <returns>
+        /// List of Dev Email addresses
+        /// </returns>
         public List<string> GetDevMails()
         {
             List<string> devMails = new List<string>
@@ -18,10 +41,20 @@ namespace Automated_Attendance_System.Helper
             return devMails;
         }
 
+        /// <summary>
+        /// Send general emails.
+        /// Does not contain body, but contains meesage about error or success.
+        /// </summary>
+        /// <param name="status"> Supposed for error or general mail flag. Currently not in use.</param>
+        /// <param name="subject"> Subject of the Email.</param>
+        /// <param name="msg"> Message of the email.</param>
+        /// <returns>
+        /// True or false depending on the email being sent.
+        /// </returns>
         public bool SendEmail(string status, string subject, string msg)
         {
-            string _userName = "bss.sys.error.notifier@gmail.com";
-            string _password = "wxtprrhcsftaivri";
+            string _userName = _primaryEmail.EmailAddress.ToLower();
+            string _password = _primaryEmail.Password;
             SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
             client.EnableSsl = true;
             client.Credentials = new NetworkCredential(_userName, _password);
@@ -55,8 +88,8 @@ namespace Automated_Attendance_System.Helper
 
         public bool SendEmailBackup(string status, string subject, string msg)
         {
-            string _userName = "bss.sys.error.notifier2@gmail.com";
-            string _password = "A2hu-4fdBF98td8";
+            string _userName = _backupEmail.EmailAddress.ToLower();
+            string _password = _backupEmail.Password;
             SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
             client.EnableSsl = true;
             client.Credentials = new NetworkCredential(_userName, _password);
@@ -80,34 +113,6 @@ namespace Automated_Attendance_System.Helper
                 return true;
             }
 
-            catch (Exception ex)
-            {
-                string err = ex.ToString();
-            }
-
-            return true;
-        }
-
-
-        public bool SendLogExceptionEmail(string status, string subject, string msg)
-        {
-            string _userName = "bss.sys.error.notifier@gmail.com";
-            string _password = "wxtprrhcsftaivri";
-            SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
-            client.EnableSsl = true;
-            client.Credentials = new NetworkCredential(_userName, _password);
-            MailAddress from = new MailAddress(_userName, "BSS");
-            MailAddress to = new MailAddress("farhan.bssit.bd@gmail.com");
-            MailMessage message = new MailMessage(from, to);
-
-            message.Subject = subject;
-            message.IsBodyHtml = true;
-            message.Body = EmailBody(status: status, message: msg);
-            try
-            {
-                client.Send(message);
-                return true;
-            }
             catch (Exception ex)
             {
                 string err = ex.ToString();
@@ -160,8 +165,8 @@ namespace Automated_Attendance_System.Helper
 
         public bool SendLogEmail()
         {
-            string _userName = "bss.sys.error.notifier@gmail.com";
-            string _password = "wxtprrhcsftaivri";
+            string _userName = _primaryEmail.EmailAddress.ToLower();
+            string _password = _primaryEmail.Password;
             SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
             client.EnableSsl = true;
             client.Credentials = new NetworkCredential(_userName, _password);
@@ -172,9 +177,9 @@ namespace Automated_Attendance_System.Helper
             message.Subject = "Automated Attendance Log File";
             message.IsBodyHtml = true;
             message.Body = $"Log file of Automated Attendance System for {DateTime.Today.Date}";
-            System.Net.Mail.Attachment attachment;
+            Attachment attachment;
             //attachment = new System.Net.Mail.Attachment($"AutomatedAttendanceSystemLogger_{DateTime.Now.Month}_{DateTime.Now.Year}.txt"); //For Testing
-            attachment = new System.Net.Mail.Attachment($"H:\\ProcessLogFile\\utomatedAttendanceSystemAutomatedAttendanceSystemLog-{DateTime.Now:yyyy}{DateTime.Now:MM}.log"); //For deploy
+            attachment = new Attachment($"H:\\ProcessLogFile\\AutomatedAttendanceSystem\\AutomatedAttendanceSystemLog-{DateTime.Now:yyyy}{DateTime.Now:MM}.log"); //For deploy
             message.Attachments.Add(attachment);
 
             try
@@ -190,5 +195,36 @@ namespace Automated_Attendance_System.Helper
 
             return true;
         }
+
+        #region Unused Code
+
+        //public bool SendLogExceptionEmail(string status, string subject, string msg)
+        //{
+        //    string _userName = _primaryEmail.EmailAddress.ToLower();
+        //    string _password = _primaryEmail.Password;
+        //    SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
+        //    client.EnableSsl = true;
+        //    client.Credentials = new NetworkCredential(_userName, _password);
+        //    MailAddress from = new MailAddress(_userName, "BSS");
+        //    MailAddress to = new MailAddress("farhan.bssit.bd@gmail.com");
+        //    MailMessage message = new MailMessage(from, to);
+
+        //    message.Subject = subject;
+        //    message.IsBodyHtml = true;
+        //    message.Body = EmailBody(status: status, message: msg);
+        //    try
+        //    {
+        //        client.Send(message);
+        //        return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string err = ex.ToString();
+        //    }
+
+        //    return true;
+        //}
+
+        #endregion
     }
 }

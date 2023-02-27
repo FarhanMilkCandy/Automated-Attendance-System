@@ -153,8 +153,7 @@ namespace Automated_Attendance_System.Helpers
         {
             foreach (BSS_ATTENDANCE_DEVICES device in _deviceList)
             {
-                int temp = 0;
-                if (int.TryParse(device.DeviceMachineNumber, out temp))
+                if (int.TryParse(device.DeviceMachineNumber, out int temp))
                 {
                     bool clearFlag = clients.ClearData(temp, 1);
                     if (clearFlag)

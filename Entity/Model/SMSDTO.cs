@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Automated_Attendance_System.Entity.Model
 {
@@ -18,6 +14,6 @@ namespace Automated_Attendance_System.Entity.Model
         public int ErrorCode { get; set; }
         public string ErrorText { get; set; }
         public int SMSCount { get; set; }
-        public DateTime? SendDate { get; set;}
+        public DateTime? SendDate { get; set; }
     }
 }

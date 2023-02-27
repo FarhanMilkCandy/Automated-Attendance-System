@@ -10,6 +10,8 @@
         <EntityTypeShape EntityType="Model.BSS_STUDENT" Width="1.5" PointX="3.375" PointY="0.75" />
         <EntityTypeShape EntityType="Model.HR_EMPLOYEE" Width="1.5" PointX="5.375" PointY="4.75" />
         <EntityTypeShape EntityType="Model.BSS_SMS_HISTORY" Width="1.5" PointX="0.75" PointY="7.75" />
+        <EntityTypeShape EntityType="Model.BSS_EMAIL_SETTINGS" Width="1.5" PointX="7.375" PointY="4.75" />
+        <EntityTypeShape EntityType="Model.BSS_SERVICE_SETTINGS" Width="1.5" PointX="9.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

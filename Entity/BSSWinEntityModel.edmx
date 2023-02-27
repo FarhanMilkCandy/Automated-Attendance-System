@@ -50,16 +50,57 @@
           <Property Name="Work_Code" Type="int" />
           <Property Name="Sync_Status" Type="bit" />
         </EntityType>
+        <EntityType Name="BSS_EMAIL_SETTINGS">
+          <Key>
+            <PropertyRef Name="EMAIL_ID" />
+          </Key>
+          <Property Name="EMAIL_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EMAIL_NAME" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="EMAIL_SHORT_NAME" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="PASSWORD" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="SMTP_AUTHENTICATE_PASSWORD" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="STATUS" Type="bit" Nullable="false" />
+          <Property Name="ATTRIBUTE1" Type="nvarchar(max)" />
+          <Property Name="ATTRIBUTE2" Type="nvarchar(max)" />
+          <Property Name="ATTRIBUTE3" Type="nvarchar(max)" />
+          <Property Name="ATTRIBUTE4" Type="nvarchar(max)" />
+          <Property Name="ATTRIBUTE5" Type="nvarchar(max)" />
+          <Property Name="CREATED_BY" Type="int" />
+          <Property Name="CREATION_DATE" Type="datetime" />
+          <Property Name="UPDATE_BY" Type="int" />
+          <Property Name="UPDATE_DATE" Type="datetime" />
+        </EntityType>
+        <EntityType Name="BSS_SERVICE_SETTINGS">
+          <Key>
+            <PropertyRef Name="SERVICE_ID" />
+          </Key>
+          <Property Name="SERVICE_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SERVICE_NAME" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="SERVICE_SHORT_NAME" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="EMAIL" Type="int" Nullable="false" />
+          <Property Name="ALTERNATIVE_EMAIL" Type="int" />
+          <Property Name="STATUS" Type="bit" Nullable="false" />
+          <Property Name="ATTRIBUTE1" Type="nvarchar(max)" />
+          <Property Name="ATTRIBUTE2" Type="nvarchar(max)" />
+          <Property Name="ATTRIBUTE3" Type="nvarchar(max)" />
+          <Property Name="ATTRIBUTE4" Type="nvarchar(max)" />
+          <Property Name="ATTRIBUTE5" Type="nvarchar(max)" />
+          <Property Name="CREATED_BY" Type="int" />
+          <Property Name="CREATION_DATE" Type="date" />
+          <Property Name="UPDATE_BY" Type="int" />
+          <Property Name="UPDATED_DATE" Type="date" />
+        </EntityType>
         <EntityType Name="BSS_SMS_HISTORY">
           <Key>
             <PropertyRef Name="SMS_ID" />
             <PropertyRef Name="SENT_TO" />
           </Key>
-          <Property Name="SMS_ID" Type="bigint" Nullable="false" />
+          <Property Name="SMS_ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SENT_TO" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="SMS_SUBJECT" Type="nvarchar" MaxLength="200" />
           <Property Name="SMS_CONTENT" Type="nvarchar" MaxLength="200" />
           <Property Name="IS_SEND" Type="bit" />
+          <Property Name="SEND_COUNT" Type="int" />
           <Property Name="STATUS" Type="int" />
           <Property Name="STATUS_TEXT" Type="nvarchar" MaxLength="200" />
           <Property Name="ERROR_CODE" Type="int" />
@@ -315,6 +356,8 @@
         <EntityContainer Name="ModelStoreContainer">
           <EntitySet Name="BSS_ATTENDANCE_DEVICES" EntityType="Self.BSS_ATTENDANCE_DEVICES" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BSS_ATTENDANCE_ZK" EntityType="Self.BSS_ATTENDANCE_ZK" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BSS_EMAIL_SETTINGS" EntityType="Self.BSS_EMAIL_SETTINGS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BSS_SERVICE_SETTINGS" EntityType="Self.BSS_SERVICE_SETTINGS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BSS_SMS_HISTORY" EntityType="Self.BSS_SMS_HISTORY" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BSS_STUDENT" EntityType="Self.BSS_STUDENT" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="HR_EMPLOYEE" EntityType="Self.HR_EMPLOYEE" Schema="dbo" store:Type="Tables" />
@@ -329,6 +372,8 @@
           <EntitySet Name="BSS_STUDENT" EntityType="Model.BSS_STUDENT" />
           <EntitySet Name="HR_EMPLOYEE" EntityType="Model.HR_EMPLOYEE" />
           <EntitySet Name="BSS_SMS_HISTORY" EntityType="Model.BSS_SMS_HISTORY" />
+          <EntitySet Name="BSS_EMAIL_SETTINGS" EntityType="Model.BSS_EMAIL_SETTINGS" />
+          <EntitySet Name="BSS_SERVICE_SETTINGS" EntityType="Model.BSS_SERVICE_SETTINGS" />
         </EntityContainer>
         <EntityType Name="BSS_ATTENDANCE_DEVICES">
           <Key>
@@ -636,6 +681,47 @@
           <Property Name="LAST_UPDATE_DATE" Type="DateTime" Precision="3" />
           <Property Name="EFFECTIVE_FROM" Type="DateTime" Precision="3" />
           <Property Name="EFFECTIVE_TO" Type="DateTime" Precision="3" />
+          <Property Name="SEND_COUNT" Type="Int32" />
+        </EntityType>
+        <EntityType Name="BSS_EMAIL_SETTINGS">
+          <Key>
+            <PropertyRef Name="EMAIL_ID" />
+          </Key>
+          <Property Name="EMAIL_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EMAIL_NAME" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="EMAIL_SHORT_NAME" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PASSWORD" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SMTP_AUTHENTICATE_PASSWORD" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="STATUS" Type="Boolean" Nullable="false" />
+          <Property Name="ATTRIBUTE1" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE3" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE4" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE5" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CREATED_BY" Type="Int32" />
+          <Property Name="CREATION_DATE" Type="DateTime" Precision="3" />
+          <Property Name="UPDATE_BY" Type="Int32" />
+          <Property Name="UPDATE_DATE" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="BSS_SERVICE_SETTINGS">
+          <Key>
+            <PropertyRef Name="SERVICE_ID" />
+          </Key>
+          <Property Name="SERVICE_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SERVICE_NAME" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SERVICE_SHORT_NAME" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="EMAIL" Type="Int32" Nullable="false" />
+          <Property Name="ALTERNATIVE_EMAIL" Type="Int32" />
+          <Property Name="STATUS" Type="Boolean" Nullable="false" />
+          <Property Name="ATTRIBUTE1" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE3" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE4" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE5" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CREATED_BY" Type="Int32" />
+          <Property Name="CREATION_DATE" Type="DateTime" Precision="0" />
+          <Property Name="UPDATE_BY" Type="Int32" />
+          <Property Name="UPDATED_DATE" Type="DateTime" Precision="0" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -931,6 +1017,7 @@
           <EntitySetMapping Name="BSS_SMS_HISTORY">
             <EntityTypeMapping TypeName="Model.BSS_SMS_HISTORY">
               <MappingFragment StoreEntitySet="BSS_SMS_HISTORY">
+                <ScalarProperty Name="SEND_COUNT" ColumnName="SEND_COUNT" />
                 <ScalarProperty Name="EFFECTIVE_TO" ColumnName="EFFECTIVE_TO" />
                 <ScalarProperty Name="EFFECTIVE_FROM" ColumnName="EFFECTIVE_FROM" />
                 <ScalarProperty Name="LAST_UPDATE_DATE" ColumnName="LAST_UPDATE_DATE" />
@@ -951,6 +1038,48 @@
                 <ScalarProperty Name="SMS_SUBJECT" ColumnName="SMS_SUBJECT" />
                 <ScalarProperty Name="SENT_TO" ColumnName="SENT_TO" />
                 <ScalarProperty Name="SMS_ID" ColumnName="SMS_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BSS_EMAIL_SETTINGS">
+            <EntityTypeMapping TypeName="Model.BSS_EMAIL_SETTINGS">
+              <MappingFragment StoreEntitySet="BSS_EMAIL_SETTINGS">
+                <ScalarProperty Name="UPDATE_DATE" ColumnName="UPDATE_DATE" />
+                <ScalarProperty Name="UPDATE_BY" ColumnName="UPDATE_BY" />
+                <ScalarProperty Name="CREATION_DATE" ColumnName="CREATION_DATE" />
+                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+                <ScalarProperty Name="ATTRIBUTE5" ColumnName="ATTRIBUTE5" />
+                <ScalarProperty Name="ATTRIBUTE4" ColumnName="ATTRIBUTE4" />
+                <ScalarProperty Name="ATTRIBUTE3" ColumnName="ATTRIBUTE3" />
+                <ScalarProperty Name="ATTRIBUTE2" ColumnName="ATTRIBUTE2" />
+                <ScalarProperty Name="ATTRIBUTE1" ColumnName="ATTRIBUTE1" />
+                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+                <ScalarProperty Name="SMTP_AUTHENTICATE_PASSWORD" ColumnName="SMTP_AUTHENTICATE_PASSWORD" />
+                <ScalarProperty Name="PASSWORD" ColumnName="PASSWORD" />
+                <ScalarProperty Name="EMAIL_SHORT_NAME" ColumnName="EMAIL_SHORT_NAME" />
+                <ScalarProperty Name="EMAIL_NAME" ColumnName="EMAIL_NAME" />
+                <ScalarProperty Name="EMAIL_ID" ColumnName="EMAIL_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BSS_SERVICE_SETTINGS">
+            <EntityTypeMapping TypeName="Model.BSS_SERVICE_SETTINGS">
+              <MappingFragment StoreEntitySet="BSS_SERVICE_SETTINGS">
+                <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+                <ScalarProperty Name="UPDATE_BY" ColumnName="UPDATE_BY" />
+                <ScalarProperty Name="CREATION_DATE" ColumnName="CREATION_DATE" />
+                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+                <ScalarProperty Name="ATTRIBUTE5" ColumnName="ATTRIBUTE5" />
+                <ScalarProperty Name="ATTRIBUTE4" ColumnName="ATTRIBUTE4" />
+                <ScalarProperty Name="ATTRIBUTE3" ColumnName="ATTRIBUTE3" />
+                <ScalarProperty Name="ATTRIBUTE2" ColumnName="ATTRIBUTE2" />
+                <ScalarProperty Name="ATTRIBUTE1" ColumnName="ATTRIBUTE1" />
+                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+                <ScalarProperty Name="ALTERNATIVE_EMAIL" ColumnName="ALTERNATIVE_EMAIL" />
+                <ScalarProperty Name="EMAIL" ColumnName="EMAIL" />
+                <ScalarProperty Name="SERVICE_SHORT_NAME" ColumnName="SERVICE_SHORT_NAME" />
+                <ScalarProperty Name="SERVICE_NAME" ColumnName="SERVICE_NAME" />
+                <ScalarProperty Name="SERVICE_ID" ColumnName="SERVICE_ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

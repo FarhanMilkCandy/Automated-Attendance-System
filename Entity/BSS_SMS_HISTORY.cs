@@ -34,5 +34,6 @@ namespace Automated_Attendance_System.Entity
         public Nullable<System.DateTime> LAST_UPDATE_DATE { get; set; }
         public Nullable<System.DateTime> EFFECTIVE_FROM { get; set; }
         public Nullable<System.DateTime> EFFECTIVE_TO { get; set; }
+        public Nullable<int> SEND_COUNT { get; set; }
     }
 }

@@ -2,18 +2,17 @@
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms.VisualStyles;
 
 namespace Automated_Attendance_System.Controller
 {
     public class AttendanceController
     {
-        private static List<BSS_ATTENDANCE_ZK> exceptionList = new List<BSS_ATTENDANCE_ZK>();
+        private static BSS_ATTENDANCE_ZK exceptionEntry = new BSS_ATTENDANCE_ZK();
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        private readonly object _lock = new object();
 
         public Entities _db = new Entities();
 
@@ -46,106 +45,154 @@ namespace Automated_Attendance_System.Controller
             }
         }
 
-        public async Task<List<BSS_ATTENDANCE_ZK>> RecordPreviousAttendance(int machineNumber, string enrollmentNumber, int verifyMethod, DateTime punchDate, TimeSpan punchTime, int workCode)
+        public async Task<BSS_ATTENDANCE_ZK> RecordPreviousAttendance(int machineNumber, string enrollmentNumber, int verifyMethod, DateTime punchDate, TimeSpan punchTime, int workCode)
         {
             await _semaphore.WaitAsync();
+            int enrollNumber = int.TryParse(enrollmentNumber, out int temp) ? temp : -1;
 
-            temp = 0;
-            attendance = new BSS_ATTENDANCE_ZK
+            try
             {
-                Machine_Number = machineNumber,
-                Enrollment_Number = int.TryParse(enrollmentNumber, out temp) ? temp : -1,
-                Verify_Method = verifyMethod,
-                Punch_Date = punchDate,
-                Punch_Time = punchTime,
-                Work_Code = workCode,
-                Sync_Status = false
-            };
+                await _db.BSS_ATTENDANCE_ZK.InsertFromQueryAsync("BSS_ATTENDANCE_ZK", i => new BSS_ATTENDANCE_ZK
+                {
+                    Machine_Number = machineNumber,
+                    Enrollment_Number = enrollNumber,
+                    Verify_Method = verifyMethod,
+                    Punch_Date = punchDate,
+                    Punch_Time = punchTime,
+                    Work_Code = workCode,
+                    Sync_Status = false
+                });
 
-            _db.BSS_ATTENDANCE_ZK.AddOrUpdate(attendance);
-            await _db.SaveChangesAsync();
-
-            await PreviousExceptionRecorder(attendance);
-
-
-            _semaphore.Release();
-
-
-            return exceptionList;
-        }
-
-        private async Task PreviousExceptionRecorder(BSS_ATTENDANCE_ZK attendance)
-        {
-            await Task.Run(() =>
+                return null;
+            }
+            catch (Exception ex)
             {
-                Console.BackgroundColor = ConsoleColor.Red;
-                Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine($"\n>>Error storing {attendance.Enrollment_Number} attendance data to DB.\n");
-                Log.Fatal($"Error occured while inserting {attendance.Enrollment_Number} attendance data to DB.\n");
-                exceptionList.Add(attendance);
-            });
+                BSS_ATTENDANCE_ZK errorEntry = new BSS_ATTENDANCE_ZK
+                {
+                    Machine_Number = machineNumber,
+                    Enrollment_Number = enrollNumber,
+                    Verify_Method = verifyMethod,
+                    Punch_Date = punchDate,
+                    Punch_Time = punchTime,
+                    Work_Code = workCode,
+                    Sync_Status = false
+                };
+                Console.WriteLine($"Realtime Push : {ex.Message}\n");
+                bool successFlag = RetryDBEntry(errorEntry).GetAwaiter().GetResult();
+                if (!successFlag)
+                {
+                    return errorEntry;
+                }
+                return null;
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
 
         //Inserts Attendance to Database
-        public async Task<List<BSS_ATTENDANCE_ZK>> RecordAttendance(int machineNumber, string enrollmentNumber, int verifyMethod, DateTime punchDate, TimeSpan punchTime, int workCode)
+        public async Task<BSS_ATTENDANCE_ZK> RecordAttendance(int machineNumber, string enrollmentNumber, int verifyMethod, DateTime punchDate, TimeSpan punchTime, int workCode)
         {
-            await _semaphore.WaitAsync();
-
-            temp = 0;
-            attendance = new BSS_ATTENDANCE_ZK
+            lock (_lock)
             {
-                Machine_Number = machineNumber,
-                Enrollment_Number = int.TryParse(enrollmentNumber, out temp) ? temp : -1,
-                Verify_Method = verifyMethod,
-                Punch_Date = punchDate,
-                Punch_Time = punchTime,
-                Work_Code = workCode,
-                Sync_Status = false
-            };
+                int enrollNumber = int.TryParse(enrollmentNumber, out int temp) ? temp : -1;
 
-            //_db.BSS_ATTENDANCE_ZK.AddOrUpdate(attendance);
-            int flag = /*await _db.SaveChangesAsync();*/ 1;
-            if (flag < 0)
-            {
-                await ExceptionRecorder(attendance);
+                try
+                {
+                    _db.BSS_ATTENDANCE_ZK.InsertFromQueryAsync("BSS_ATTENDANCE_ZK", i => new BSS_ATTENDANCE_ZK
+                    {
+                        Machine_Number = machineNumber,
+                        Enrollment_Number = enrollNumber,
+                        Verify_Method = verifyMethod,
+                        Punch_Date = punchDate,
+                        Punch_Time = punchTime,
+                        Work_Code = workCode,
+                        Sync_Status = false
+                    });
+
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    BSS_ATTENDANCE_ZK errorEntry = new BSS_ATTENDANCE_ZK
+                    {
+                        Machine_Number = machineNumber,
+                        Enrollment_Number = enrollNumber,
+                        Verify_Method = verifyMethod,
+                        Punch_Date = punchDate,
+                        Punch_Time = punchTime,
+                        Work_Code = workCode,
+                        Sync_Status = false
+                    };
+                    Console.WriteLine($"Realtime Push : {ex.Message}\n");
+                    bool successFlag = RetryDBEntry(errorEntry).GetAwaiter().GetResult();
+                    if (!successFlag)
+                    {
+                        return errorEntry;
+                    }
+                    return null;
+                }
             }
-
-            _semaphore.Release();
-
-            return exceptionList;
         }
 
-        private async Task ExceptionRecorder(BSS_ATTENDANCE_ZK attendance)
+        public async Task<bool> RetryDBEntry(BSS_ATTENDANCE_ZK errorEntry, int retryCount = 0)
         {
-            await Task.Run(() =>
+            lock (_lock)
             {
-                Console.BackgroundColor = ConsoleColor.Red;
-                Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine($"\n>>Error storing {attendance.Enrollment_Number} attendance data to DB.\n");
-                Log.Fatal($"Error occured while inserting {attendance.Enrollment_Number} attendance data to DB at {attendance.Punch_Date.Date} {attendance.Punch_Time}.\n");
-                exceptionList.Add(attendance);
-            });
-        }
+                using (var transaction = _db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _db.BSS_ATTENDANCE_ZK.InsertFromQueryAsync("BSS_ATTENDANCE_ZK", i => new BSS_ATTENDANCE_ZK
+                        {
+                            Enrollment_Number = errorEntry.Enrollment_Number,
+                            InOut_Mode = errorEntry.InOut_Mode,
+                            Machine_Number = errorEntry.Machine_Number,
+                            Punch_Date = errorEntry.Punch_Date,
+                            Punch_Time = errorEntry.Punch_Time,
+                            Sync_Status = errorEntry.Sync_Status,
+                            Verify_Method = errorEntry.Verify_Method,
+                            Work_Code = errorEntry.Work_Code
+                        });
+                        transaction.Commit();
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        Console.WriteLine($"Transaction for {errorEntry.Enrollment_Number} failed in Retry Entry to DB. Exception: {ex.Message}\n");
+                        Log.Fatal($"Transaction for {errorEntry.Enrollment_Number} failed in Retry Entry to DB. Exception: {ex.Message}\n");
+                        if (retryCount <= 10)
+                        {
+                            RetryDBEntry(errorEntry, retryCount += 1).GetAwaiter();
+                            return false;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
 
-        public async Task<List<BSS_ATTENDANCE_ZK>> RetryDBEntry(List<BSS_ATTENDANCE_ZK> errorList)
-        {
-            await _semaphore.WaitAsync();
-            BSS_ATTENDANCE_ZK temp = null;
-            foreach (BSS_ATTENDANCE_ZK att in errorList)
-            {
-                temp = att;
-                await _db.BSS_ATTENDANCE_ZK.SingleInsertAsync(att);
+                // The old code has higher time complexity as well as SaveChangesAsync is slower
+                #region Old Code
+
+                //BSS_ATTENDANCE_ZK temp = null;
+                //foreach (BSS_ATTENDANCE_ZK att in errorList)
+                //{
+                //    temp = att;
+                //    await _db.BSS_ATTENDANCE_ZK.SingleInsertAsync(att);
+                //}
+                //int saveFlag = await _db.SaveChangesAsync();
+                //if (saveFlag > 0)
+                //{
+                //    errorList.RemoveAll(r => r == temp);
+                //    temp = null;
+                //}
+
+                #endregion
             }
-
-            if (saveFlag > 0)
-            {
-                errorList.RemoveAll(r => r == temp);
-                temp = null;
-            }
-
-            _semaphore.Release();
-            return errorList;
         }
-
     }
 }

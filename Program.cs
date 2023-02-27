@@ -1,4 +1,5 @@
-﻿using Automated_Attendance_System.Helper;
+﻿using Automated_Attendance_System.Entity.Model;
+using Automated_Attendance_System.Helper;
 using Automated_Attendance_System.Helpers;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -7,13 +8,19 @@ using System.Threading;
 
 namespace Automated_Attendance_System
 {
-    internal class Program
+    public class Program
     {
         public static ConnectionHelper _connector = new ConnectionHelper();
         public static EmailHelper _emailHelper = new EmailHelper();
+        public static ServiceDTO _serviceObj;
         //DateTime endTime;
         static void Main(string[] args)
         {
+            _serviceObj = ServiceHelper.GetDTOInstance();
+            if (!_serviceObj.Status)
+            {
+                Environment.Exit(0);
+            }
             #region Logger Settings
 
             //Created the "appsettings.json" file only for the logger. Sketchy solution, but hey, it works...
@@ -49,7 +56,7 @@ namespace Automated_Attendance_System
                         #endregion
 
                         _connector.EstablishConnections();
-                        _connector.TestRTPush();
+                        //_connector.TestRTPush();
 
                         Thread timerThread = new Thread(new ThreadStart(Program.ApplicationExitTime));
                         timerThread.IsBackground = false;
@@ -80,9 +87,6 @@ namespace Automated_Attendance_System
             {
                 Log.CloseAndFlush();
             }
-
-
-
         }
 
         public static void ApplicationExitTime()

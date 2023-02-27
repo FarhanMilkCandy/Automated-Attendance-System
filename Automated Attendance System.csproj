@@ -331,6 +331,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller\AttendanceController.cs" />
+    <Compile Include="Controller\EmailController.cs" />
+    <Compile Include="Controller\ServiceController.cs" />
     <Compile Include="Controller\SMSController.cs" />
     <Compile Include="Controller\UpdateController.cs" />
     <Compile Include="Entity\BSSWinEntityModel.Context.cs">
@@ -354,6 +356,12 @@
     <Compile Include="Entity\BSS_ATTENDANCE_ZK.cs">
       <DependentUpon>BSSWinEntityModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entity\BSS_EMAIL_SETTINGS.cs">
+      <DependentUpon>BSSWinEntityModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entity\BSS_SERVICE_SETTINGS.cs">
+      <DependentUpon>BSSWinEntityModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entity\BSS_SMS_HISTORY.cs">
       <DependentUpon>BSSWinEntityModel.tt</DependentUpon>
     </Compile>
@@ -363,10 +371,13 @@
     <Compile Include="Entity\HR_EMPLOYEE.cs">
       <DependentUpon>BSSWinEntityModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entity\Model\EmailDTO.cs" />
+    <Compile Include="Entity\Model\ServiceDTO.cs" />
     <Compile Include="Entity\Model\SMSDTO.cs" />
     <Compile Include="Helper\ConnectionHelper.cs" />
     <Compile Include="Helper\EmailHelper.cs" />
     <Compile Include="Helper\LogHelper.cs" />
+    <Compile Include="Helper\ServiceHelper.cs" />
     <Compile Include="Helper\SMSHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
