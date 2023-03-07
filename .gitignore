@@ -17,7 +17,7 @@
 mono_crash.*
 
 #AppConfig
-/App.config
+App.config
 
 # Build results
 [Dd]ebug/
