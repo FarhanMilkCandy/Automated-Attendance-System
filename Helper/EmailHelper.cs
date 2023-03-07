@@ -1,5 +1,6 @@
 ﻿using Automated_Attendance_System.Controller;
 using Automated_Attendance_System.Entity.Model;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -180,6 +181,8 @@ namespace Automated_Attendance_System.Helper
             Attachment attachment;
             //attachment = new System.Net.Mail.Attachment($"AutomatedAttendanceSystemLogger_{DateTime.Now.Month}_{DateTime.Now.Year}.txt"); //For Testing
             attachment = new Attachment($"H:\\ProcessLogFile\\AutomatedAttendanceSystem\\AutomatedAttendanceSystemLog-{DateTime.Now:yyyy}{DateTime.Now:MM}.log"); //For deploy
+            Log.Information($"H:\\ProcessLogFile\\AutomatedAttendanceSystem\\AutomatedAttendanceSystemLog-{DateTime.Now:yyyy}{DateTime.Now:MM}.log");
+            Log.Information(attachment.Name.ToString());
             message.Attachments.Add(attachment);
 
             try
