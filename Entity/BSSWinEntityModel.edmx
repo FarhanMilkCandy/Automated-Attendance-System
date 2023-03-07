@@ -353,6 +353,240 @@
           <Property Name="SYNC_STATUS" Type="nvarchar" MaxLength="10" />
           <Property Name="REJOINING_DATE" Type="datetime" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'BSS-MVC-LOCAL.dbo.BSS_STUDENT_BILL_VW' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="BSS_STUDENT_BILL_VW">
+          <Key>
+            <PropertyRef Name="BILL_HEADER_ID" />
+            <PropertyRef Name="STUDENT_ID" />
+            <PropertyRef Name="SECTION_NAME" />
+            <PropertyRef Name="CAMPUS_NAME" />
+            <PropertyRef Name="FLEX_VALUE" />
+            <PropertyRef Name="SESSION_NAME" />
+            <PropertyRef Name="USER_NAME" />
+            <PropertyRef Name="PERIOD_NAME" />
+            <PropertyRef Name="BILL_DTL_ID" />
+            <PropertyRef Name="RCV_TYPE" />
+          </Key>
+          <Property Name="BILL_HEADER_ID" Type="int" Nullable="false" />
+          <Property Name="BILL_NO" Type="nvarchar" MaxLength="10" />
+          <Property Name="BILL_DATE" Type="datetime" />
+          <Property Name="SESSION_ID" Type="int" />
+          <Property Name="STUDENT_HEADER_ID" Type="int" />
+          <Property Name="STUDENT_ID" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="CLASS_ID" Type="int" />
+          <Property Name="SECTION_ID" Type="int" />
+          <Property Name="SHIFT" Type="int" />
+          <Property Name="SCHOOL_ID" Type="int" />
+          <Property Name="BRANCH_ID" Type="int" />
+          <Property Name="DISCOUNT" Type="decimal" Precision="6" Scale="2" />
+          <Property Name="PERIOD_ID" Type="int" />
+          <Property Name="STUDENT_NAME" Type="nvarchar" MaxLength="92" />
+          <Property Name="CLASS_NAME" Type="nvarchar" MaxLength="50" />
+          <Property Name="SECTION_NAME" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="CLASS_DETAILS" Type="int" />
+          <Property Name="CAMPUS_NAME" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="FLEX_VALUE" Type="nvarchar" MaxLength="101" Nullable="false" />
+          <Property Name="SESSION_NAME" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="USER_NAME" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="EMP_NAME" Type="nvarchar" MaxLength="92" />
+          <Property Name="PERIOD_NAME" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="ATTRIBUTE1" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE2" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE3" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE4" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE5" Type="nvarchar" MaxLength="250" />
+          <Property Name="CREATED_BY" Type="int" />
+          <Property Name="CREATION_DATE" Type="datetime" />
+          <Property Name="LAST_UPDATE_BY" Type="int" />
+          <Property Name="LAST_UPDATE_DATE" Type="datetime" />
+          <Property Name="BILL_DTL_ID" Type="int" Nullable="false" />
+          <Property Name="RCV_TYPE" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="BILL_AMOUNT" Type="money" />
+          <Property Name="ACTUAL_RCV_AMOUNT" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="VAT_AMT" Type="nvarchar" MaxLength="100" />
+          <Property Name="DISC_AMOUNT" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="SEGMENT1" Type="nvarchar" MaxLength="10" />
+          <Property Name="SEGMENT2" Type="nvarchar" MaxLength="10" />
+          <Property Name="SEGMENT3" Type="nvarchar" MaxLength="10" />
+          <Property Name="SEGMENT4" Type="nvarchar" MaxLength="10" />
+          <Property Name="SEGMENT5" Type="nvarchar" MaxLength="10" />
+          <Property Name="SEGMENT6" Type="nvarchar" MaxLength="10" />
+          <Property Name="SEGMENT7" Type="nvarchar" MaxLength="10" />
+          <Property Name="DISC_ACC" Type="nvarchar" MaxLength="10" />
+          <Property Name="BSL_PERIOD_ID" Type="int" />
+          <Property Name="REMARKS" Type="nvarchar" MaxLength="200" />
+          <Property Name="LINE_ATTRIBUTE1" Type="nvarchar" MaxLength="250" />
+          <Property Name="LINE_ATTRIBUTE2" Type="nvarchar" MaxLength="250" />
+          <Property Name="LINE_ATTRIBUTE3" Type="nvarchar" MaxLength="250" />
+          <Property Name="LINE_ATTRIBUTE4" Type="nvarchar" MaxLength="250" />
+          <Property Name="LINE_ATTRIBUTE5" Type="nvarchar" MaxLength="250" />
+          <Property Name="LINE_CREATED_BY" Type="bigint" />
+          <Property Name="LINE_CREATION_DATE" Type="datetime" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'BSS-MVC-LOCAL.dbo.BSS_STUDENT_VW' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="BSS_STUDENT_VW">
+          <Key>
+            <PropertyRef Name="STUDENT_HEADER_ID" />
+            <PropertyRef Name="STUDENT_ID" />
+            <PropertyRef Name="CAMPUS" />
+          </Key>
+          <Property Name="STUDENT_HEADER_ID" Type="int" Nullable="false" />
+          <Property Name="STUDENT_ID" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="STUDENT_NAME" Type="nvarchar" MaxLength="92" />
+          <Property Name="NICK_NAME" Type="nvarchar" MaxLength="50" />
+          <Property Name="PRESENT_ADDRESS" Type="nvarchar" MaxLength="132" />
+          <Property Name="PRES_THANA" Type="nvarchar" MaxLength="100" />
+          <Property Name="PRES_POST_CODE" Type="nvarchar" MaxLength="10" />
+          <Property Name="PRES_CITY" Type="nvarchar" MaxLength="100" />
+          <Property Name="PRES_DIVISION" Type="nvarchar" MaxLength="100" />
+          <Property Name="PRES_COUNTRY" Type="nvarchar" MaxLength="100" />
+          <Property Name="PERM_ADDRESS" Type="nvarchar" MaxLength="132" />
+          <Property Name="PERM_THANA" Type="nvarchar" MaxLength="100" />
+          <Property Name="PERM_POST_CODE" Type="nvarchar" MaxLength="10" />
+          <Property Name="PERM_CITY" Type="nvarchar" MaxLength="100" />
+          <Property Name="PERM_DIVISION" Type="nvarchar" MaxLength="100" />
+          <Property Name="PERM_COUNTRY" Type="nvarchar" MaxLength="100" />
+          <Property Name="DOB" Type="datetime" />
+          <Property Name="BIRTH_CITY" Type="nvarchar" MaxLength="100" />
+          <Property Name="BIRTH_COUNTRY" Type="nvarchar" MaxLength="100" />
+          <Property Name="PLACE_OF_BIRTH" Type="nvarchar" MaxLength="60" />
+          <Property Name="ADMISSION_DATE" Type="datetime" />
+          <Property Name="ADMISSION_SESSION_ID" Type="int" />
+          <Property Name="ADMISSION_SESSION" Type="nvarchar" MaxLength="50" />
+          <Property Name="ADMISSION_CLASS_ID" Type="int" />
+          <Property Name="ADMISSION_CLASS" Type="nvarchar" MaxLength="50" />
+          <Property Name="ADMISSION_SECTION_ID" Type="int" />
+          <Property Name="ADMISSION_SECTION" Type="nvarchar" MaxLength="50" />
+          <Property Name="ADMISSION_SHIFT" Type="int" />
+          <Property Name="Expr1" Type="nvarchar" MaxLength="100" />
+          <Property Name="SESSION_ID" Type="int" />
+          <Property Name="SESSION_NAME" Type="nvarchar" MaxLength="50" />
+          <Property Name="CLASS_ID" Type="int" />
+          <Property Name="CLASS_NAME" Type="nvarchar" MaxLength="50" />
+          <Property Name="SECTION_ID" Type="int" />
+          <Property Name="SECTION_NAME" Type="nvarchar" MaxLength="50" />
+          <Property Name="SHIFT" Type="int" />
+          <Property Name="CURRENT_SHIFT" Type="nvarchar" MaxLength="100" />
+          <Property Name="CAMPUS_ID" Type="int" />
+          <Property Name="CAMPUS" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="END_DATE" Type="datetime" />
+          <Property Name="STATUS" Type="bit" />
+          <Property Name="GENDER" Type="nvarchar" MaxLength="10" />
+          <Property Name="RELIGION_ID" Type="nvarchar" MaxLength="30" />
+          <Property Name="RELIGION" Type="nvarchar" MaxLength="100" />
+          <Property Name="RES_PHONE" Type="nvarchar" MaxLength="30" />
+          <Property Name="MOBILE" Type="nvarchar" MaxLength="30" />
+          <Property Name="EMAIL" Type="nvarchar" MaxLength="100" />
+          <Property Name="BLOOD_GROUP" Type="nvarchar" MaxLength="10" />
+          <Property Name="NATIONALITY_ID" Type="nvarchar" MaxLength="60" />
+          <Property Name="NATIONALITY" Type="nvarchar" MaxLength="100" />
+          <Property Name="BIRTH_CERTIFICATE_NO" Type="nvarchar" MaxLength="30" />
+          <Property Name="PASSPORT_NO" Type="nvarchar" MaxLength="30" />
+          <Property Name="MEDICAL_HISTORY" Type="nvarchar" MaxLength="200" />
+          <Property Name="EMERGENCY_MEDICAL_ACTION" Type="nvarchar" MaxLength="200" />
+          <Property Name="FATHERS_NAME" Type="nvarchar" MaxLength="92" />
+          <Property Name="FATHER_EDUCATION" Type="nvarchar" MaxLength="50" />
+          <Property Name="FATHER_EDUCATION_DETAILS" Type="nvarchar" MaxLength="200" />
+          <Property Name="FATHER_OCCUPATION" Type="nvarchar" MaxLength="30" />
+          <Property Name="FATHER_OCCUPATION_DETAILS" Type="nvarchar" MaxLength="150" />
+          <Property Name="FATHER_OFFICE_ADDRESS" Type="nvarchar" MaxLength="200" />
+          <Property Name="FATHER_OFFICE_PHONE" Type="nvarchar" MaxLength="30" />
+          <Property Name="FATHER_MOBILE" Type="nvarchar" MaxLength="30" />
+          <Property Name="FATHER_NATIONAL_ID" Type="nvarchar" MaxLength="30" />
+          <Property Name="FATHER_PASSPORT_NO" Type="nvarchar" MaxLength="30" />
+          <Property Name="MOTHERS_NAME" Type="nvarchar" MaxLength="92" />
+          <Property Name="MOTHER_EDUCATION" Type="nvarchar" MaxLength="50" />
+          <Property Name="MOTHER_EDUCATION_DETAILS" Type="nvarchar" MaxLength="200" />
+          <Property Name="MOTHER_OCCUPATION" Type="nvarchar" MaxLength="30" />
+          <Property Name="MOTHER_OCCUPATION_DETAILS" Type="nvarchar" MaxLength="150" />
+          <Property Name="MOTHER_OFFICE_ADDRESS" Type="nvarchar" MaxLength="200" />
+          <Property Name="MOTHER_OFFICE_PHONE" Type="nvarchar" MaxLength="30" />
+          <Property Name="MOTHER_MOBILE" Type="nvarchar" MaxLength="30" />
+          <Property Name="MOTHER_NATIONAL_ID" Type="nvarchar" MaxLength="30" />
+          <Property Name="MOHER_PASSPORT_NO" Type="nvarchar" MaxLength="30" />
+          <Property Name="LOC_GUARDIAN_NAME" Type="nvarchar" MaxLength="92" />
+          <Property Name="LOC_GUARDIAN_RELATIONSHIP" Type="nvarchar" MaxLength="30" />
+          <Property Name="LOC_GUARDIAN_MOBILE" Type="nvarchar" MaxLength="30" />
+          <Property Name="LOCAL_GURDIAN_NATIONAL_ID" Type="nvarchar" MaxLength="30" />
+          <Property Name="LOCAL_GURDIAN_PASSPORT_NO" Type="nvarchar" MaxLength="30" />
+          <Property Name="STUDENT_PHOTO_PATH" Type="nvarchar" MaxLength="50" />
+          <Property Name="PROXIMITY_NUM" Type="nvarchar" MaxLength="15" />
+          <Property Name="EXIT_REASONS" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE1" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE2" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE3" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE4" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE5" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE6" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE7" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE8" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE9" Type="nvarchar" MaxLength="250" />
+          <Property Name="ATTRIBUTE10" Type="text" />
+          <Property Name="CREATED_BY" Type="bigint" />
+          <Property Name="CREATION_DATE" Type="datetime" />
+          <Property Name="LAST_UPDATE_BY" Type="bigint" />
+          <Property Name="LAST_UPDATE_DATE" Type="datetime" />
+          <Property Name="SYNC_STATUS" Type="nvarchar" MaxLength="10" />
+          <Property Name="READMISSION_SESSION_ID" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'BSS-MVC-LOCAL.dbo.HR_EMPLOYEE_VW' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="HR_EMPLOYEE_VW">
+          <Key>
+            <PropertyRef Name="EMP_HEADER_ID" />
+            <PropertyRef Name="EMP_ID" />
+            <PropertyRef Name="START_TIME" />
+            <PropertyRef Name="END_TIME" />
+          </Key>
+          <Property Name="EMP_HEADER_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EMP_ID" Type="nvarchar" MaxLength="15" Nullable="false" />
+          <Property Name="NAME" Type="nvarchar" MaxLength="92" />
+          <Property Name="DEPT_ID" Type="int" />
+          <Property Name="Department" Type="nvarchar" MaxLength="100" />
+          <Property Name="DESIG_ID" Type="int" />
+          <Property Name="NID" Type="nvarchar" MaxLength="30" />
+          <Property Name="PASSPORT" Type="nvarchar" MaxLength="30" />
+          <Property Name="EMAIL" Type="nvarchar" MaxLength="100" />
+          <Property Name="EMAIL_2" Type="nvarchar" MaxLength="100" />
+          <Property Name="DESIGNATION" Type="nvarchar" MaxLength="100" />
+          <Property Name="PHONE" Type="nvarchar" MaxLength="20" />
+          <Property Name="MOBILE" Type="nvarchar" MaxLength="20" />
+          <Property Name="START_TIME" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="END_TIME" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="JOINING_DATE" Type="datetime" />
+          <Property Name="REJOIN_DATE" Type="nvarchar" MaxLength="250" />
+          <Property Name="JOB_END_DATE" Type="datetime" />
+          <Property Name="Campus" Type="int" />
+          <Property Name="PresentAdderss" Type="nvarchar" MaxLength="234" />
+          <Property Name="PermanentAdderss" Type="nvarchar" MaxLength="234" />
+          <Property Name="FATHER_NAME" Type="nvarchar" MaxLength="92" />
+          <Property Name="FATHER_CONTACT_NO" Type="nvarchar" MaxLength="20" />
+          <Property Name="MOTHER_NAME" Type="nvarchar" MaxLength="92" />
+          <Property Name="MOTHER_CONTACT_NO" Type="nvarchar" MaxLength="20" />
+          <Property Name="JOB_LOCATION_ID" Type="int" />
+          <Property Name="STATUS" Type="bit" />
+          <Property Name="NATIONAL_ID" Type="nvarchar" MaxLength="30" />
+          <Property Name="GENDER" Type="bit" />
+          <Property Name="BIRTH_DATE" Type="datetime" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'BSS-MVC-LOCAL.dbo.Tution_Fee_Due_VW' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Tution_Fee_Due_VW">
+          <Key>
+            <PropertyRef Name="STUDENT_ID" />
+            <PropertyRef Name="LAST_PAID_MONTH" />
+            <PropertyRef Name="PERIOD_ID" />
+          </Key>
+          <Property Name="STUDENT_ID" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="STUDENT_NAME" Type="nvarchar" MaxLength="92" />
+          <Property Name="CLASS_NAME" Type="nvarchar" MaxLength="50" />
+          <Property Name="SECTION_NAME" Type="nvarchar" MaxLength="50" />
+          <Property Name="LAST_PAID_MONTH" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="MOBILE" Type="nvarchar" MaxLength="30" />
+          <Property Name="PERIOD_ID" Type="int" Nullable="false" />
+        </EntityType>
         <EntityContainer Name="ModelStoreContainer">
           <EntitySet Name="BSS_ATTENDANCE_DEVICES" EntityType="Self.BSS_ATTENDANCE_DEVICES" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BSS_ATTENDANCE_ZK" EntityType="Self.BSS_ATTENDANCE_ZK" Schema="dbo" store:Type="Tables" />
@@ -361,6 +595,212 @@
           <EntitySet Name="BSS_SMS_HISTORY" EntityType="Self.BSS_SMS_HISTORY" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BSS_STUDENT" EntityType="Self.BSS_STUDENT" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="HR_EMPLOYEE" EntityType="Self.HR_EMPLOYEE" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BSS_STUDENT_BILL_VW" EntityType="Self.BSS_STUDENT_BILL_VW" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [BSS_STUDENT_BILL_VW].[BILL_HEADER_ID] AS [BILL_HEADER_ID], 
+    [BSS_STUDENT_BILL_VW].[BILL_NO] AS [BILL_NO], 
+    [BSS_STUDENT_BILL_VW].[BILL_DATE] AS [BILL_DATE], 
+    [BSS_STUDENT_BILL_VW].[SESSION_ID] AS [SESSION_ID], 
+    [BSS_STUDENT_BILL_VW].[STUDENT_HEADER_ID] AS [STUDENT_HEADER_ID], 
+    [BSS_STUDENT_BILL_VW].[STUDENT_ID] AS [STUDENT_ID], 
+    [BSS_STUDENT_BILL_VW].[CLASS_ID] AS [CLASS_ID], 
+    [BSS_STUDENT_BILL_VW].[SECTION_ID] AS [SECTION_ID], 
+    [BSS_STUDENT_BILL_VW].[SHIFT] AS [SHIFT], 
+    [BSS_STUDENT_BILL_VW].[SCHOOL_ID] AS [SCHOOL_ID], 
+    [BSS_STUDENT_BILL_VW].[BRANCH_ID] AS [BRANCH_ID], 
+    [BSS_STUDENT_BILL_VW].[DISCOUNT] AS [DISCOUNT], 
+    [BSS_STUDENT_BILL_VW].[PERIOD_ID] AS [PERIOD_ID], 
+    [BSS_STUDENT_BILL_VW].[STUDENT_NAME] AS [STUDENT_NAME], 
+    [BSS_STUDENT_BILL_VW].[CLASS_NAME] AS [CLASS_NAME], 
+    [BSS_STUDENT_BILL_VW].[SECTION_NAME] AS [SECTION_NAME], 
+    [BSS_STUDENT_BILL_VW].[CLASS_DETAILS] AS [CLASS_DETAILS], 
+    [BSS_STUDENT_BILL_VW].[CAMPUS_NAME] AS [CAMPUS_NAME], 
+    [BSS_STUDENT_BILL_VW].[FLEX_VALUE] AS [FLEX_VALUE], 
+    [BSS_STUDENT_BILL_VW].[SESSION_NAME] AS [SESSION_NAME], 
+    [BSS_STUDENT_BILL_VW].[USER_NAME] AS [USER_NAME], 
+    [BSS_STUDENT_BILL_VW].[EMP_NAME] AS [EMP_NAME], 
+    [BSS_STUDENT_BILL_VW].[PERIOD_NAME] AS [PERIOD_NAME], 
+    [BSS_STUDENT_BILL_VW].[ATTRIBUTE1] AS [ATTRIBUTE1], 
+    [BSS_STUDENT_BILL_VW].[ATTRIBUTE2] AS [ATTRIBUTE2], 
+    [BSS_STUDENT_BILL_VW].[ATTRIBUTE3] AS [ATTRIBUTE3], 
+    [BSS_STUDENT_BILL_VW].[ATTRIBUTE4] AS [ATTRIBUTE4], 
+    [BSS_STUDENT_BILL_VW].[ATTRIBUTE5] AS [ATTRIBUTE5], 
+    [BSS_STUDENT_BILL_VW].[CREATED_BY] AS [CREATED_BY], 
+    [BSS_STUDENT_BILL_VW].[CREATION_DATE] AS [CREATION_DATE], 
+    [BSS_STUDENT_BILL_VW].[LAST_UPDATE_BY] AS [LAST_UPDATE_BY], 
+    [BSS_STUDENT_BILL_VW].[LAST_UPDATE_DATE] AS [LAST_UPDATE_DATE], 
+    [BSS_STUDENT_BILL_VW].[BILL_DTL_ID] AS [BILL_DTL_ID], 
+    [BSS_STUDENT_BILL_VW].[RCV_TYPE] AS [RCV_TYPE], 
+    [BSS_STUDENT_BILL_VW].[BILL_AMOUNT] AS [BILL_AMOUNT], 
+    [BSS_STUDENT_BILL_VW].[ACTUAL_RCV_AMOUNT] AS [ACTUAL_RCV_AMOUNT], 
+    [BSS_STUDENT_BILL_VW].[VAT_AMT] AS [VAT_AMT], 
+    [BSS_STUDENT_BILL_VW].[DISC_AMOUNT] AS [DISC_AMOUNT], 
+    [BSS_STUDENT_BILL_VW].[SEGMENT1] AS [SEGMENT1], 
+    [BSS_STUDENT_BILL_VW].[SEGMENT2] AS [SEGMENT2], 
+    [BSS_STUDENT_BILL_VW].[SEGMENT3] AS [SEGMENT3], 
+    [BSS_STUDENT_BILL_VW].[SEGMENT4] AS [SEGMENT4], 
+    [BSS_STUDENT_BILL_VW].[SEGMENT5] AS [SEGMENT5], 
+    [BSS_STUDENT_BILL_VW].[SEGMENT6] AS [SEGMENT6], 
+    [BSS_STUDENT_BILL_VW].[SEGMENT7] AS [SEGMENT7], 
+    [BSS_STUDENT_BILL_VW].[DISC_ACC] AS [DISC_ACC], 
+    [BSS_STUDENT_BILL_VW].[BSL_PERIOD_ID] AS [BSL_PERIOD_ID], 
+    [BSS_STUDENT_BILL_VW].[REMARKS] AS [REMARKS], 
+    [BSS_STUDENT_BILL_VW].[LINE_ATTRIBUTE1] AS [LINE_ATTRIBUTE1], 
+    [BSS_STUDENT_BILL_VW].[LINE_ATTRIBUTE2] AS [LINE_ATTRIBUTE2], 
+    [BSS_STUDENT_BILL_VW].[LINE_ATTRIBUTE3] AS [LINE_ATTRIBUTE3], 
+    [BSS_STUDENT_BILL_VW].[LINE_ATTRIBUTE4] AS [LINE_ATTRIBUTE4], 
+    [BSS_STUDENT_BILL_VW].[LINE_ATTRIBUTE5] AS [LINE_ATTRIBUTE5], 
+    [BSS_STUDENT_BILL_VW].[LINE_CREATED_BY] AS [LINE_CREATED_BY], 
+    [BSS_STUDENT_BILL_VW].[LINE_CREATION_DATE] AS [LINE_CREATION_DATE]
+    FROM [dbo].[BSS_STUDENT_BILL_VW] AS [BSS_STUDENT_BILL_VW]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="BSS_STUDENT_VW" EntityType="Self.BSS_STUDENT_VW" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [BSS_STUDENT_VW].[STUDENT_HEADER_ID] AS [STUDENT_HEADER_ID], 
+    [BSS_STUDENT_VW].[STUDENT_ID] AS [STUDENT_ID], 
+    [BSS_STUDENT_VW].[STUDENT_NAME] AS [STUDENT_NAME], 
+    [BSS_STUDENT_VW].[NICK_NAME] AS [NICK_NAME], 
+    [BSS_STUDENT_VW].[PRESENT_ADDRESS] AS [PRESENT_ADDRESS], 
+    [BSS_STUDENT_VW].[PRES_THANA] AS [PRES_THANA], 
+    [BSS_STUDENT_VW].[PRES_POST_CODE] AS [PRES_POST_CODE], 
+    [BSS_STUDENT_VW].[PRES_CITY] AS [PRES_CITY], 
+    [BSS_STUDENT_VW].[PRES_DIVISION] AS [PRES_DIVISION], 
+    [BSS_STUDENT_VW].[PRES_COUNTRY] AS [PRES_COUNTRY], 
+    [BSS_STUDENT_VW].[PERM_ADDRESS] AS [PERM_ADDRESS], 
+    [BSS_STUDENT_VW].[PERM_THANA] AS [PERM_THANA], 
+    [BSS_STUDENT_VW].[PERM_POST_CODE] AS [PERM_POST_CODE], 
+    [BSS_STUDENT_VW].[PERM_CITY] AS [PERM_CITY], 
+    [BSS_STUDENT_VW].[PERM_DIVISION] AS [PERM_DIVISION], 
+    [BSS_STUDENT_VW].[PERM_COUNTRY] AS [PERM_COUNTRY], 
+    [BSS_STUDENT_VW].[DOB] AS [DOB], 
+    [BSS_STUDENT_VW].[BIRTH_CITY] AS [BIRTH_CITY], 
+    [BSS_STUDENT_VW].[BIRTH_COUNTRY] AS [BIRTH_COUNTRY], 
+    [BSS_STUDENT_VW].[PLACE_OF_BIRTH] AS [PLACE_OF_BIRTH], 
+    [BSS_STUDENT_VW].[ADMISSION_DATE] AS [ADMISSION_DATE], 
+    [BSS_STUDENT_VW].[ADMISSION_SESSION_ID] AS [ADMISSION_SESSION_ID], 
+    [BSS_STUDENT_VW].[ADMISSION_SESSION] AS [ADMISSION_SESSION], 
+    [BSS_STUDENT_VW].[ADMISSION_CLASS_ID] AS [ADMISSION_CLASS_ID], 
+    [BSS_STUDENT_VW].[ADMISSION_CLASS] AS [ADMISSION_CLASS], 
+    [BSS_STUDENT_VW].[ADMISSION_SECTION_ID] AS [ADMISSION_SECTION_ID], 
+    [BSS_STUDENT_VW].[ADMISSION_SECTION] AS [ADMISSION_SECTION], 
+    [BSS_STUDENT_VW].[ADMISSION_SHIFT] AS [ADMISSION_SHIFT], 
+    [BSS_STUDENT_VW].[Expr1] AS [Expr1], 
+    [BSS_STUDENT_VW].[SESSION_ID] AS [SESSION_ID], 
+    [BSS_STUDENT_VW].[SESSION_NAME] AS [SESSION_NAME], 
+    [BSS_STUDENT_VW].[CLASS_ID] AS [CLASS_ID], 
+    [BSS_STUDENT_VW].[CLASS_NAME] AS [CLASS_NAME], 
+    [BSS_STUDENT_VW].[SECTION_ID] AS [SECTION_ID], 
+    [BSS_STUDENT_VW].[SECTION_NAME] AS [SECTION_NAME], 
+    [BSS_STUDENT_VW].[SHIFT] AS [SHIFT], 
+    [BSS_STUDENT_VW].[CURRENT_SHIFT] AS [CURRENT_SHIFT], 
+    [BSS_STUDENT_VW].[CAMPUS_ID] AS [CAMPUS_ID], 
+    [BSS_STUDENT_VW].[CAMPUS] AS [CAMPUS], 
+    [BSS_STUDENT_VW].[END_DATE] AS [END_DATE], 
+    [BSS_STUDENT_VW].[STATUS] AS [STATUS], 
+    [BSS_STUDENT_VW].[GENDER] AS [GENDER], 
+    [BSS_STUDENT_VW].[RELIGION_ID] AS [RELIGION_ID], 
+    [BSS_STUDENT_VW].[RELIGION] AS [RELIGION], 
+    [BSS_STUDENT_VW].[RES_PHONE] AS [RES_PHONE], 
+    [BSS_STUDENT_VW].[MOBILE] AS [MOBILE], 
+    [BSS_STUDENT_VW].[EMAIL] AS [EMAIL], 
+    [BSS_STUDENT_VW].[BLOOD_GROUP] AS [BLOOD_GROUP], 
+    [BSS_STUDENT_VW].[NATIONALITY_ID] AS [NATIONALITY_ID], 
+    [BSS_STUDENT_VW].[NATIONALITY] AS [NATIONALITY], 
+    [BSS_STUDENT_VW].[BIRTH_CERTIFICATE_NO] AS [BIRTH_CERTIFICATE_NO], 
+    [BSS_STUDENT_VW].[PASSPORT_NO] AS [PASSPORT_NO], 
+    [BSS_STUDENT_VW].[MEDICAL_HISTORY] AS [MEDICAL_HISTORY], 
+    [BSS_STUDENT_VW].[EMERGENCY_MEDICAL_ACTION] AS [EMERGENCY_MEDICAL_ACTION], 
+    [BSS_STUDENT_VW].[FATHERS_NAME] AS [FATHERS_NAME], 
+    [BSS_STUDENT_VW].[FATHER_EDUCATION] AS [FATHER_EDUCATION], 
+    [BSS_STUDENT_VW].[FATHER_EDUCATION_DETAILS] AS [FATHER_EDUCATION_DETAILS], 
+    [BSS_STUDENT_VW].[FATHER_OCCUPATION] AS [FATHER_OCCUPATION], 
+    [BSS_STUDENT_VW].[FATHER_OCCUPATION_DETAILS] AS [FATHER_OCCUPATION_DETAILS], 
+    [BSS_STUDENT_VW].[FATHER_OFFICE_ADDRESS] AS [FATHER_OFFICE_ADDRESS], 
+    [BSS_STUDENT_VW].[FATHER_OFFICE_PHONE] AS [FATHER_OFFICE_PHONE], 
+    [BSS_STUDENT_VW].[FATHER_MOBILE] AS [FATHER_MOBILE], 
+    [BSS_STUDENT_VW].[FATHER_NATIONAL_ID] AS [FATHER_NATIONAL_ID], 
+    [BSS_STUDENT_VW].[FATHER_PASSPORT_NO] AS [FATHER_PASSPORT_NO], 
+    [BSS_STUDENT_VW].[MOTHERS_NAME] AS [MOTHERS_NAME], 
+    [BSS_STUDENT_VW].[MOTHER_EDUCATION] AS [MOTHER_EDUCATION], 
+    [BSS_STUDENT_VW].[MOTHER_EDUCATION_DETAILS] AS [MOTHER_EDUCATION_DETAILS], 
+    [BSS_STUDENT_VW].[MOTHER_OCCUPATION] AS [MOTHER_OCCUPATION], 
+    [BSS_STUDENT_VW].[MOTHER_OCCUPATION_DETAILS] AS [MOTHER_OCCUPATION_DETAILS], 
+    [BSS_STUDENT_VW].[MOTHER_OFFICE_ADDRESS] AS [MOTHER_OFFICE_ADDRESS], 
+    [BSS_STUDENT_VW].[MOTHER_OFFICE_PHONE] AS [MOTHER_OFFICE_PHONE], 
+    [BSS_STUDENT_VW].[MOTHER_MOBILE] AS [MOTHER_MOBILE], 
+    [BSS_STUDENT_VW].[MOTHER_NATIONAL_ID] AS [MOTHER_NATIONAL_ID], 
+    [BSS_STUDENT_VW].[MOHER_PASSPORT_NO] AS [MOHER_PASSPORT_NO], 
+    [BSS_STUDENT_VW].[LOC_GUARDIAN_NAME] AS [LOC_GUARDIAN_NAME], 
+    [BSS_STUDENT_VW].[LOC_GUARDIAN_RELATIONSHIP] AS [LOC_GUARDIAN_RELATIONSHIP], 
+    [BSS_STUDENT_VW].[LOC_GUARDIAN_MOBILE] AS [LOC_GUARDIAN_MOBILE], 
+    [BSS_STUDENT_VW].[LOCAL_GURDIAN_NATIONAL_ID] AS [LOCAL_GURDIAN_NATIONAL_ID], 
+    [BSS_STUDENT_VW].[LOCAL_GURDIAN_PASSPORT_NO] AS [LOCAL_GURDIAN_PASSPORT_NO], 
+    [BSS_STUDENT_VW].[STUDENT_PHOTO_PATH] AS [STUDENT_PHOTO_PATH], 
+    [BSS_STUDENT_VW].[PROXIMITY_NUM] AS [PROXIMITY_NUM], 
+    [BSS_STUDENT_VW].[EXIT_REASONS] AS [EXIT_REASONS], 
+    [BSS_STUDENT_VW].[ATTRIBUTE1] AS [ATTRIBUTE1], 
+    [BSS_STUDENT_VW].[ATTRIBUTE2] AS [ATTRIBUTE2], 
+    [BSS_STUDENT_VW].[ATTRIBUTE3] AS [ATTRIBUTE3], 
+    [BSS_STUDENT_VW].[ATTRIBUTE4] AS [ATTRIBUTE4], 
+    [BSS_STUDENT_VW].[ATTRIBUTE5] AS [ATTRIBUTE5], 
+    [BSS_STUDENT_VW].[ATTRIBUTE6] AS [ATTRIBUTE6], 
+    [BSS_STUDENT_VW].[ATTRIBUTE7] AS [ATTRIBUTE7], 
+    [BSS_STUDENT_VW].[ATTRIBUTE8] AS [ATTRIBUTE8], 
+    [BSS_STUDENT_VW].[ATTRIBUTE9] AS [ATTRIBUTE9], 
+    [BSS_STUDENT_VW].[ATTRIBUTE10] AS [ATTRIBUTE10], 
+    [BSS_STUDENT_VW].[CREATED_BY] AS [CREATED_BY], 
+    [BSS_STUDENT_VW].[CREATION_DATE] AS [CREATION_DATE], 
+    [BSS_STUDENT_VW].[LAST_UPDATE_BY] AS [LAST_UPDATE_BY], 
+    [BSS_STUDENT_VW].[LAST_UPDATE_DATE] AS [LAST_UPDATE_DATE], 
+    [BSS_STUDENT_VW].[SYNC_STATUS] AS [SYNC_STATUS], 
+    [BSS_STUDENT_VW].[READMISSION_SESSION_ID] AS [READMISSION_SESSION_ID]
+    FROM [dbo].[BSS_STUDENT_VW] AS [BSS_STUDENT_VW]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="HR_EMPLOYEE_VW" EntityType="Self.HR_EMPLOYEE_VW" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [HR_EMPLOYEE_VW].[EMP_HEADER_ID] AS [EMP_HEADER_ID], 
+    [HR_EMPLOYEE_VW].[EMP_ID] AS [EMP_ID], 
+    [HR_EMPLOYEE_VW].[NAME] AS [NAME], 
+    [HR_EMPLOYEE_VW].[DEPT_ID] AS [DEPT_ID], 
+    [HR_EMPLOYEE_VW].[Department] AS [Department], 
+    [HR_EMPLOYEE_VW].[DESIG_ID] AS [DESIG_ID], 
+    [HR_EMPLOYEE_VW].[NID] AS [NID], 
+    [HR_EMPLOYEE_VW].[PASSPORT] AS [PASSPORT], 
+    [HR_EMPLOYEE_VW].[EMAIL] AS [EMAIL], 
+    [HR_EMPLOYEE_VW].[EMAIL_2] AS [EMAIL_2], 
+    [HR_EMPLOYEE_VW].[DESIGNATION] AS [DESIGNATION], 
+    [HR_EMPLOYEE_VW].[PHONE] AS [PHONE], 
+    [HR_EMPLOYEE_VW].[MOBILE] AS [MOBILE], 
+    [HR_EMPLOYEE_VW].[START_TIME] AS [START_TIME], 
+    [HR_EMPLOYEE_VW].[END_TIME] AS [END_TIME], 
+    [HR_EMPLOYEE_VW].[JOINING_DATE] AS [JOINING_DATE], 
+    [HR_EMPLOYEE_VW].[REJOIN_DATE] AS [REJOIN_DATE], 
+    [HR_EMPLOYEE_VW].[JOB_END_DATE] AS [JOB_END_DATE], 
+    [HR_EMPLOYEE_VW].[Campus] AS [Campus], 
+    [HR_EMPLOYEE_VW].[PresentAdderss] AS [PresentAdderss], 
+    [HR_EMPLOYEE_VW].[PermanentAdderss] AS [PermanentAdderss], 
+    [HR_EMPLOYEE_VW].[FATHER_NAME] AS [FATHER_NAME], 
+    [HR_EMPLOYEE_VW].[FATHER_CONTACT_NO] AS [FATHER_CONTACT_NO], 
+    [HR_EMPLOYEE_VW].[MOTHER_NAME] AS [MOTHER_NAME], 
+    [HR_EMPLOYEE_VW].[MOTHER_CONTACT_NO] AS [MOTHER_CONTACT_NO], 
+    [HR_EMPLOYEE_VW].[JOB_LOCATION_ID] AS [JOB_LOCATION_ID], 
+    [HR_EMPLOYEE_VW].[STATUS] AS [STATUS], 
+    [HR_EMPLOYEE_VW].[NATIONAL_ID] AS [NATIONAL_ID], 
+    [HR_EMPLOYEE_VW].[GENDER] AS [GENDER], 
+    [HR_EMPLOYEE_VW].[BIRTH_DATE] AS [BIRTH_DATE]
+    FROM [dbo].[HR_EMPLOYEE_VW] AS [HR_EMPLOYEE_VW]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Tution_Fee_Due_VW" EntityType="Self.Tution_Fee_Due_VW" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Tution_Fee_Due_VW].[STUDENT_ID] AS [STUDENT_ID], 
+    [Tution_Fee_Due_VW].[STUDENT_NAME] AS [STUDENT_NAME], 
+    [Tution_Fee_Due_VW].[CLASS_NAME] AS [CLASS_NAME], 
+    [Tution_Fee_Due_VW].[SECTION_NAME] AS [SECTION_NAME], 
+    [Tution_Fee_Due_VW].[LAST_PAID_MONTH] AS [LAST_PAID_MONTH], 
+    [Tution_Fee_Due_VW].[MOBILE] AS [MOBILE], 
+    [Tution_Fee_Due_VW].[PERIOD_ID] AS [PERIOD_ID]
+    FROM [dbo].[Tution_Fee_Due_VW] AS [Tution_Fee_Due_VW]</DefiningQuery>
+          </EntitySet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -374,6 +814,10 @@
           <EntitySet Name="BSS_SMS_HISTORY" EntityType="Model.BSS_SMS_HISTORY" />
           <EntitySet Name="BSS_EMAIL_SETTINGS" EntityType="Model.BSS_EMAIL_SETTINGS" />
           <EntitySet Name="BSS_SERVICE_SETTINGS" EntityType="Model.BSS_SERVICE_SETTINGS" />
+          <EntitySet Name="BSS_STUDENT_VW" EntityType="Model.BSS_STUDENT_VW" />
+          <EntitySet Name="HR_EMPLOYEE_VW" EntityType="Model.HR_EMPLOYEE_VW" />
+          <EntitySet Name="BSS_STUDENT_BILL_VW" EntityType="Model.BSS_STUDENT_BILL_VW" />
+          <EntitySet Name="Tution_Fee_Due_VW" EntityType="Model.Tution_Fee_Due_VW" />
         </EntityContainer>
         <EntityType Name="BSS_ATTENDANCE_DEVICES">
           <Key>
@@ -722,6 +1166,232 @@
           <Property Name="CREATION_DATE" Type="DateTime" Precision="0" />
           <Property Name="UPDATE_BY" Type="Int32" />
           <Property Name="UPDATED_DATE" Type="DateTime" Precision="0" />
+        </EntityType>
+        <EntityType Name="BSS_STUDENT_VW">
+          <Key>
+            <PropertyRef Name="STUDENT_HEADER_ID" />
+            <PropertyRef Name="STUDENT_ID" />
+            <PropertyRef Name="CAMPUS" />
+          </Key>
+          <Property Name="STUDENT_HEADER_ID" Type="Int32" Nullable="false" />
+          <Property Name="STUDENT_ID" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="STUDENT_NAME" Type="String" MaxLength="92" FixedLength="false" Unicode="true" />
+          <Property Name="NICK_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PRESENT_ADDRESS" Type="String" MaxLength="132" FixedLength="false" Unicode="true" />
+          <Property Name="PRES_THANA" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PRES_POST_CODE" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="PRES_CITY" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PRES_DIVISION" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PRES_COUNTRY" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PERM_ADDRESS" Type="String" MaxLength="132" FixedLength="false" Unicode="true" />
+          <Property Name="PERM_THANA" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PERM_POST_CODE" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="PERM_CITY" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PERM_DIVISION" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PERM_COUNTRY" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DOB" Type="DateTime" Precision="3" />
+          <Property Name="BIRTH_CITY" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="BIRTH_COUNTRY" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PLACE_OF_BIRTH" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="ADMISSION_DATE" Type="DateTime" Precision="3" />
+          <Property Name="ADMISSION_SESSION_ID" Type="Int32" />
+          <Property Name="ADMISSION_SESSION" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ADMISSION_CLASS_ID" Type="Int32" />
+          <Property Name="ADMISSION_CLASS" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ADMISSION_SECTION_ID" Type="Int32" />
+          <Property Name="ADMISSION_SECTION" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ADMISSION_SHIFT" Type="Int32" />
+          <Property Name="Expr1" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="SESSION_ID" Type="Int32" />
+          <Property Name="SESSION_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CLASS_ID" Type="Int32" />
+          <Property Name="CLASS_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SECTION_ID" Type="Int32" />
+          <Property Name="SECTION_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SHIFT" Type="Int32" />
+          <Property Name="CURRENT_SHIFT" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CAMPUS_ID" Type="Int32" />
+          <Property Name="CAMPUS" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="END_DATE" Type="DateTime" Precision="3" />
+          <Property Name="STATUS" Type="Boolean" />
+          <Property Name="GENDER" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="RELIGION_ID" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="RELIGION" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="RES_PHONE" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MOBILE" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="EMAIL" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="BLOOD_GROUP" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="NATIONALITY_ID" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="NATIONALITY" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="BIRTH_CERTIFICATE_NO" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="PASSPORT_NO" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MEDICAL_HISTORY" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="EMERGENCY_MEDICAL_ACTION" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="FATHERS_NAME" Type="String" MaxLength="92" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_EDUCATION" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_EDUCATION_DETAILS" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_OCCUPATION" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_OCCUPATION_DETAILS" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_OFFICE_ADDRESS" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_OFFICE_PHONE" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_MOBILE" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_NATIONAL_ID" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_PASSPORT_NO" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHERS_NAME" Type="String" MaxLength="92" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_EDUCATION" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_EDUCATION_DETAILS" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_OCCUPATION" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_OCCUPATION_DETAILS" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_OFFICE_ADDRESS" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_OFFICE_PHONE" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_MOBILE" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_NATIONAL_ID" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MOHER_PASSPORT_NO" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="LOC_GUARDIAN_NAME" Type="String" MaxLength="92" FixedLength="false" Unicode="true" />
+          <Property Name="LOC_GUARDIAN_RELATIONSHIP" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="LOC_GUARDIAN_MOBILE" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="LOCAL_GURDIAN_NATIONAL_ID" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="LOCAL_GURDIAN_PASSPORT_NO" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="STUDENT_PHOTO_PATH" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PROXIMITY_NUM" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="EXIT_REASONS" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE1" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE2" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE3" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE4" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE5" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE6" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE7" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE8" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE9" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE10" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CREATED_BY" Type="Int64" />
+          <Property Name="CREATION_DATE" Type="DateTime" Precision="3" />
+          <Property Name="LAST_UPDATE_BY" Type="Int64" />
+          <Property Name="LAST_UPDATE_DATE" Type="DateTime" Precision="3" />
+          <Property Name="SYNC_STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="READMISSION_SESSION_ID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="HR_EMPLOYEE_VW">
+          <Key>
+            <PropertyRef Name="EMP_HEADER_ID" />
+            <PropertyRef Name="EMP_ID" />
+            <PropertyRef Name="START_TIME" />
+            <PropertyRef Name="END_TIME" />
+          </Key>
+          <Property Name="EMP_HEADER_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EMP_ID" Type="String" Nullable="false" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="NAME" Type="String" MaxLength="92" FixedLength="false" Unicode="true" />
+          <Property Name="DEPT_ID" Type="Int32" />
+          <Property Name="Department" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DESIG_ID" Type="Int32" />
+          <Property Name="NID" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="PASSPORT" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="EMAIL" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="EMAIL_2" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DESIGNATION" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PHONE" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="MOBILE" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="START_TIME" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="END_TIME" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="JOINING_DATE" Type="DateTime" Precision="3" />
+          <Property Name="REJOIN_DATE" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="JOB_END_DATE" Type="DateTime" Precision="3" />
+          <Property Name="Campus" Type="Int32" />
+          <Property Name="PresentAdderss" Type="String" MaxLength="234" FixedLength="false" Unicode="true" />
+          <Property Name="PermanentAdderss" Type="String" MaxLength="234" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_NAME" Type="String" MaxLength="92" FixedLength="false" Unicode="true" />
+          <Property Name="FATHER_CONTACT_NO" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_NAME" Type="String" MaxLength="92" FixedLength="false" Unicode="true" />
+          <Property Name="MOTHER_CONTACT_NO" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="JOB_LOCATION_ID" Type="Int32" />
+          <Property Name="STATUS" Type="Boolean" />
+          <Property Name="NATIONAL_ID" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="GENDER" Type="Boolean" />
+          <Property Name="BIRTH_DATE" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="BSS_STUDENT_BILL_VW">
+          <Key>
+            <PropertyRef Name="BILL_HEADER_ID" />
+            <PropertyRef Name="STUDENT_ID" />
+            <PropertyRef Name="SECTION_NAME" />
+            <PropertyRef Name="CAMPUS_NAME" />
+            <PropertyRef Name="FLEX_VALUE" />
+            <PropertyRef Name="SESSION_NAME" />
+            <PropertyRef Name="USER_NAME" />
+            <PropertyRef Name="PERIOD_NAME" />
+            <PropertyRef Name="BILL_DTL_ID" />
+            <PropertyRef Name="RCV_TYPE" />
+          </Key>
+          <Property Name="BILL_HEADER_ID" Type="Int32" Nullable="false" />
+          <Property Name="BILL_NO" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="BILL_DATE" Type="DateTime" Precision="3" />
+          <Property Name="SESSION_ID" Type="Int32" />
+          <Property Name="STUDENT_HEADER_ID" Type="Int32" />
+          <Property Name="STUDENT_ID" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="CLASS_ID" Type="Int32" />
+          <Property Name="SECTION_ID" Type="Int32" />
+          <Property Name="SHIFT" Type="Int32" />
+          <Property Name="SCHOOL_ID" Type="Int32" />
+          <Property Name="BRANCH_ID" Type="Int32" />
+          <Property Name="DISCOUNT" Type="Decimal" Precision="6" Scale="2" />
+          <Property Name="PERIOD_ID" Type="Int32" />
+          <Property Name="STUDENT_NAME" Type="String" MaxLength="92" FixedLength="false" Unicode="true" />
+          <Property Name="CLASS_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SECTION_NAME" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CLASS_DETAILS" Type="Int32" />
+          <Property Name="CAMPUS_NAME" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="FLEX_VALUE" Type="String" Nullable="false" MaxLength="101" FixedLength="false" Unicode="true" />
+          <Property Name="SESSION_NAME" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="USER_NAME" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="EMP_NAME" Type="String" MaxLength="92" FixedLength="false" Unicode="true" />
+          <Property Name="PERIOD_NAME" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE1" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE2" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE3" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE4" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ATTRIBUTE5" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="CREATED_BY" Type="Int32" />
+          <Property Name="CREATION_DATE" Type="DateTime" Precision="3" />
+          <Property Name="LAST_UPDATE_BY" Type="Int32" />
+          <Property Name="LAST_UPDATE_DATE" Type="DateTime" Precision="3" />
+          <Property Name="BILL_DTL_ID" Type="Int32" Nullable="false" />
+          <Property Name="RCV_TYPE" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="BILL_AMOUNT" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="ACTUAL_RCV_AMOUNT" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="VAT_AMT" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DISC_AMOUNT" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="SEGMENT1" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="SEGMENT2" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="SEGMENT3" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="SEGMENT4" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="SEGMENT5" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="SEGMENT6" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="SEGMENT7" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="DISC_ACC" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="BSL_PERIOD_ID" Type="Int32" />
+          <Property Name="REMARKS" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="LINE_ATTRIBUTE1" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="LINE_ATTRIBUTE2" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="LINE_ATTRIBUTE3" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="LINE_ATTRIBUTE4" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="LINE_ATTRIBUTE5" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="LINE_CREATED_BY" Type="Int64" />
+          <Property Name="LINE_CREATION_DATE" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Tution_Fee_Due_VW">
+          <Key>
+            <PropertyRef Name="STUDENT_ID" />
+            <PropertyRef Name="LAST_PAID_MONTH" />
+            <PropertyRef Name="PERIOD_ID" />
+          </Key>
+          <Property Name="STUDENT_ID" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="STUDENT_NAME" Type="String" MaxLength="92" FixedLength="false" Unicode="true" />
+          <Property Name="CLASS_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SECTION_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LAST_PAID_MONTH" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="MOBILE" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="PERIOD_ID" Type="Int32" Nullable="false" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -1080,6 +1750,220 @@
                 <ScalarProperty Name="SERVICE_SHORT_NAME" ColumnName="SERVICE_SHORT_NAME" />
                 <ScalarProperty Name="SERVICE_NAME" ColumnName="SERVICE_NAME" />
                 <ScalarProperty Name="SERVICE_ID" ColumnName="SERVICE_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BSS_STUDENT_VW">
+            <EntityTypeMapping TypeName="Model.BSS_STUDENT_VW">
+              <MappingFragment StoreEntitySet="BSS_STUDENT_VW">
+                <ScalarProperty Name="READMISSION_SESSION_ID" ColumnName="READMISSION_SESSION_ID" />
+                <ScalarProperty Name="SYNC_STATUS" ColumnName="SYNC_STATUS" />
+                <ScalarProperty Name="LAST_UPDATE_DATE" ColumnName="LAST_UPDATE_DATE" />
+                <ScalarProperty Name="LAST_UPDATE_BY" ColumnName="LAST_UPDATE_BY" />
+                <ScalarProperty Name="CREATION_DATE" ColumnName="CREATION_DATE" />
+                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+                <ScalarProperty Name="ATTRIBUTE10" ColumnName="ATTRIBUTE10" />
+                <ScalarProperty Name="ATTRIBUTE9" ColumnName="ATTRIBUTE9" />
+                <ScalarProperty Name="ATTRIBUTE8" ColumnName="ATTRIBUTE8" />
+                <ScalarProperty Name="ATTRIBUTE7" ColumnName="ATTRIBUTE7" />
+                <ScalarProperty Name="ATTRIBUTE6" ColumnName="ATTRIBUTE6" />
+                <ScalarProperty Name="ATTRIBUTE5" ColumnName="ATTRIBUTE5" />
+                <ScalarProperty Name="ATTRIBUTE4" ColumnName="ATTRIBUTE4" />
+                <ScalarProperty Name="ATTRIBUTE3" ColumnName="ATTRIBUTE3" />
+                <ScalarProperty Name="ATTRIBUTE2" ColumnName="ATTRIBUTE2" />
+                <ScalarProperty Name="ATTRIBUTE1" ColumnName="ATTRIBUTE1" />
+                <ScalarProperty Name="EXIT_REASONS" ColumnName="EXIT_REASONS" />
+                <ScalarProperty Name="PROXIMITY_NUM" ColumnName="PROXIMITY_NUM" />
+                <ScalarProperty Name="STUDENT_PHOTO_PATH" ColumnName="STUDENT_PHOTO_PATH" />
+                <ScalarProperty Name="LOCAL_GURDIAN_PASSPORT_NO" ColumnName="LOCAL_GURDIAN_PASSPORT_NO" />
+                <ScalarProperty Name="LOCAL_GURDIAN_NATIONAL_ID" ColumnName="LOCAL_GURDIAN_NATIONAL_ID" />
+                <ScalarProperty Name="LOC_GUARDIAN_MOBILE" ColumnName="LOC_GUARDIAN_MOBILE" />
+                <ScalarProperty Name="LOC_GUARDIAN_RELATIONSHIP" ColumnName="LOC_GUARDIAN_RELATIONSHIP" />
+                <ScalarProperty Name="LOC_GUARDIAN_NAME" ColumnName="LOC_GUARDIAN_NAME" />
+                <ScalarProperty Name="MOHER_PASSPORT_NO" ColumnName="MOHER_PASSPORT_NO" />
+                <ScalarProperty Name="MOTHER_NATIONAL_ID" ColumnName="MOTHER_NATIONAL_ID" />
+                <ScalarProperty Name="MOTHER_MOBILE" ColumnName="MOTHER_MOBILE" />
+                <ScalarProperty Name="MOTHER_OFFICE_PHONE" ColumnName="MOTHER_OFFICE_PHONE" />
+                <ScalarProperty Name="MOTHER_OFFICE_ADDRESS" ColumnName="MOTHER_OFFICE_ADDRESS" />
+                <ScalarProperty Name="MOTHER_OCCUPATION_DETAILS" ColumnName="MOTHER_OCCUPATION_DETAILS" />
+                <ScalarProperty Name="MOTHER_OCCUPATION" ColumnName="MOTHER_OCCUPATION" />
+                <ScalarProperty Name="MOTHER_EDUCATION_DETAILS" ColumnName="MOTHER_EDUCATION_DETAILS" />
+                <ScalarProperty Name="MOTHER_EDUCATION" ColumnName="MOTHER_EDUCATION" />
+                <ScalarProperty Name="MOTHERS_NAME" ColumnName="MOTHERS_NAME" />
+                <ScalarProperty Name="FATHER_PASSPORT_NO" ColumnName="FATHER_PASSPORT_NO" />
+                <ScalarProperty Name="FATHER_NATIONAL_ID" ColumnName="FATHER_NATIONAL_ID" />
+                <ScalarProperty Name="FATHER_MOBILE" ColumnName="FATHER_MOBILE" />
+                <ScalarProperty Name="FATHER_OFFICE_PHONE" ColumnName="FATHER_OFFICE_PHONE" />
+                <ScalarProperty Name="FATHER_OFFICE_ADDRESS" ColumnName="FATHER_OFFICE_ADDRESS" />
+                <ScalarProperty Name="FATHER_OCCUPATION_DETAILS" ColumnName="FATHER_OCCUPATION_DETAILS" />
+                <ScalarProperty Name="FATHER_OCCUPATION" ColumnName="FATHER_OCCUPATION" />
+                <ScalarProperty Name="FATHER_EDUCATION_DETAILS" ColumnName="FATHER_EDUCATION_DETAILS" />
+                <ScalarProperty Name="FATHER_EDUCATION" ColumnName="FATHER_EDUCATION" />
+                <ScalarProperty Name="FATHERS_NAME" ColumnName="FATHERS_NAME" />
+                <ScalarProperty Name="EMERGENCY_MEDICAL_ACTION" ColumnName="EMERGENCY_MEDICAL_ACTION" />
+                <ScalarProperty Name="MEDICAL_HISTORY" ColumnName="MEDICAL_HISTORY" />
+                <ScalarProperty Name="PASSPORT_NO" ColumnName="PASSPORT_NO" />
+                <ScalarProperty Name="BIRTH_CERTIFICATE_NO" ColumnName="BIRTH_CERTIFICATE_NO" />
+                <ScalarProperty Name="NATIONALITY" ColumnName="NATIONALITY" />
+                <ScalarProperty Name="NATIONALITY_ID" ColumnName="NATIONALITY_ID" />
+                <ScalarProperty Name="BLOOD_GROUP" ColumnName="BLOOD_GROUP" />
+                <ScalarProperty Name="EMAIL" ColumnName="EMAIL" />
+                <ScalarProperty Name="MOBILE" ColumnName="MOBILE" />
+                <ScalarProperty Name="RES_PHONE" ColumnName="RES_PHONE" />
+                <ScalarProperty Name="RELIGION" ColumnName="RELIGION" />
+                <ScalarProperty Name="RELIGION_ID" ColumnName="RELIGION_ID" />
+                <ScalarProperty Name="GENDER" ColumnName="GENDER" />
+                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+                <ScalarProperty Name="END_DATE" ColumnName="END_DATE" />
+                <ScalarProperty Name="CAMPUS" ColumnName="CAMPUS" />
+                <ScalarProperty Name="CAMPUS_ID" ColumnName="CAMPUS_ID" />
+                <ScalarProperty Name="CURRENT_SHIFT" ColumnName="CURRENT_SHIFT" />
+                <ScalarProperty Name="SHIFT" ColumnName="SHIFT" />
+                <ScalarProperty Name="SECTION_NAME" ColumnName="SECTION_NAME" />
+                <ScalarProperty Name="SECTION_ID" ColumnName="SECTION_ID" />
+                <ScalarProperty Name="CLASS_NAME" ColumnName="CLASS_NAME" />
+                <ScalarProperty Name="CLASS_ID" ColumnName="CLASS_ID" />
+                <ScalarProperty Name="SESSION_NAME" ColumnName="SESSION_NAME" />
+                <ScalarProperty Name="SESSION_ID" ColumnName="SESSION_ID" />
+                <ScalarProperty Name="Expr1" ColumnName="Expr1" />
+                <ScalarProperty Name="ADMISSION_SHIFT" ColumnName="ADMISSION_SHIFT" />
+                <ScalarProperty Name="ADMISSION_SECTION" ColumnName="ADMISSION_SECTION" />
+                <ScalarProperty Name="ADMISSION_SECTION_ID" ColumnName="ADMISSION_SECTION_ID" />
+                <ScalarProperty Name="ADMISSION_CLASS" ColumnName="ADMISSION_CLASS" />
+                <ScalarProperty Name="ADMISSION_CLASS_ID" ColumnName="ADMISSION_CLASS_ID" />
+                <ScalarProperty Name="ADMISSION_SESSION" ColumnName="ADMISSION_SESSION" />
+                <ScalarProperty Name="ADMISSION_SESSION_ID" ColumnName="ADMISSION_SESSION_ID" />
+                <ScalarProperty Name="ADMISSION_DATE" ColumnName="ADMISSION_DATE" />
+                <ScalarProperty Name="PLACE_OF_BIRTH" ColumnName="PLACE_OF_BIRTH" />
+                <ScalarProperty Name="BIRTH_COUNTRY" ColumnName="BIRTH_COUNTRY" />
+                <ScalarProperty Name="BIRTH_CITY" ColumnName="BIRTH_CITY" />
+                <ScalarProperty Name="DOB" ColumnName="DOB" />
+                <ScalarProperty Name="PERM_COUNTRY" ColumnName="PERM_COUNTRY" />
+                <ScalarProperty Name="PERM_DIVISION" ColumnName="PERM_DIVISION" />
+                <ScalarProperty Name="PERM_CITY" ColumnName="PERM_CITY" />
+                <ScalarProperty Name="PERM_POST_CODE" ColumnName="PERM_POST_CODE" />
+                <ScalarProperty Name="PERM_THANA" ColumnName="PERM_THANA" />
+                <ScalarProperty Name="PERM_ADDRESS" ColumnName="PERM_ADDRESS" />
+                <ScalarProperty Name="PRES_COUNTRY" ColumnName="PRES_COUNTRY" />
+                <ScalarProperty Name="PRES_DIVISION" ColumnName="PRES_DIVISION" />
+                <ScalarProperty Name="PRES_CITY" ColumnName="PRES_CITY" />
+                <ScalarProperty Name="PRES_POST_CODE" ColumnName="PRES_POST_CODE" />
+                <ScalarProperty Name="PRES_THANA" ColumnName="PRES_THANA" />
+                <ScalarProperty Name="PRESENT_ADDRESS" ColumnName="PRESENT_ADDRESS" />
+                <ScalarProperty Name="NICK_NAME" ColumnName="NICK_NAME" />
+                <ScalarProperty Name="STUDENT_NAME" ColumnName="STUDENT_NAME" />
+                <ScalarProperty Name="STUDENT_ID" ColumnName="STUDENT_ID" />
+                <ScalarProperty Name="STUDENT_HEADER_ID" ColumnName="STUDENT_HEADER_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HR_EMPLOYEE_VW">
+            <EntityTypeMapping TypeName="Model.HR_EMPLOYEE_VW">
+              <MappingFragment StoreEntitySet="HR_EMPLOYEE_VW">
+                <ScalarProperty Name="BIRTH_DATE" ColumnName="BIRTH_DATE" />
+                <ScalarProperty Name="GENDER" ColumnName="GENDER" />
+                <ScalarProperty Name="NATIONAL_ID" ColumnName="NATIONAL_ID" />
+                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+                <ScalarProperty Name="JOB_LOCATION_ID" ColumnName="JOB_LOCATION_ID" />
+                <ScalarProperty Name="MOTHER_CONTACT_NO" ColumnName="MOTHER_CONTACT_NO" />
+                <ScalarProperty Name="MOTHER_NAME" ColumnName="MOTHER_NAME" />
+                <ScalarProperty Name="FATHER_CONTACT_NO" ColumnName="FATHER_CONTACT_NO" />
+                <ScalarProperty Name="FATHER_NAME" ColumnName="FATHER_NAME" />
+                <ScalarProperty Name="PermanentAdderss" ColumnName="PermanentAdderss" />
+                <ScalarProperty Name="PresentAdderss" ColumnName="PresentAdderss" />
+                <ScalarProperty Name="Campus" ColumnName="Campus" />
+                <ScalarProperty Name="JOB_END_DATE" ColumnName="JOB_END_DATE" />
+                <ScalarProperty Name="REJOIN_DATE" ColumnName="REJOIN_DATE" />
+                <ScalarProperty Name="JOINING_DATE" ColumnName="JOINING_DATE" />
+                <ScalarProperty Name="END_TIME" ColumnName="END_TIME" />
+                <ScalarProperty Name="START_TIME" ColumnName="START_TIME" />
+                <ScalarProperty Name="MOBILE" ColumnName="MOBILE" />
+                <ScalarProperty Name="PHONE" ColumnName="PHONE" />
+                <ScalarProperty Name="DESIGNATION" ColumnName="DESIGNATION" />
+                <ScalarProperty Name="EMAIL_2" ColumnName="EMAIL_2" />
+                <ScalarProperty Name="EMAIL" ColumnName="EMAIL" />
+                <ScalarProperty Name="PASSPORT" ColumnName="PASSPORT" />
+                <ScalarProperty Name="NID" ColumnName="NID" />
+                <ScalarProperty Name="DESIG_ID" ColumnName="DESIG_ID" />
+                <ScalarProperty Name="Department" ColumnName="Department" />
+                <ScalarProperty Name="DEPT_ID" ColumnName="DEPT_ID" />
+                <ScalarProperty Name="NAME" ColumnName="NAME" />
+                <ScalarProperty Name="EMP_ID" ColumnName="EMP_ID" />
+                <ScalarProperty Name="EMP_HEADER_ID" ColumnName="EMP_HEADER_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BSS_STUDENT_BILL_VW">
+            <EntityTypeMapping TypeName="Model.BSS_STUDENT_BILL_VW">
+              <MappingFragment StoreEntitySet="BSS_STUDENT_BILL_VW">
+                <ScalarProperty Name="LINE_CREATION_DATE" ColumnName="LINE_CREATION_DATE" />
+                <ScalarProperty Name="LINE_CREATED_BY" ColumnName="LINE_CREATED_BY" />
+                <ScalarProperty Name="LINE_ATTRIBUTE5" ColumnName="LINE_ATTRIBUTE5" />
+                <ScalarProperty Name="LINE_ATTRIBUTE4" ColumnName="LINE_ATTRIBUTE4" />
+                <ScalarProperty Name="LINE_ATTRIBUTE3" ColumnName="LINE_ATTRIBUTE3" />
+                <ScalarProperty Name="LINE_ATTRIBUTE2" ColumnName="LINE_ATTRIBUTE2" />
+                <ScalarProperty Name="LINE_ATTRIBUTE1" ColumnName="LINE_ATTRIBUTE1" />
+                <ScalarProperty Name="REMARKS" ColumnName="REMARKS" />
+                <ScalarProperty Name="BSL_PERIOD_ID" ColumnName="BSL_PERIOD_ID" />
+                <ScalarProperty Name="DISC_ACC" ColumnName="DISC_ACC" />
+                <ScalarProperty Name="SEGMENT7" ColumnName="SEGMENT7" />
+                <ScalarProperty Name="SEGMENT6" ColumnName="SEGMENT6" />
+                <ScalarProperty Name="SEGMENT5" ColumnName="SEGMENT5" />
+                <ScalarProperty Name="SEGMENT4" ColumnName="SEGMENT4" />
+                <ScalarProperty Name="SEGMENT3" ColumnName="SEGMENT3" />
+                <ScalarProperty Name="SEGMENT2" ColumnName="SEGMENT2" />
+                <ScalarProperty Name="SEGMENT1" ColumnName="SEGMENT1" />
+                <ScalarProperty Name="DISC_AMOUNT" ColumnName="DISC_AMOUNT" />
+                <ScalarProperty Name="VAT_AMT" ColumnName="VAT_AMT" />
+                <ScalarProperty Name="ACTUAL_RCV_AMOUNT" ColumnName="ACTUAL_RCV_AMOUNT" />
+                <ScalarProperty Name="BILL_AMOUNT" ColumnName="BILL_AMOUNT" />
+                <ScalarProperty Name="RCV_TYPE" ColumnName="RCV_TYPE" />
+                <ScalarProperty Name="BILL_DTL_ID" ColumnName="BILL_DTL_ID" />
+                <ScalarProperty Name="LAST_UPDATE_DATE" ColumnName="LAST_UPDATE_DATE" />
+                <ScalarProperty Name="LAST_UPDATE_BY" ColumnName="LAST_UPDATE_BY" />
+                <ScalarProperty Name="CREATION_DATE" ColumnName="CREATION_DATE" />
+                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+                <ScalarProperty Name="ATTRIBUTE5" ColumnName="ATTRIBUTE5" />
+                <ScalarProperty Name="ATTRIBUTE4" ColumnName="ATTRIBUTE4" />
+                <ScalarProperty Name="ATTRIBUTE3" ColumnName="ATTRIBUTE3" />
+                <ScalarProperty Name="ATTRIBUTE2" ColumnName="ATTRIBUTE2" />
+                <ScalarProperty Name="ATTRIBUTE1" ColumnName="ATTRIBUTE1" />
+                <ScalarProperty Name="PERIOD_NAME" ColumnName="PERIOD_NAME" />
+                <ScalarProperty Name="EMP_NAME" ColumnName="EMP_NAME" />
+                <ScalarProperty Name="USER_NAME" ColumnName="USER_NAME" />
+                <ScalarProperty Name="SESSION_NAME" ColumnName="SESSION_NAME" />
+                <ScalarProperty Name="FLEX_VALUE" ColumnName="FLEX_VALUE" />
+                <ScalarProperty Name="CAMPUS_NAME" ColumnName="CAMPUS_NAME" />
+                <ScalarProperty Name="CLASS_DETAILS" ColumnName="CLASS_DETAILS" />
+                <ScalarProperty Name="SECTION_NAME" ColumnName="SECTION_NAME" />
+                <ScalarProperty Name="CLASS_NAME" ColumnName="CLASS_NAME" />
+                <ScalarProperty Name="STUDENT_NAME" ColumnName="STUDENT_NAME" />
+                <ScalarProperty Name="PERIOD_ID" ColumnName="PERIOD_ID" />
+                <ScalarProperty Name="DISCOUNT" ColumnName="DISCOUNT" />
+                <ScalarProperty Name="BRANCH_ID" ColumnName="BRANCH_ID" />
+                <ScalarProperty Name="SCHOOL_ID" ColumnName="SCHOOL_ID" />
+                <ScalarProperty Name="SHIFT" ColumnName="SHIFT" />
+                <ScalarProperty Name="SECTION_ID" ColumnName="SECTION_ID" />
+                <ScalarProperty Name="CLASS_ID" ColumnName="CLASS_ID" />
+                <ScalarProperty Name="STUDENT_ID" ColumnName="STUDENT_ID" />
+                <ScalarProperty Name="STUDENT_HEADER_ID" ColumnName="STUDENT_HEADER_ID" />
+                <ScalarProperty Name="SESSION_ID" ColumnName="SESSION_ID" />
+                <ScalarProperty Name="BILL_DATE" ColumnName="BILL_DATE" />
+                <ScalarProperty Name="BILL_NO" ColumnName="BILL_NO" />
+                <ScalarProperty Name="BILL_HEADER_ID" ColumnName="BILL_HEADER_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tution_Fee_Due_VW">
+            <EntityTypeMapping TypeName="Model.Tution_Fee_Due_VW">
+              <MappingFragment StoreEntitySet="Tution_Fee_Due_VW">
+                <ScalarProperty Name="PERIOD_ID" ColumnName="PERIOD_ID" />
+                <ScalarProperty Name="MOBILE" ColumnName="MOBILE" />
+                <ScalarProperty Name="LAST_PAID_MONTH" ColumnName="LAST_PAID_MONTH" />
+                <ScalarProperty Name="SECTION_NAME" ColumnName="SECTION_NAME" />
+                <ScalarProperty Name="CLASS_NAME" ColumnName="CLASS_NAME" />
+                <ScalarProperty Name="STUDENT_NAME" ColumnName="STUDENT_NAME" />
+                <ScalarProperty Name="STUDENT_ID" ColumnName="STUDENT_ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

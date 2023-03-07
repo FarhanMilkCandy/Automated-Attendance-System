@@ -3,6 +3,7 @@ using Automated_Attendance_System.Entity.Model;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -38,7 +39,15 @@ namespace Automated_Attendance_System.Helper
                     _bssITEmp = _smsController.GetBSSITIds().Result;
                     HttpWebRequest request;
                     SMSDTO smsObj = GetDTO(idNumber).Result;
-                    string smsBody = $"We are pleased to notify you that Your child({smsObj.Name}, ID: {idNumber.Substring(idNumber.Length - 4)}) has been marked present today: {DateTime.Now.Date.ToString("dd-MM-yyyy")} at {punchTime}.\n\nRegards, BSS.";
+                    string smsBody = $"Your attendance was recorded at {punchTime}.\nRegards,\nBSS";
+                    if (idNumber.StartsWith("2200"))
+                    {
+                        smsBody = $"Hello, {smsObj.Name} (ID: {idNumber.Substring(idNumber.Length - 4)}) your attendance has been recorded: {DateTime.Now.Date.ToString("dd-MM-yyyy")} at {punchTime}.\n\nRegards,\nBSS.";
+                    }
+                    else if (idNumber.StartsWith("1100"))
+                    {
+                        smsBody = $"We are pleased to notify you that your child ({smsObj.Name}, ID: {idNumber.Substring(idNumber.Length - 4)}) has been marked present today: {DateTime.Now.Date.ToString("dd-MM-yyyy")} at {punchTime}.\n\nRegards,\nBSS.";
+                    }
                     bool eligible = _smsController.SMSEligible(idNumber).Result;
                     if (eligible && _bssITEmp.Contains(idNumber))
                     {

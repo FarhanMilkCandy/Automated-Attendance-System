@@ -28,9 +28,9 @@ namespace Automated_Attendance_System.Controller
                     if (enrollmentNumber.StartsWith("1100"))
                     {
                         string studentId = enrollmentNumber.Substring(enrollmentNumber.Length - 4);
-                        SmsDtoList = _db.BSS_STUDENT.Where(w => w.STATUS == true && w.STUDENT_ID.EndsWith(studentId)).AsEnumerable().Select(s => new SMSDTO
+                        SmsDtoList = _db.BSS_STUDENT_VW.Where(w => w.STATUS == true && w.STUDENT_ID.EndsWith(studentId)).AsEnumerable().Select(s => new SMSDTO
                         {
-                            Name = s.FIRST_NAME + " " + (string.IsNullOrEmpty(s.MIDDLE_NAME) ? " " : s.MIDDLE_NAME.Concat(" ")) + s.LAST_NAME,
+                            Name = s.STUDENT_NAME,
                             EnrollmentNumber = enrollmentNumber,
                             PhoneNumber = s.MOBILE,
                             SMSCount = 0
@@ -39,9 +39,9 @@ namespace Automated_Attendance_System.Controller
                     else
                     {
                         string empId = enrollmentNumber.Substring(enrollmentNumber.Length - 4);
-                        SmsDtoList = _db.HR_EMPLOYEE.Where(w => w.STATUS == true && w.EMP_ID.EndsWith(empId)).AsEnumerable().Select(s => new SMSDTO
+                        SmsDtoList = _db.HR_EMPLOYEE_VW.Where(w => w.STATUS == true && w.EMP_ID.EndsWith(empId)).AsEnumerable().Select(s => new SMSDTO
                         {
-                            Name = s.EMP_FIRST_NAME + " " + (string.IsNullOrEmpty(s.EMP_MIDDLE_NAME) ? " " : s.EMP_MIDDLE_NAME.Concat(" ")) + s.EMP_LAST_NAME,
+                            Name = s.NAME,
                             EnrollmentNumber = enrollmentNumber,
                             PhoneNumber = s.MOBILE,
                             SMSCount = 0
@@ -66,7 +66,7 @@ namespace Automated_Attendance_System.Controller
 
             var flag = _db.BSS_SMS_HISTORY.SingleInsertAsync(_smsHistory);
 
-            Console.WriteLine($"SMS insertion flag: {flag} ");
+            //Console.WriteLine($"SMS insertion flag: {flag} ");
 
             return flag;
         }
@@ -75,7 +75,24 @@ namespace Automated_Attendance_System.Controller
         {
             try
             {
-                return await _db.BSS_SMS_HISTORY.AnyAsync(a => a.SENT_TO.Equals(enrollmentNumber) && a.CREATION_DATE.Value.Date.Equals(DateTime.Now.Date) && a.SEND_COUNT < 1);
+                DateTime date = DateTime.Today;
+                var enrollSmsHistory = await _db.BSS_SMS_HISTORY.FirstOrDefaultAsync(a => a.SENT_TO.Equals(enrollmentNumber) && a.CREATION_DATE.Value == date);
+                
+                if (enrollSmsHistory != null)
+                {
+                    if (enrollSmsHistory.SEND_COUNT >= 1)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    return true;
+                }
             }
             catch (Exception)
             {

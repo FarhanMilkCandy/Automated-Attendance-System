@@ -65,7 +65,7 @@ namespace Automated_Attendance_System.Helper
             {
                 if (!string.IsNullOrEmpty(mailAddress) && mailAddress.Trim() != "")
                 {
-                    message.CC.Add(mailAddress);
+                    //message.CC.Add(mailAddress);
                 }
             }
 

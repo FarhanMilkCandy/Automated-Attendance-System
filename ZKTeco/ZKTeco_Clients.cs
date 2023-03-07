@@ -1,5 +1,6 @@
 ﻿using Automated_Attendance_System.Controller;
 using Automated_Attendance_System.Entity;
+using Automated_Attendance_System.Entity.Model;
 using Automated_Attendance_System.Helper;
 using Automated_Attendance_System.Helpers;
 using Serilog;
@@ -316,102 +317,123 @@ namespace Automated_Attendance_System.ZKTeco
 
         private async void ObjCZKEM_OnConnected(int machineNumber)
         {
-            try
+            //Remove Task Run if any thread safe error is thrown
+            await Task.Run(() =>
             {
-                #region Variables
-                string dwEnrollNumber = string.Empty;
-                int dwVerifyMode = 0;
-                int dwInOutMode = 0;
-                int dwYear = 0;
-                int dwMonth = 0;
-                int dwDay = 0;
-                int dwHour = 0;
-                int dwMinute = 0;
-                int dwSecond = 0;
-                int dwWorkCode = 0;
-                #endregion
-                if (!connectionFlag)
+                try
                 {
-                    objCZKEM.SetDeviceTime(machineNumber);
-                    objCZKEM.ReadAllGLogData(machineNumber);
-                    while (objCZKEM.SSR_GetGeneralLogData(machineNumber, out dwEnrollNumber, out dwVerifyMode, out dwInOutMode, out dwYear, out dwMonth, out dwDay, out dwHour, out dwMinute, out dwSecond, ref dwWorkCode))
+                    #region Variables
+                    string dwEnrollNumber = string.Empty;
+                    int dwVerifyMode = 0;
+                    int dwInOutMode = 0;
+                    int dwYear = 0;
+                    int dwMonth = 0;
+                    int dwDay = 0;
+                    int dwHour = 0;
+                    int dwMinute = 0;
+                    int dwSecond = 0;
+                    int dwWorkCode = 0;
+                    #endregion
+                    if (!connectionFlag)
                     {
+                        objCZKEM.SetDeviceTime(machineNumber);
+                        objCZKEM.ReadAllGLogData(machineNumber);
                         #region push attendance to DB
-                        DateTime PunchDate = new DateTime(dwYear, dwMonth, dwDay);
-                        TimeSpan PunchTime = new TimeSpan(dwHour, dwMinute, dwSecond);
-                        errorEnroll = await _controller.RecordPreviousAttendance(machineNumber, dwEnrollNumber, dwVerifyMode, PunchDate, PunchTime, dwWorkCode);
-                        #endregion
-                    }
-                    bool clearFlag = objCZKEM.ClearData(machineNumber, 1);
-                    if (errorEnroll != null)
-                    {
-                        Log.Fatal($"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.\n");
-                        bool emailFlag = emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.");
-                        if (!emailFlag)
+                        List<BSS_ATTENDANCE_ZK> attendances = new List<BSS_ATTENDANCE_ZK>();
+                        while (objCZKEM.SSR_GetGeneralLogData(machineNumber, out dwEnrollNumber, out dwVerifyMode, out dwInOutMode, out dwYear, out dwMonth, out dwDay, out dwHour, out dwMinute, out dwSecond, ref dwWorkCode))
                         {
-                            Log.Error($"Error sending email for data recording after wakeup\n");
-                        }
-                        else
-                        {
-                            Log.Information($"Sending email for data recording after wakeup was success\n");
-                            Log.Information($"\"Trying Backup email.\n");
-                            bool bkpMailFlag = emailHelper.SendEmailBackup("error", "Error in Automated Attendance System", $"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.");
-                            if (bkpMailFlag)
+                            DateTime PunchDate = new DateTime(dwYear, dwMonth, dwDay);
+                            TimeSpan PunchTime = new TimeSpan(dwHour, dwMinute, dwSecond);
+                            BSS_ATTENDANCE_ZK dtObj = new BSS_ATTENDANCE_ZK
                             {
-                                Log.Information($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
-                                Console.WriteLine($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
+                                Machine_Number = machineNumber,
+                                Enrollment_Number = int.TryParse(dwEnrollNumber, out int temp) ? temp : -1,
+                                Verify_Method = dwVerifyMode,
+                                Punch_Date = PunchDate,
+                                Punch_Time = PunchTime,
+                                Work_Code = dwWorkCode
+                            };
+                            attendances.Add(dtObj);
+                        }
+                        bool flag = false;
+                        if (attendances.Count > 0)
+                        {
+
+                            flag = _controller.RecordPreviousAttendance(attendances);
+                        }
+                        #endregion
+
+                        bool clearFlag = objCZKEM.ClearData(machineNumber, 1);
+                        if (!flag)
+                        {
+                            Log.Fatal($"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.\n");
+                            bool emailFlag = emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.");
+                            if (!emailFlag)
+                            {
+                                Log.Error($"Error sending email for data recording after wakeup\n");
                             }
                             else
                             {
-                                Log.Fatal($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
-                                Console.WriteLine($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
+                                Log.Information($"Sending email for data recording after wakeup was success\n");
+                                Log.Information($"\"Trying Backup email.\n");
+                                bool bkpMailFlag = emailHelper.SendEmailBackup("error", "Error in Automated Attendance System", $"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.");
+                                if (bkpMailFlag)
+                                {
+                                    Log.Information($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
+                                    Console.WriteLine($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
+                                }
+                                else
+                                {
+                                    Log.Fatal($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
+                                    Console.WriteLine($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        Log.Information($"No error while wake-up data recording to device.\n");
-                    }
+                        else
+                        {
+                            Log.Information($"No error while wake-up data recording to device.\n");
+                        }
 
-                    #region Console and Log
-                    Log.Information($"Read Data successfull from device {objCZKEM.MachineNumber}\n");
-                    Console.BackgroundColor = ConsoleColor.Green;
-                    Console.ForegroundColor = ConsoleColor.Black;
-                    Console.WriteLine($"\n>>Read Data successfull from device {objCZKEM.MachineNumber}");
-                    Console.WriteLine($"\n>>Clearing device {objCZKEM.MachineNumber}");
-                    #endregion
-
-
-                    if (clearFlag)
-                    {
-                        #region Console
-                        Log.Information($"Clear device {objCZKEM.MachineNumber} was success\n");
+                        #region Console and Log
+                        Log.Information($"Read Data successfull from device {objCZKEM.MachineNumber}\n");
                         Console.BackgroundColor = ConsoleColor.Green;
                         Console.ForegroundColor = ConsoleColor.Black;
-                        Console.WriteLine($"\n>>Clear device {objCZKEM.MachineNumber} was success.");
+                        Console.WriteLine($"\n>>Read Data successfull from device {objCZKEM.MachineNumber}");
+                        Console.WriteLine($"\n>>Clearing device {objCZKEM.MachineNumber}");
                         #endregion
-                    }
-                    else
-                    {
-                        #region Console
-                        Log.Error($"Could not clear data from device {objCZKEM.MachineNumber}. The device may not have any data or unknown error occured\n");
-                        Console.BackgroundColor = ConsoleColor.Red;
-                        Console.ForegroundColor = ConsoleColor.Black;
-                        Console.WriteLine($"\n>>Could not clear data from device {objCZKEM.MachineNumber}. The device may not have any data or unknown error occured.");
-                        #endregion
+
+
+                        if (clearFlag)
+                        {
+                            #region Console
+                            Log.Information($"Clear device {objCZKEM.MachineNumber} was success\n");
+                            Console.BackgroundColor = ConsoleColor.Green;
+                            Console.ForegroundColor = ConsoleColor.Black;
+                            Console.WriteLine($"\n>>Clear device {objCZKEM.MachineNumber} was success.\n");
+                            #endregion
+                        }
+                        else
+                        {
+                            #region Console
+                            Log.Error($"Could not clear data from device {objCZKEM.MachineNumber}. The device may not have any data or unknown error occured\n");
+                            Console.BackgroundColor = ConsoleColor.Red;
+                            Console.ForegroundColor = ConsoleColor.Black;
+                            Console.WriteLine($"\n>>Could not clear data from device {objCZKEM.MachineNumber}. The device may not have any data or unknown error occured.\n");
+                            #endregion
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                #region Console and log
-                Log.Error($"Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}.\r\nStackTrace:\r\n{ex.StackTrace}\n");
-                Console.BackgroundColor = ConsoleColor.Red;
-                Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine($"\n>>Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}");
-                bool emailFlag = emailHelper.SendEmail("Error", "Exception while recording device data on wakeup", $"Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}.</br>StackTrace:</br><code>{ex.StackTrace}</code>");
-                #endregion
-            }
+                catch (Exception ex)
+                {
+                    #region Console and log
+                    Log.Error($"Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}.\r\nStackTrace:\r\n{ex.StackTrace}\n");
+                    Console.BackgroundColor = ConsoleColor.Red;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.WriteLine($"\n>>Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}");
+                    bool emailFlag = emailHelper.SendEmail("Error", "Exception while recording device data on wakeup", $"Error while acquiring data from device {objCZKEM.MachineNumber}. Exception: {ex.Message}.</br>StackTrace:</br><code>{ex.StackTrace}</code>");
+                    #endregion
+                }
+            });
         }
 
         public async void zkemClient_OnAttTransactionEx(string EnrollNumber, int IsInValid, int AttState, int VerifyMethod, int Year, int Month, int Day, int Hour, int Minute, int Second, int WorkCode)
@@ -429,7 +451,7 @@ namespace Automated_Attendance_System.ZKTeco
                 if (!string.IsNullOrEmpty(EnrollNumber) && !string.IsNullOrEmpty(objCZKEM.MachineNumber.ToString()) && PunchDate != null && PunchTime != null)
                 {
                     //Console.WriteLine("\n>>Transaction happened");
-                    errorEnroll = await _controller.RecordAttendance(objCZKEM.MachineNumber, EnrollNumber, VerifyMethod, PunchDate, PunchTime, WorkCode);
+                    errorEnroll = await Task.Run(()=> _controller.RecordAttendance(objCZKEM.MachineNumber, EnrollNumber, VerifyMethod, PunchDate, PunchTime, WorkCode));
                 }
                 if (errorEnroll != null)
                 {
@@ -449,7 +471,7 @@ namespace Automated_Attendance_System.ZKTeco
         {
             TimeSpan PunchTime = new TimeSpan(Hour, Minute, Second);
             _smsHelper = new SMSHelper();
-            await _smsHelper.SendSMS(idNumber, PunchTime.ToString());
+            await _smsHelper.SendSMS(idNumber, PunchTime.ToString(""));
         }
 
         private async Task ExceptionHandler(int MachineNumber, Exception ex) => await Task.Run(() =>

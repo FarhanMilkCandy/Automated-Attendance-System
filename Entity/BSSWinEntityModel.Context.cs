@@ -32,5 +32,9 @@ namespace Automated_Attendance_System.Entity
         public virtual DbSet<BSS_SMS_HISTORY> BSS_SMS_HISTORY { get; set; }
         public virtual DbSet<BSS_EMAIL_SETTINGS> BSS_EMAIL_SETTINGS { get; set; }
         public virtual DbSet<BSS_SERVICE_SETTINGS> BSS_SERVICE_SETTINGS { get; set; }
+        public virtual DbSet<BSS_STUDENT_VW> BSS_STUDENT_VW { get; set; }
+        public virtual DbSet<HR_EMPLOYEE_VW> HR_EMPLOYEE_VW { get; set; }
+        public virtual DbSet<BSS_STUDENT_BILL_VW> BSS_STUDENT_BILL_VW { get; set; }
+        public virtual DbSet<Tution_Fee_Due_VW> Tution_Fee_Due_VW { get; set; }
     }
 }

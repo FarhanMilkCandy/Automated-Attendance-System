@@ -12,6 +12,10 @@
         <EntityTypeShape EntityType="Model.BSS_SMS_HISTORY" Width="1.5" PointX="0.75" PointY="7.75" />
         <EntityTypeShape EntityType="Model.BSS_EMAIL_SETTINGS" Width="1.5" PointX="7.375" PointY="4.75" />
         <EntityTypeShape EntityType="Model.BSS_SERVICE_SETTINGS" Width="1.5" PointX="9.375" PointY="0.75" />
+        <EntityTypeShape EntityType="Model.BSS_STUDENT_VW" Width="1.5" PointX="9.375" PointY="5.75" />
+        <EntityTypeShape EntityType="Model.HR_EMPLOYEE_VW" Width="1.5" PointX="11.375" PointY="0.75" />
+        <EntityTypeShape EntityType="Model.BSS_STUDENT_BILL_VW" Width="1.5" PointX="11.375" PointY="8.75" />
+        <EntityTypeShape EntityType="Model.Tution_Fee_Due_VW" Width="1.5" PointX="13.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

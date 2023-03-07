@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 using System;
 using System.Threading;
+using Z.EntityFramework.Classic;
 
 namespace Automated_Attendance_System
 {
@@ -16,6 +17,7 @@ namespace Automated_Attendance_System
         //DateTime endTime;
         static void Main(string[] args)
         {
+            EntityFrameworkManager.IsCommunity = true;
             _serviceObj = ServiceHelper.GetDTOInstance();
             if (!_serviceObj.Status)
             {
@@ -37,7 +39,7 @@ namespace Automated_Attendance_System
 
             try
             {
-                Log.Information($"++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-++");
+                Log.Information($"++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-++\n");
                 Log.Information("Process Started\n");
                 Log.Information("Connecting to devices\n");
 
@@ -49,10 +51,10 @@ namespace Automated_Attendance_System
                         #region Console and log
                         Console.BackgroundColor = ConsoleColor.Green;
                         Console.ForegroundColor = ConsoleColor.Black;
-                        Console.WriteLine($"\n>>Automated Attendance System Started > {DateTime.Now.ToString("dddd dd, MMMM yyyy")}");
-                        Console.WriteLine($"\n>> Connecting to Devices.");
-                        Log.Information($"Automated Attendance System Started > {DateTime.Now.ToString("dddd dd, MMMM yyyy")}");
-                        Log.Information($"Connecting to Devices");
+                        Console.WriteLine($"\n>>Automated Attendance System Started > {DateTime.Now.ToString("dddd dd, MMMM yyyy")}\n");
+                        Console.WriteLine($"\n>> Connecting to Devices.\n");
+                        Log.Information($"Automated Attendance System Started > {DateTime.Now.ToString("dddd dd, MMMM yyyy")}\n");
+                        Log.Information($"Connecting to Devices\n");
                         #endregion
 
                         _connector.EstablishConnections();
@@ -114,9 +116,9 @@ namespace Automated_Attendance_System
             {
                 int milisecs = Convert.ToInt32(endTime.TimeOfDay.Subtract(DateTime.Now.TimeOfDay).TotalMilliseconds);
                 TimeSpan calculatedExitTime = TimeSpan.FromMilliseconds(milisecs);
-                Console.WriteLine($"\n>> Time is now {DateTime.Now.TimeOfDay} || Application will close after {calculatedExitTime.Hours} hours and {calculatedExitTime.Minutes} minutes.");
-                Log.Information($"Application termination time is set to > {endTime.TimeOfDay}");
-                Log.Information($"Time is now {DateTime.Now.TimeOfDay} || Application will close after {calculatedExitTime.Hours} hours and {calculatedExitTime.Minutes} minutes.");
+                Console.WriteLine($"\n>> Time is now {DateTime.Now.TimeOfDay} || Application will close after {calculatedExitTime.Hours} hours and {calculatedExitTime.Minutes} minutes.\n");
+                Log.Information($"Application termination time is set to > {endTime.TimeOfDay}\n");
+                Log.Information($"Time is now {DateTime.Now.TimeOfDay} || Application will close after {calculatedExitTime.Hours} hours and {calculatedExitTime.Minutes} minutes.\n");
                 Thread.Sleep(milisecs);
                 goto Exitng;
             }

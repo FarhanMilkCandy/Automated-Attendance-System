@@ -45,54 +45,26 @@ namespace Automated_Attendance_System.Controller
             }
         }
 
-        public async Task<BSS_ATTENDANCE_ZK> RecordPreviousAttendance(int machineNumber, string enrollmentNumber, int verifyMethod, DateTime punchDate, TimeSpan punchTime, int workCode)
+        public bool RecordPreviousAttendance(List<BSS_ATTENDANCE_ZK> previousAttendances)
         {
-            await _semaphore.WaitAsync();
-            int enrollNumber = int.TryParse(enrollmentNumber, out int temp) ? temp : -1;
-
-            try
+            lock (_lock)
             {
-                await _db.BSS_ATTENDANCE_ZK.InsertFromQueryAsync("BSS_ATTENDANCE_ZK", i => new BSS_ATTENDANCE_ZK
+                try
                 {
-                    Machine_Number = machineNumber,
-                    Enrollment_Number = enrollNumber,
-                    Verify_Method = verifyMethod,
-                    Punch_Date = punchDate,
-                    Punch_Time = punchTime,
-                    Work_Code = workCode,
-                    Sync_Status = false
-                });
-
-                return null;
-            }
-            catch (Exception ex)
-            {
-                BSS_ATTENDANCE_ZK errorEntry = new BSS_ATTENDANCE_ZK
-                {
-                    Machine_Number = machineNumber,
-                    Enrollment_Number = enrollNumber,
-                    Verify_Method = verifyMethod,
-                    Punch_Date = punchDate,
-                    Punch_Time = punchTime,
-                    Work_Code = workCode,
-                    Sync_Status = false
-                };
-                Console.WriteLine($"Realtime Push : {ex.Message}\n");
-                bool successFlag = RetryDBEntry(errorEntry).GetAwaiter().GetResult();
-                if (!successFlag)
-                {
-                    return errorEntry;
+                    _db.BSS_ATTENDANCE_ZK.BulkInsert(previousAttendances);
+                    return true;
                 }
-                return null;
-            }
-            finally
-            {
-                _semaphore.Release();
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Bulk insert to database on wake up failed. Exception: {ex.Message}\n");
+                    Log.Fatal($"Bulk insert to database on wake up failed. Exception: {ex.Message}\n");
+                    return false;
+                }
             }
         }
 
         //Inserts Attendance to Database
-        public async Task<BSS_ATTENDANCE_ZK> RecordAttendance(int machineNumber, string enrollmentNumber, int verifyMethod, DateTime punchDate, TimeSpan punchTime, int workCode)
+        public BSS_ATTENDANCE_ZK RecordAttendance(int machineNumber, string enrollmentNumber, int verifyMethod, DateTime punchDate, TimeSpan punchTime, int workCode)
         {
             lock (_lock)
             {
@@ -138,9 +110,10 @@ namespace Automated_Attendance_System.Controller
 
         public async Task<bool> RetryDBEntry(BSS_ATTENDANCE_ZK errorEntry, int retryCount = 0)
         {
-            lock (_lock)
+            return await Task.Run(() =>
             {
-                using (var transaction = _db.Database.BeginTransaction())
+                bool result = false;
+                lock (_lock)
                 {
                     try
                     {
@@ -155,44 +128,43 @@ namespace Automated_Attendance_System.Controller
                             Verify_Method = errorEntry.Verify_Method,
                             Work_Code = errorEntry.Work_Code
                         });
-                        transaction.Commit();
-                        return true;
+                        result = true;
                     }
                     catch (Exception ex)
                     {
-                        transaction.Rollback();
                         Console.WriteLine($"Transaction for {errorEntry.Enrollment_Number} failed in Retry Entry to DB. Exception: {ex.Message}\n");
                         Log.Fatal($"Transaction for {errorEntry.Enrollment_Number} failed in Retry Entry to DB. Exception: {ex.Message}\n");
                         if (retryCount <= 10)
                         {
                             RetryDBEntry(errorEntry, retryCount += 1).GetAwaiter();
-                            return false;
+                            result = false;
                         }
                         else
                         {
-                            return false;
+                            result = false;
                         }
                     }
                 }
+                return result;
+            });
 
-                // The old code has higher time complexity as well as SaveChangesAsync is slower
-                #region Old Code
+            // The old code has higher time complexity as well as SaveChangesAsync is slower
+            #region Old Code
 
-                //BSS_ATTENDANCE_ZK temp = null;
-                //foreach (BSS_ATTENDANCE_ZK att in errorList)
-                //{
-                //    temp = att;
-                //    await _db.BSS_ATTENDANCE_ZK.SingleInsertAsync(att);
-                //}
-                //int saveFlag = await _db.SaveChangesAsync();
-                //if (saveFlag > 0)
-                //{
-                //    errorList.RemoveAll(r => r == temp);
-                //    temp = null;
-                //}
+            //BSS_ATTENDANCE_ZK temp = null;
+            //foreach (BSS_ATTENDANCE_ZK att in errorList)
+            //{
+            //    temp = att;
+            //    await _db.BSS_ATTENDANCE_ZK.SingleInsertAsync(att);
+            //}
+            //int saveFlag = await _db.SaveChangesAsync();
+            //if (saveFlag > 0)
+            //{
+            //    errorList.RemoveAll(r => r == temp);
+            //    temp = null;
+            //}
 
-                #endregion
-            }
+            #endregion
         }
     }
 }
