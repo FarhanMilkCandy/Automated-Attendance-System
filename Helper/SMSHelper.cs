@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Automated_Attendance_System.Helper
@@ -13,7 +14,7 @@ namespace Automated_Attendance_System.Helper
     public class SMSHelper
     {
         private SMSController _smsController = new SMSController();
-        private readonly object _lock = new object();
+        private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
         private SMSDTO _smsDTOs = new SMSDTO();
         private List<string> _bssITEmp;
 
@@ -32,49 +33,56 @@ namespace Automated_Attendance_System.Helper
 
         public async Task SendSMS(string idNumber, string punchTime)
         {
-            await Task.Run(() =>
+            await _semaphore.WaitAsync();
+
+            try
             {
-                lock (_lock)
+                _bssITEmp = _smsController.GetBSSITIds().Result;
+                HttpWebRequest request;
+                SMSDTO smsObj = GetDTO(idNumber).Result;
+                string smsBody = $"Your attendance was recorded at {punchTime}.\nRegards,\nBSS";
+                if (idNumber.StartsWith("2200"))
                 {
-                    _bssITEmp = _smsController.GetBSSITIds().Result;
-                    HttpWebRequest request;
-                    SMSDTO smsObj = GetDTO(idNumber).Result;
-                    string smsBody = $"Your attendance was recorded at {punchTime}.\nRegards,\nBSS";
-                    if (idNumber.StartsWith("2200"))
-                    {
-                        smsBody = $"Hello, {smsObj.Name} (ID: {idNumber.Substring(idNumber.Length - 4)}) your attendance has been recorded: {DateTime.Now.Date.ToString("dd-MM-yyyy")} at {punchTime}.\n\nRegards,\nBSS.";
-                    }
-                    else if (idNumber.StartsWith("1100"))
-                    {
-                        smsBody = $"We are pleased to notify you that your child ({smsObj.Name}, ID: {idNumber.Substring(idNumber.Length - 4)}) has been marked present today: {DateTime.Now.Date.ToString("dd-MM-yyyy")} at {punchTime}.\n\nRegards,\nBSS.";
-                    }
-                    bool eligible = _smsController.SMSEligible(idNumber).Result;
-                    if (eligible && _bssITEmp.Contains(idNumber))
-                    {
-                        request = (HttpWebRequest)WebRequest.Create(@"https://powersms.banglaphone.net.bd/httpapi/sendsms?userId=bss1&password=Bss123&smsText=" + smsBody + "&commaSeperatedReceiverNumbers=" + smsObj.PhoneNumber);
-
-                        request.Method = WebRequestMethods.Http.Get;
-                        request.Accept = "application /json";
-                        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                        string content = new StreamReader(response.GetResponseStream()).ReadToEnd();
-                        if (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Accepted)
-                        {
-                            _smsDTOs.Status = (int)response.StatusCode;
-                            _smsDTOs.StatusText = content;
-                            _smsDTOs.SMSCount += 1;
-                        }
-                        else
-                        {
-                            _smsDTOs.ErrorCode = (int)response.StatusCode;
-                            _smsDTOs.ErrorText = content;
-                        }
-                        _smsDTOs.SMSContent = smsBody;
-                        _smsDTOs.SendDate = DateTime.Now;
-
-                        _smsController.SaveSMSDTOHistory(_smsDTOs);
-                    }
+                    smsBody = $"Hello, {smsObj.Name} (ID: {idNumber.Substring(idNumber.Length - 4)}) your attendance has been recorded: {DateTime.Now.Date.ToString("dd-MM-yyyy")} at {punchTime}.\n\nRegards,\nBSS.";
                 }
-            });
+                else if (idNumber.StartsWith("1100"))
+                {
+                    smsBody = $"We are pleased to notify you that your child ({smsObj.Name}, ID: {idNumber.Substring(idNumber.Length - 4)}) has been marked present today: {DateTime.Now.Date.ToString("dd-MM-yyyy")} at {punchTime}.\n\nRegards,\nBSS.";
+                }
+                bool eligible = _smsController.SMSEligible(idNumber).Result;
+                if (eligible && _bssITEmp.Contains(idNumber))
+                {
+                    request = (HttpWebRequest)WebRequest.Create(@"https://powersms.banglaphone.net.bd/httpapi/sendsms?userId=bss1&password=Bss123&smsText=" + smsBody + "&commaSeperatedReceiverNumbers=" + smsObj.PhoneNumber);
+
+                    request.Method = WebRequestMethods.Http.Get;
+                    request.Accept = "application /json";
+                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                    string content = new StreamReader(response.GetResponseStream()).ReadToEnd();
+                    if (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Accepted)
+                    {
+                        _smsDTOs.Status = (int)response.StatusCode;
+                        _smsDTOs.StatusText = content;
+                        _smsDTOs.SMSCount += 1;
+                    }
+                    else
+                    {
+                        _smsDTOs.ErrorCode = (int)response.StatusCode;
+                        _smsDTOs.ErrorText = content;
+                    }
+                    _smsDTOs.SMSContent = smsBody;
+                    _smsDTOs.SendDate = DateTime.Now;
+
+                    await _smsController.SaveSMSDTOHistory(_smsDTOs);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal($"SMS Send failed. Excetion Details: {ex.Message} SMSHelper.cs: 80.");
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
     }
 }

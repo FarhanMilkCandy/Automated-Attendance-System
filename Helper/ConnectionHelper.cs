@@ -34,7 +34,7 @@ namespace Automated_Attendance_System.Helpers
             }
         }
 
-        private int retryCount = 1;
+        private static int retryCount = 1;
 
         public void EstablishConnections()
         {
@@ -65,7 +65,7 @@ namespace Automated_Attendance_System.Helpers
                                 Log.Fatal($"Connection unsuccessful with Device @ {device.DeviceIP} : {device.DevicePort}\n");
                                 Console.BackgroundColor = ConsoleColor.Red;
                                 Console.ForegroundColor = ConsoleColor.Black;
-                                Console.WriteLine($"\n>> Connected unsuccessfully to device with IP: {device.DeviceIP}. and Port: {device.DevicePort}.");
+                                Console.WriteLine($"\n>> Connection unsuccessfull to device with IP: {device.DeviceIP}. and Port: {device.DevicePort}.");
                             }
                         }
                         else
@@ -251,36 +251,38 @@ namespace Automated_Attendance_System.Helpers
                                     Console.BackgroundColor = ConsoleColor.Blue;
                                     Console.ForegroundColor = ConsoleColor.Black;
                                     Console.WriteLine($"\n>> Connected successfully to device with IP: {device.DeviceIP}. and Port: {device.DevicePort}. Retry count: {retryCounter}.");
-                                    bool emailFlag = emailHelper.SendEmail("Success", "Device Connection Established", $"<p style=\"color:green;\">Device no: {device.DeviceMachineNumber} @ IP: {device.DeviceIP} : {device.DevicePort} is connected after {retryCounter} times retrying.</p>");
-
-                                    if (emailFlag)
+                                    if (retryCounter > 10)
                                     {
-                                        Log.Information($"Notifying email sent successfully\n");
-                                        Console.BackgroundColor = ConsoleColor.Black;
-                                        Console.ForegroundColor = ConsoleColor.Green;
-                                        Console.WriteLine("\n>> Notifying email sent successfully.");
-                                    }
-                                    else
-                                    {
-                                        Console.BackgroundColor = ConsoleColor.Red;
-                                        Console.ForegroundColor = ConsoleColor.Black;
-                                        Console.WriteLine("\n>> Email send unsuccessful. Check network connectivity or other error may have occured. Trying Backup email.");
+                                        bool emailFlag = emailHelper.SendEmail("Success", "Device Connection Established", $"<p style=\"color:green;\">Device no: {device.DeviceMachineNumber} @ IP: {device.DeviceIP} : {device.DevicePort} is connected after {retryCounter} times retrying.</p>");
 
-                                        Log.Error($"Email send unsuccessful. Network connectivity or other error may have occured.\n");
-                                        Log.Information($"\"Trying Backup email.\n");
-                                        bool bkpMailFlag = emailHelper.SendEmailBackup("Success", "Device Connection Established", $"<p style=\"color:green;\">Device no: {device.DeviceMachineNumber} @ IP: {device.DeviceIP} : {device.DevicePort} is connected after {retryCounter} times retrying.</p>");
-                                        if (bkpMailFlag)
+                                        if (emailFlag)
                                         {
-                                            Log.Information($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
+                                            Log.Information($"Notifying email sent successfully\n");
+                                            Console.BackgroundColor = ConsoleColor.Black;
+                                            Console.ForegroundColor = ConsoleColor.Green;
+                                            Console.WriteLine("\n>> Notifying email sent successfully.");
                                         }
                                         else
                                         {
-                                            Log.Fatal($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
                                             Console.BackgroundColor = ConsoleColor.Red;
                                             Console.ForegroundColor = ConsoleColor.Black;
-                                            Console.WriteLine("\n>> Email send unsuccessful. Check network connectivity or other error may have occured. Backup email failed!!.");
-                                        }
+                                            Console.WriteLine("\n>> Email send unsuccessful. Check network connectivity or other error may have occured. Trying Backup email.");
 
+                                            Log.Error($"Email send unsuccessful. Network connectivity or other error may have occured.\n");
+                                            Log.Information($"\"Trying Backup email.\n");
+                                            bool bkpMailFlag = emailHelper.SendEmailBackup("Success", "Device Connection Established", $"<p style=\"color:green;\">Device no: {device.DeviceMachineNumber} @ IP: {device.DeviceIP} : {device.DevicePort} is connected after {retryCounter} times retrying.</p>");
+                                            if (bkpMailFlag)
+                                            {
+                                                Log.Information($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
+                                            }
+                                            else
+                                            {
+                                                Log.Fatal($"\"Device Connection Failed\" email sending unsuccessful even with backup mail.\n");
+                                                Console.BackgroundColor = ConsoleColor.Red;
+                                                Console.ForegroundColor = ConsoleColor.Black;
+                                                Console.WriteLine("\n>> Email send unsuccessful. Check network connectivity or other error may have occured. Backup email failed!!.");
+                                            }
+                                        }
                                     }
                                     #endregion
                                 }

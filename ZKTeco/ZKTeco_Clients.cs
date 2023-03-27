@@ -236,7 +236,7 @@ namespace Automated_Attendance_System.ZKTeco
                 Log.Information($"Student data updates found. Total: {stdList.Count}. Data will sync to Device {machineNumber}\n");
                 foreach (BSS_STUDENT std in _updateCcontroller.GetStudentUpdates())
                 {
-                    if (int.TryParse("2200" + std.STUDENT_ID.Substring(std.STUDENT_ID.Length - 4), out temp))
+                    if (int.TryParse("1100" + std.STUDENT_ID.Substring(std.STUDENT_ID.Length - 4), out temp))
                     {
                         if (this.SSR_GetUserInfo(machineNumber, temp.ToString(), out dwname, out dwpassword, out dwprivillege, out dwenabled))
                         {
@@ -318,7 +318,7 @@ namespace Automated_Attendance_System.ZKTeco
         private async void ObjCZKEM_OnConnected(int machineNumber)
         {
             //Remove Task Run if any thread safe error is thrown
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
                 try
                 {
@@ -351,7 +351,8 @@ namespace Automated_Attendance_System.ZKTeco
                                 Verify_Method = dwVerifyMode,
                                 Punch_Date = PunchDate,
                                 Punch_Time = PunchTime,
-                                Work_Code = dwWorkCode
+                                Work_Code = dwWorkCode,
+                                Sync_Status = false
                             };
                             attendances.Add(dtObj);
                         }
@@ -359,11 +360,12 @@ namespace Automated_Attendance_System.ZKTeco
                         if (attendances.Count > 0)
                         {
 
-                            flag = _controller.RecordPreviousAttendance(attendances);
+                            flag = await _controller.RecordPreviousAttendance(attendances);
                         }
                         #endregion
 
-                        bool clearFlag = objCZKEM.ClearData(machineNumber, 1);
+                        //bool clearFlag = objCZKEM.ClearData(machineNumber, 1);
+                        bool clearFlag = true;
                         if (!flag)
                         {
                             Log.Fatal($"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.\n");
@@ -455,8 +457,8 @@ namespace Automated_Attendance_System.ZKTeco
                 }
                 if (errorEnroll != null)
                 {
-                    Log.Fatal($"Exception storing attendance data to DB in real time for: {string.Join("\n", errorEnroll)}.\n Data could not be inserted even after retry.\n");
-                    emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing attendance data to DB in real time for: {string.Join(",", errorEnroll)}\n Data could not be inserted even after retry.\n");
+                    Log.Fatal($"Exception storing attendance data to DB in real time for: {errorEnroll}.\n Data could not be inserted even after retry.\n");
+                    emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing attendance data to DB in real time for: {errorEnroll}\n Data could not be inserted even after retry.\n");
                     Console.WriteLine($"\n>>Error mail sent at {DateTime.Now}\n");
                     errorEnroll = null;
                 }
@@ -490,7 +492,6 @@ namespace Automated_Attendance_System.ZKTeco
             // Implementing the Event
             RaiseDeviceEvent(this, "Disconnected");
         }
-
 
         public bool ReadSuperLogData(int dwMachineNumber)
         {

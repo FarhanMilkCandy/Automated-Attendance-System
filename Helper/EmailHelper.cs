@@ -35,8 +35,8 @@ namespace Automated_Attendance_System.Helper
         {
             List<string> devMails = new List<string>
             {
-                "shopon@bssitbd.com",
-                "anikrahman70945@gmail.com"
+                //"shopon@bssitbd.com",
+                //"anikrahman70945@gmail.com"
             };
 
             return devMails;

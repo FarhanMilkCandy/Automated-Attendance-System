@@ -117,8 +117,8 @@ namespace Automated_Attendance_System
                 int milisecs = Convert.ToInt32(endTime.TimeOfDay.Subtract(DateTime.Now.TimeOfDay).TotalMilliseconds);
                 TimeSpan calculatedExitTime = TimeSpan.FromMilliseconds(milisecs);
                 Console.WriteLine($"\n>> Time is now {DateTime.Now.TimeOfDay} || Application will close after {calculatedExitTime.Hours} hours and {calculatedExitTime.Minutes} minutes.\n");
-                Log.Information($"Application termination time is set to > {endTime.TimeOfDay}\n");
-                Log.Information($"Time is now {DateTime.Now.TimeOfDay} || Application will close after {calculatedExitTime.Hours} hours and {calculatedExitTime.Minutes} minutes.\n");
+                Log.Information($"\nApplication termination time is set to > {endTime.TimeOfDay}\n");
+                Log.Information($"\nTime is now {DateTime.Now.TimeOfDay} || Application will close after {calculatedExitTime.Hours} hours and {calculatedExitTime.Minutes} minutes.\n");
                 Thread.Sleep(milisecs);
                 goto Exitng;
             }

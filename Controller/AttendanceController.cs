@@ -10,144 +10,119 @@ namespace Automated_Attendance_System.Controller
 {
     public class AttendanceController
     {
-        private static BSS_ATTENDANCE_ZK exceptionEntry = new BSS_ATTENDANCE_ZK();
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
-        private readonly object _lock = new object();
+        private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
         public Entities _db = new Entities();
 
-        int temp = 0;
-        BSS_ATTENDANCE_ZK attendance;
-
         public int GetAttendanceDeviceCount()
         {
+            _semaphore.Wait(1);
             try
             {
                 return _db.BSS_ATTENDANCE_DEVICES.Where(w => w.Status == true).Count();
             }
             catch (Exception ex)
             {
-                Log.Fatal($"Exception: {ex.Message} occured while fetching device count.\n");
+                Log.Fatal($"Fetching attendance device failed. Excetion Details: {ex.Message} AttendanceController.cs: 26.");
                 return -1;
             }
+            finally { _semaphore.Release(); }
         }
 
         public List<BSS_ATTENDANCE_DEVICES> GetAttendanceDevices()
         {
+            _semaphore.Wait(1);
             try
             {
                 return _db.BSS_ATTENDANCE_DEVICES.Where(w => w.Status == true).ToList();
             }
             catch (Exception ex)
             {
-                Log.Fatal($"Exception: {ex.Message} occured while fetching attendance devices.\n");
+                Log.Fatal($"Fetching Device List Failed. Excetion Details: {ex.Message} AttendanceController.cs: 41.");
                 return null;
             }
+            finally { _semaphore.Release(); }
         }
 
-        public bool RecordPreviousAttendance(List<BSS_ATTENDANCE_ZK> previousAttendances)
+        public async Task<bool> RecordPreviousAttendance(List<BSS_ATTENDANCE_ZK> previousAttendances)
         {
-            lock (_lock)
+            await _semaphore.WaitAsync(1);
+            try
             {
-                try
-                {
-                    _db.BSS_ATTENDANCE_ZK.BulkInsert(previousAttendances);
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Bulk insert to database on wake up failed. Exception: {ex.Message}\n");
-                    Log.Fatal($"Bulk insert to database on wake up failed. Exception: {ex.Message}\n");
-                    return false;
-                }
+                await _db.BSS_ATTENDANCE_ZK.BulkInsertAsync<BSS_ATTENDANCE_ZK>(previousAttendances);
+                return true;
             }
+            catch (Exception ex)
+            {
+                Log.Fatal($"Bulk insertion into database failed. Excetion Details: {ex.Message} AttendanceController.cs: 57.");
+                return false;
+            }
+
         }
+
 
         //Inserts Attendance to Database
-        public BSS_ATTENDANCE_ZK RecordAttendance(int machineNumber, string enrollmentNumber, int verifyMethod, DateTime punchDate, TimeSpan punchTime, int workCode)
+        public async Task<BSS_ATTENDANCE_ZK> RecordAttendance(int machineNumber, string enrollmentNumber, int verifyMethod, DateTime punchDate, TimeSpan punchTime, int workCode)
         {
-            lock (_lock)
+            await _semaphore.WaitAsync(1);
+            int enrollNumber = int.TryParse(enrollmentNumber, out int temp) ? temp : -1;
+
+            BSS_ATTENDANCE_ZK attendanceEntity = new BSS_ATTENDANCE_ZK
             {
-                int enrollNumber = int.TryParse(enrollmentNumber, out int temp) ? temp : -1;
-
-                try
-                {
-                    _db.BSS_ATTENDANCE_ZK.InsertFromQueryAsync("BSS_ATTENDANCE_ZK", i => new BSS_ATTENDANCE_ZK
-                    {
-                        Machine_Number = machineNumber,
-                        Enrollment_Number = enrollNumber,
-                        Verify_Method = verifyMethod,
-                        Punch_Date = punchDate,
-                        Punch_Time = punchTime,
-                        Work_Code = workCode,
-                        Sync_Status = false
-                    });
-
-                    return null;
-                }
-                catch (Exception ex)
-                {
-                    BSS_ATTENDANCE_ZK errorEntry = new BSS_ATTENDANCE_ZK
-                    {
-                        Machine_Number = machineNumber,
-                        Enrollment_Number = enrollNumber,
-                        Verify_Method = verifyMethod,
-                        Punch_Date = punchDate,
-                        Punch_Time = punchTime,
-                        Work_Code = workCode,
-                        Sync_Status = false
-                    };
-                    Console.WriteLine($"Realtime Push : {ex.Message}\n");
-                    bool successFlag = RetryDBEntry(errorEntry).GetAwaiter().GetResult();
-                    if (!successFlag)
-                    {
-                        return errorEntry;
-                    }
-                    return null;
-                }
+                Machine_Number = machineNumber,
+                Enrollment_Number = enrollNumber,
+                Verify_Method = verifyMethod, 
+                Punch_Date = punchDate,
+                Punch_Time = punchTime,
+                Work_Code = workCode,
+                Sync_Status = false
+            };
+            try
+            {
+                await _db.BSS_ATTENDANCE_ZK.SingleInsertAsync(attendanceEntity);
+                return null;
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Realtime Push : {ex.Message}\n");
+                bool successFlag = RetryDBEntry(attendanceEntity).GetAwaiter().GetResult();
+                if (!successFlag)
+                {
+                    return attendanceEntity;
+                }
+                return null;
+            }
+            finally { _semaphore.Release(); }
         }
 
         public async Task<bool> RetryDBEntry(BSS_ATTENDANCE_ZK errorEntry, int retryCount = 0)
         {
-            return await Task.Run(() =>
-            {
-                bool result = false;
-                lock (_lock)
-                {
-                    try
-                    {
-                        _db.BSS_ATTENDANCE_ZK.InsertFromQueryAsync("BSS_ATTENDANCE_ZK", i => new BSS_ATTENDANCE_ZK
-                        {
-                            Enrollment_Number = errorEntry.Enrollment_Number,
-                            InOut_Mode = errorEntry.InOut_Mode,
-                            Machine_Number = errorEntry.Machine_Number,
-                            Punch_Date = errorEntry.Punch_Date,
-                            Punch_Time = errorEntry.Punch_Time,
-                            Sync_Status = errorEntry.Sync_Status,
-                            Verify_Method = errorEntry.Verify_Method,
-                            Work_Code = errorEntry.Work_Code
-                        });
-                        result = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Transaction for {errorEntry.Enrollment_Number} failed in Retry Entry to DB. Exception: {ex.Message}\n");
-                        Log.Fatal($"Transaction for {errorEntry.Enrollment_Number} failed in Retry Entry to DB. Exception: {ex.Message}\n");
-                        if (retryCount <= 10)
-                        {
-                            RetryDBEntry(errorEntry, retryCount += 1).GetAwaiter();
-                            result = false;
-                        }
-                        else
-                        {
-                            result = false;
-                        }
-                    }
-                }
-                return result;
-            });
+            await _semaphore.WaitAsync(1);
+            bool result = false;
 
+            try
+            {
+                await _db.BSS_ATTENDANCE_ZK.SingleInsertAsync(errorEntry);
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                if (retryCount <= 10)
+                {
+                    retryCount += 1;
+                    await RetryDBEntry(errorEntry, retryCount);
+                    result = false;
+                }
+                else
+                {
+                    Console.WriteLine($"Insertion for {errorEntry.Enrollment_Number} failed in Retry Entry to DB. Exception: {ex.Message}\n ");
+                    Log.Fatal($"Insertion for {errorEntry.Enrollment_Number} failed in Retry Entry to DB. Exception: {ex.Message}\n AttendanceController.cs: 118.\n");
+                    result = false;
+                }
+            }
+            finally { _semaphore.Release(); }
+
+            return result;
             // The old code has higher time complexity as well as SaveChangesAsync is slower
             #region Old Code
 
