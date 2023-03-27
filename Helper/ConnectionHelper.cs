@@ -34,7 +34,7 @@ namespace Automated_Attendance_System.Helpers
             }
         }
 
-        private static int retryCount = 1;
+        private int retryCount = 1;
 
         public void EstablishConnections()
         {

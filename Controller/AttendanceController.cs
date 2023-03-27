@@ -107,7 +107,7 @@ namespace Automated_Attendance_System.Controller
             }
             catch (Exception ex)
             {
-                if (retryCount <= 10)
+                if (retryCount <= 3)
                 {
                     retryCount += 1;
                     await RetryDBEntry(errorEntry, retryCount);

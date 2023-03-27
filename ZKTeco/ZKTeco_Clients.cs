@@ -364,12 +364,12 @@ namespace Automated_Attendance_System.ZKTeco
                         }
                         #endregion
 
-                        //bool clearFlag = objCZKEM.ClearData(machineNumber, 1);
-                        bool clearFlag = true;
+                        bool clearFlag = objCZKEM.ClearData(machineNumber, 1);
+                        //bool clearFlag = true;
                         if (!flag)
                         {
-                            Log.Fatal($"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.\n");
-                            bool emailFlag = emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.");
+                            Log.Fatal($"Error storing {errorEnroll} attendance data to DB after system wake up.\n");
+                            bool emailFlag = emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing {errorEnroll} attendance data to DB after system wake up.");
                             if (!emailFlag)
                             {
                                 Log.Error($"Error sending email for data recording after wakeup\n");
@@ -378,7 +378,7 @@ namespace Automated_Attendance_System.ZKTeco
                             {
                                 Log.Information($"Sending email for data recording after wakeup was success\n");
                                 Log.Information($"\"Trying Backup email.\n");
-                                bool bkpMailFlag = emailHelper.SendEmailBackup("error", "Error in Automated Attendance System", $"Exception storing {string.Join(", ", errorEnroll)} attendance data to DB after system wake up.");
+                                bool bkpMailFlag = emailHelper.SendEmailBackup("error", "Error in Automated Attendance System", $"Exception storing {errorEnroll} attendance data to DB after system wake up.");
                                 if (bkpMailFlag)
                                 {
                                     Log.Information($"\"Device Connection Failed\" email sent successfully using backup mail.\n");

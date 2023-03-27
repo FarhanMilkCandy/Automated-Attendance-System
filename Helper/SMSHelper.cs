@@ -16,13 +16,13 @@ namespace Automated_Attendance_System.Helper
         private SMSController _smsController = new SMSController();
         private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
         private SMSDTO _smsDTOs = new SMSDTO();
-        private List<string> _bssITEmp;
+        private static List<string> _bssITEmp = new List<string>();
 
         public async Task<SMSDTO> GetDTO(string enrollmentNumber)
         {
             try
             {
-                await Task.Run(() => { _smsDTOs = _smsController.GetSMSDTO(enrollmentNumber).Result; });
+                 _smsDTOs = await _smsController.GetSMSDTO(enrollmentNumber);
             }
             catch (Exception ex)
             {
@@ -33,13 +33,16 @@ namespace Automated_Attendance_System.Helper
 
         public async Task SendSMS(string idNumber, string punchTime)
         {
-            await _semaphore.WaitAsync();
+            await _semaphore.WaitAsync(1);
 
             try
             {
-                _bssITEmp = _smsController.GetBSSITIds().Result;
+                if (_bssITEmp.Count == 0)
+                {
+                    _bssITEmp = await _smsController.GetBSSITIds();
+                }
                 HttpWebRequest request;
-                SMSDTO smsObj = GetDTO(idNumber).Result;
+                SMSDTO smsObj = await GetDTO(idNumber);
                 string smsBody = $"Your attendance was recorded at {punchTime}.\nRegards,\nBSS";
                 if (idNumber.StartsWith("2200"))
                 {
