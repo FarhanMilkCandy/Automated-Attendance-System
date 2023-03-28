@@ -457,8 +457,8 @@ namespace Automated_Attendance_System.ZKTeco
                 }
                 if (errorEnroll != null)
                 {
-                    Log.Fatal($"Exception storing attendance data to DB in real time for: {errorEnroll}.\n Data could not be inserted even after retry.\n");
-                    emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing attendance data to DB in real time for: {errorEnroll}\n Data could not be inserted even after retry.\n");
+                    Log.Fatal($"Exception storing attendance data to DB in real time for: {errorEnroll.Enrollment_Number}, {errorEnroll.Punch_Date} at time {errorEnroll.Punch_Time} on Machine {errorEnroll.Machine_Number}.\n Data could not be inserted even after retry.\n");
+                    emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing attendance data to DB in real time for: {errorEnroll.Enrollment_Number}, {errorEnroll.Punch_Date} at time {errorEnroll.Punch_Time}on Machine {errorEnroll.Machine_Number}.\n Data could not be inserted even after retry.\n");
                     Console.WriteLine($"\n>>Error mail sent at {DateTime.Now}\n");
                     errorEnroll = null;
                 }

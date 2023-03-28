@@ -107,7 +107,7 @@ namespace Automated_Attendance_System.Controller
             }
             catch (Exception ex)
             {
-                if (retryCount <= 3)
+                if (retryCount <= 1)
                 {
                     retryCount += 1;
                     await RetryDBEntry(errorEntry, retryCount);
@@ -116,7 +116,7 @@ namespace Automated_Attendance_System.Controller
                 else
                 {
                     Console.WriteLine($"Insertion for {errorEntry.Enrollment_Number} failed in Retry Entry to DB. Exception: {ex.Message}\n ");
-                    Log.Fatal($"Insertion for {errorEntry.Enrollment_Number} failed in Retry Entry to DB. Exception: {ex.Message}\n AttendanceController.cs: 118.\n");
+                    Log.Fatal($"Insertion for {errorEntry.Enrollment_Number} failed in Retry Entry to DB. Exception: {ex.Message}\n AttendanceController.cs: 119.\n");
                     result = false;
                 }
             }
