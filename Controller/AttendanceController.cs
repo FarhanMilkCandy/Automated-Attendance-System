@@ -57,6 +57,10 @@ namespace Automated_Attendance_System.Controller
                 Log.Fatal($"Bulk insertion into database failed. Excetion Details: {ex.Message} AttendanceController.cs: 57.");
                 return false;
             }
+            finally
+            {
+                _semaphore.Release();
+            }
 
         }
 
@@ -71,7 +75,7 @@ namespace Automated_Attendance_System.Controller
             {
                 Machine_Number = machineNumber,
                 Enrollment_Number = enrollNumber,
-                Verify_Method = verifyMethod, 
+                Verify_Method = verifyMethod,
                 Punch_Date = punchDate,
                 Punch_Time = punchTime,
                 Work_Code = workCode,

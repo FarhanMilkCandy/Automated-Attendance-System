@@ -63,7 +63,7 @@ namespace Automated_Attendance_System.Controller
             }
             catch (Exception ex)
             {
-                Log.Fatal($"Bulk insertion into database failed. Excetion Details: {ex.Message} SMSController.cs: 66.");
+                Log.Fatal($"Reading SMS DTO from DB failed. Exception Details: {ex.Message} SMSController.cs: 66.");
                 return null;
             }
             finally { _semaphore.Release(); }
@@ -91,6 +91,10 @@ namespace Automated_Attendance_System.Controller
             {
                 Log.Fatal($"Insertion of SMS entity of {obj.EnrollmentNumber} into DB failed. Excetion Details: {ex.Message} SMSController.cs: 93.");
                 return 0;
+            }
+            finally
+            {
+                _semaphore.Release();
             }
         }
 

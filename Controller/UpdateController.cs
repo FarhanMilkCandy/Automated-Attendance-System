@@ -1,7 +1,6 @@
 ﻿using Automated_Attendance_System.Entity;
 using Serilog;
 using System.Collections.Generic;
-using System.IdentityModel.Protocols.WSTrust;
 using System.Linq;
 using System.Threading;
 

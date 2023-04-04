@@ -1,6 +1,5 @@
 ﻿using Automated_Attendance_System.Controller;
 using Automated_Attendance_System.Entity;
-using Automated_Attendance_System.Entity.Model;
 using Automated_Attendance_System.Helper;
 using Automated_Attendance_System.Helpers;
 using Serilog;
@@ -368,8 +367,8 @@ namespace Automated_Attendance_System.ZKTeco
                         //bool clearFlag = true;
                         if (!flag)
                         {
-                            Log.Fatal($"Error storing {errorEnroll} attendance data to DB after system wake up.\n");
-                            bool emailFlag = emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing {errorEnroll} attendance data to DB after system wake up.");
+                            Log.Fatal($"Error storing {string.Join(",", errorEnroll)} attendance data to DB after system wake up.\n");
+                            bool emailFlag = emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing {string.Join(",", errorEnroll)} attendance data to DB after system wake up.");
                             if (!emailFlag)
                             {
                                 Log.Error($"Error sending email for data recording after wakeup\n");
@@ -453,7 +452,7 @@ namespace Automated_Attendance_System.ZKTeco
                 if (!string.IsNullOrEmpty(EnrollNumber) && !string.IsNullOrEmpty(objCZKEM.MachineNumber.ToString()) && PunchDate != null && PunchTime != null)
                 {
                     //Console.WriteLine("\n>>Transaction happened");
-                    errorEnroll = await Task.Run(()=> _controller.RecordAttendance(objCZKEM.MachineNumber, EnrollNumber, VerifyMethod, PunchDate, PunchTime, WorkCode));
+                    errorEnroll = await Task.Run(() => _controller.RecordAttendance(objCZKEM.MachineNumber, EnrollNumber, VerifyMethod, PunchDate, PunchTime, WorkCode));
                 }
                 if (errorEnroll != null)
                 {
@@ -753,7 +752,7 @@ namespace Automated_Attendance_System.ZKTeco
 
         #endregion
 
-        #region SSR_ZOne
+        #region SSR_Zone
 
         public bool SSR_GetUserTmp(int dwMachineNumber, string dwEnrollNumber, int dwFingerIndex, out byte TmpData, out int TmpLength)
         {

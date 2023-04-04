@@ -2,8 +2,6 @@
 using Automated_Attendance_System.Entity.Model;
 using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -22,7 +20,7 @@ namespace Automated_Attendance_System.Helper
         {
             try
             {
-                 _smsDTOs = await _smsController.GetSMSDTO(enrollmentNumber);
+                _smsDTOs = await _smsController.GetSMSDTO(enrollmentNumber);
             }
             catch (Exception ex)
             {
