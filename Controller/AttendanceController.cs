@@ -6,19 +6,21 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+
 namespace Automated_Attendance_System.Controller
 {
     public class AttendanceController
     {
         private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
 
-        public Entities _db = new Entities();
+
 
         public int GetAttendanceDeviceCount()
         {
             _semaphore.Wait(1);
             try
             {
+                Entities _db = new Entities();
                 return _db.BSS_ATTENDANCE_DEVICES.Where(w => w.Status == true).Count();
             }
             catch (Exception ex)
@@ -34,6 +36,7 @@ namespace Automated_Attendance_System.Controller
             _semaphore.Wait(1);
             try
             {
+                Entities _db = new Entities();
                 return _db.BSS_ATTENDANCE_DEVICES.Where(w => w.Status == true).ToList();
             }
             catch (Exception ex)
@@ -44,24 +47,33 @@ namespace Automated_Attendance_System.Controller
             finally { _semaphore.Release(); }
         }
 
-        public async Task<bool> RecordPreviousAttendance(List<BSS_ATTENDANCE_ZK> previousAttendances)
+        public async Task<int> RecordPreviousAttendance(List<BSS_ATTENDANCE_ZK> previousAttendances)
         {
             await _semaphore.WaitAsync(1);
+            int flag = 0;
             try
             {
-                await _db.BSS_ATTENDANCE_ZK.BulkInsertAsync<BSS_ATTENDANCE_ZK>(previousAttendances);
-                return true;
+                Entities _db = new Entities();
+                _db.BSS_ATTENDANCE_ZK.AddRange(previousAttendances);
+                flag = await _db.SaveChangesAsync();
+                //_db.Dispose();
+                if (flag <= 0)
+                {
+                    Log.Error($"{string.Join(",", previousAttendances.Select(s=> new { s.Enrollment_Number, s.Machine_Number, s.Punch_Time }))} data not inserted.\n");
+                    return flag;
+                }
+                Log.Information("Insertion of previous data success.\n");
+                return flag;
             }
             catch (Exception ex)
             {
-                Log.Fatal($"Bulk insertion into database failed. Excetion Details: {ex.Message} AttendanceController.cs: 57.");
-                return false;
+                Log.Fatal($"Bulk insertion into database failed. Excetion Details: {ex.Message} AttendanceController.cs: 57.\n");
+                return flag;
             }
             finally
             {
                 _semaphore.Release();
             }
-
         }
 
 
@@ -83,6 +95,7 @@ namespace Automated_Attendance_System.Controller
             };
             try
             {
+                Entities _db = new Entities();
                 await _db.BSS_ATTENDANCE_ZK.SingleInsertAsync(attendanceEntity);
                 return null;
             }
@@ -106,6 +119,7 @@ namespace Automated_Attendance_System.Controller
 
             try
             {
+                Entities _db = new Entities();
                 await _db.BSS_ATTENDANCE_ZK.SingleInsertAsync(errorEntry);
                 result = true;
             }

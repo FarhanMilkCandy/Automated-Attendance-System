@@ -52,12 +52,12 @@ namespace Automated_Attendance_System.Helper
                 }
                 bool eligible = _smsController.SMSEligible(idNumber).Result;
                 //if (eligible && _bssITEmp.Contains(idNumber))
-                if (eligible && idNumber.StartsWith("2200"))
+                if (eligible)
                 {
                     request = (HttpWebRequest)WebRequest.Create(@"https://powersms.banglaphone.net.bd/httpapi/sendsms?userId=bss1&password=Bss123&smsText=" + smsBody + "&commaSeperatedReceiverNumbers=" + smsObj.PhoneNumber);
 
                     request.Method = WebRequestMethods.Http.Get;
-                    request.Accept = "application /json";
+                    request.Accept = "application/json";
                     HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                     string content = new StreamReader(response.GetResponseStream()).ReadToEnd();
                     if (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Accepted)

@@ -71,9 +71,9 @@ namespace Automated_Attendance_System.ZKTeco
                     //if (productCode != "MB560-VL/ID" && !connectionFlag)
                     //{
                     ObjCZKEM_OnConnected(machineNumber);
-                    GetStdUpdate(machineNumber, _updateCcontroller.GetStudentUpdates()).GetAwaiter();
+                    //GetStdUpdate(machineNumber, _updateCcontroller.GetStudentUpdates()).GetAwaiter();
                     //}
-                    GetHRUpdate(machineNumber, _updateCcontroller.GetHRUpdates()).GetAwaiter();
+                    //GetHRUpdate(machineNumber, _updateCcontroller.GetHRUpdates()).GetAwaiter();
                     if (upFailed != null && upFailed.Count > 0)
                     {
                         Log.Error($"Enrollment ID : {string.Join(", ", upFailed.Distinct().ToList())} was not synced properly with device {machineNumber}");
@@ -273,7 +273,7 @@ namespace Automated_Attendance_System.ZKTeco
                             await Task.Run(() =>
                             {
                                 syncCard = this.SetStrCardNumber(std.PROXIMITY_NUM);
-                                syncInfo = this.SSR_SetUserInfo(machineNumber, "2200" + std.STUDENT_ID.Substring(std.STUDENT_ID.Length - 4), std.FIRST_NAME + " " + std.MIDDLE_NAME + " " + std.LAST_NAME, string.Empty, 0, true);
+                                syncInfo = this.SSR_SetUserInfo(machineNumber, "1100" + std.STUDENT_ID.Substring(std.STUDENT_ID.Length - 4), std.FIRST_NAME + " " + std.MIDDLE_NAME + " " + std.LAST_NAME, string.Empty, 0, true);
                                 if (syncCard && syncInfo)
                                 {
                                     if (_deviceCount == ConnectionHelper.connectedDeviceCount)
@@ -302,9 +302,9 @@ namespace Automated_Attendance_System.ZKTeco
                     }
                     else
                     {
-                        Log.Error($"Could not parse Student ID : {"2200" + std.STUDENT_ID.Substring(std.STUDENT_ID.Length - 4)}\n");
+                        Log.Error($"Could not parse Student ID : {"1100" + std.STUDENT_ID.Substring(std.STUDENT_ID.Length - 4)}\n");
                         Console.BackgroundColor = ConsoleColor.Red; Console.ForegroundColor = ConsoleColor.Black;
-                        Console.WriteLine($"\n>> Could not parse Student ID : {"2200" + std.STUDENT_ID.Substring(std.STUDENT_ID.Length - 4)}");
+                        Console.WriteLine($"\n>> Could not parse Student ID : {"1100" + std.STUDENT_ID.Substring(std.STUDENT_ID.Length - 4)}");
                     }
                 }
             }
@@ -355,20 +355,17 @@ namespace Automated_Attendance_System.ZKTeco
                             };
                             attendances.Add(dtObj);
                         }
-                        bool flag = false;
+                        int flag = 0;
                         if (attendances.Count > 0)
                         {
-
                             flag = await _controller.RecordPreviousAttendance(attendances);
                         }
                         #endregion
 
-                        bool clearFlag = objCZKEM.ClearData(machineNumber, 1);
-                        //bool clearFlag = true;
-                        if (!flag)
+                        if (flag <= 0 && attendances.Count > 0)
                         {
-                            Log.Fatal($"Error storing {string.Join(",", errorEnroll)} attendance data to DB after system wake up.\n");
-                            bool emailFlag = emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing {string.Join(",", errorEnroll)} attendance data to DB after system wake up.");
+                            Log.Fatal($"Error storing attendance data to DB after system wake up.\n");
+                            bool emailFlag = emailHelper.SendEmail("error", "Error in Automated Attendance System", $"Exception storing attendance data to DB after system wake up.");
                             if (!emailFlag)
                             {
                                 Log.Error($"Error sending email for data recording after wakeup\n");
@@ -377,7 +374,7 @@ namespace Automated_Attendance_System.ZKTeco
                             {
                                 Log.Information($"Sending email for data recording after wakeup was success\n");
                                 Log.Information($"\"Trying Backup email.\n");
-                                bool bkpMailFlag = emailHelper.SendEmailBackup("error", "Error in Automated Attendance System", $"Exception storing {errorEnroll} attendance data to DB after system wake up.");
+                                bool bkpMailFlag = emailHelper.SendEmailBackup("error", "Error in Automated Attendance System", $"Exception storing attendance data to DB after system wake up.");
                                 if (bkpMailFlag)
                                 {
                                     Log.Information($"\"Device Connection Failed\" email sent successfully using backup mail.\n");
@@ -390,9 +387,32 @@ namespace Automated_Attendance_System.ZKTeco
                                 }
                             }
                         }
+                        else if(attendances.Count <= 0)
+                        {
+                            Log.Information($"No data in device: {machineNumber} found.\n");
+                        }
                         else
                         {
+                            bool clearFlag = objCZKEM.ClearData(machineNumber, 1);
                             Log.Information($"No error while wake-up data recording to device.\n");
+                            if (clearFlag)
+                            {
+                                #region Console
+                                Log.Information($"Clear device {objCZKEM.MachineNumber} was success\n");
+                                Console.BackgroundColor = ConsoleColor.Green;
+                                Console.ForegroundColor = ConsoleColor.Black;
+                                Console.WriteLine($"\n>>Clear device {objCZKEM.MachineNumber} was success.\n");
+                                #endregion
+                            }
+                            else
+                            {
+                                #region Console
+                                Log.Error($"Could not clear data from device {objCZKEM.MachineNumber}. The device may not have any data or unknown error occured\n");
+                                Console.BackgroundColor = ConsoleColor.Red;
+                                Console.ForegroundColor = ConsoleColor.Black;
+                                Console.WriteLine($"\n>>Could not clear data from device {objCZKEM.MachineNumber}. The device may not have any data or unknown error occured.\n");
+                                #endregion
+                            }
                         }
 
                         #region Console and Log
@@ -402,26 +422,6 @@ namespace Automated_Attendance_System.ZKTeco
                         Console.WriteLine($"\n>>Read Data successfull from device {objCZKEM.MachineNumber}");
                         Console.WriteLine($"\n>>Clearing device {objCZKEM.MachineNumber}");
                         #endregion
-
-
-                        if (clearFlag)
-                        {
-                            #region Console
-                            Log.Information($"Clear device {objCZKEM.MachineNumber} was success\n");
-                            Console.BackgroundColor = ConsoleColor.Green;
-                            Console.ForegroundColor = ConsoleColor.Black;
-                            Console.WriteLine($"\n>>Clear device {objCZKEM.MachineNumber} was success.\n");
-                            #endregion
-                        }
-                        else
-                        {
-                            #region Console
-                            Log.Error($"Could not clear data from device {objCZKEM.MachineNumber}. The device may not have any data or unknown error occured\n");
-                            Console.BackgroundColor = ConsoleColor.Red;
-                            Console.ForegroundColor = ConsoleColor.Black;
-                            Console.WriteLine($"\n>>Could not clear data from device {objCZKEM.MachineNumber}. The device may not have any data or unknown error occured.\n");
-                            #endregion
-                        }
                     }
                 }
                 catch (Exception ex)
